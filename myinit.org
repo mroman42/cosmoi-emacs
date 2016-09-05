@@ -126,9 +126,9 @@ Indicates what face are we using currently under the cursor.
 #+END_SRC
 * Other packages
 ** Magit
-Opens *magit* with `f9`.
+Opens *magit* with =C-x g=.
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f9>") 'magit-status)
+  (global-set-key (kbd "C-x g") 'magit-status)
 #+END_SRC
 ** dict-replace
 My dict-replace package.
