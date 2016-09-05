@@ -1,0 +1,8 @@
+* Emacs init file
+
+#+BEGIN_SRC emacs-lisp
+  ;; Dict-replace
+  (load-file "~/.emacs.d/dict-replace.el")
+  (global-set-key (kbd "<f5>") 'dict-translate)
+#+END_SRC
+
