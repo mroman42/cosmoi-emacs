@@ -158,10 +158,7 @@
 )
 (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 
-;; Interactive Haskell mode
-(require 'haskell-interactive-mode)
-(require 'haskell-process)
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+
 
 ;; Latex-math-mode
 (require 'latex)

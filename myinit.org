@@ -1,8 +1,43 @@
 * Emacs init file
-
 #+BEGIN_SRC emacs-lisp
   ;; Dict-replace
   (load-file "~/.emacs.d/dict-replace.el")
   (global-set-key (kbd "<f5>") 'dict-translate)
 #+END_SRC
 
+* Org-mode
+** Org-reveal
+The configuration allowing me to do *Reveal.js* presentations using org-mode.
+This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'est la Z]].
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-reveal
+    :ensure ox-reveal)
+
+  (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+  (setq org-reveal-mathjax t)
+
+  (use-package htmlize
+    :ensure t)
+#+END_SRC
+
+* Programming languages
+** Haskell
+Allows interactive Haskell evaluation in Emacs.
+#+BEGIN_SRC emacs-lisp
+  (require 'haskell-interactive-mode)
+  (require 'haskell-process)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+#+END_SRC
+
+* Snippets
+** Yasnippet support.
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
+  (require 'yasnippet)
+  (yas-global-mode 1)
+#+END_SRC
+
+** Snippets for programming languages
+#+BEGIN_SRC emacs-lisp
+  (require 'haskell-snippets)
+#+END_SRC
