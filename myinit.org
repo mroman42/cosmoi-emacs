@@ -1,12 +1,36 @@
-* Emacs init file
+* Org-mode
+** Basic keybindings
+Basic keybindings for org-mode.
 #+BEGIN_SRC emacs-lisp
-  ;; Dict-replace
-  (load-file "~/.emacs.d/dict-replace.el")
-  (global-set-key (kbd "<f5>") 'dict-translate)
+  (setq org-agenda-files (list "~/org/todo.org"))
+  (setq org-export-coding-system 'utf-8)
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cb" 'org-iswitchb)
 #+END_SRC
 
-* Org-mode
-** Org-reveal
+Opens the TODO file with `f6`.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f6>")
+                  (lambda() (interactive)
+                     (find-file "~/org/todo.org")
+                     ))
+#+END_SRC
+** Org-export
+*** Beamer
+Exports to beamer. Defines the beamer class.
+#+BEGIN_SRC emacs-lisp
+  (require 'ox-latex)
+  (add-to-list 'org-latex-classes
+               '("beamer"
+                 "\\documentclass\[presentation\]\{beamer\}"
+                 ("\\section\{%s\}" . "\\section*\{%s\}")
+                 ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
+                 ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
+#+END_SRC
+
+*** Reveal.js
 The configuration allowing me to do *Reveal.js* presentations using org-mode.
 This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'est la Z]].
 #+BEGIN_SRC emacs-lisp
@@ -20,6 +44,25 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
     :ensure t)
 #+END_SRC
 
+** Latex preview
+*** Conmutative diagrams
+Conmutative diagrams with the =tikz-cd= package.
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-latex-packages-alist '("" "tikz" t))
+  (eval-after-load "preview"
+    '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+  (setq org-latex-create-formula-image-program 'imagemagick)
+#+END_SRC
+*** Zooming
+Zooms latex image previews along with the text using =C-x C-+=.
+
+#+BEGIN_SRC emacs-lisp
+(defun update-org-latex-fragment-scale ()
+  (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
+    (plist-put org-format-latex-options :scale (* 1.2 text-scale-factor)))
+)
+(add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
+#+END_SRC
 * Programming languages
 ** Haskell
 Allows interactive Haskell evaluation in Emacs.
@@ -27,6 +70,31 @@ Allows interactive Haskell evaluation in Emacs.
   (require 'haskell-interactive-mode)
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+#+END_SRC
+
+** Lisp
+Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/2013/06/21/eval-and-replace/][Emacs Redux]].
+#+BEGIN_SRC emacs-lisp
+  (defun eval-and-replace ()
+    "Replace the preceding sexp with its value."
+    (interactive)
+    (backward-kill-sexp)
+    (condition-case nil
+        (prin1 (eval (read (current-kill 0)))
+               (current-buffer))
+      (error (message "Invalid expression")
+             (insert (current-kill 0)))))
+  (global-set-key (kbd "C-c e") 'eval-and-replace)
+#+END_SRC
+
+** HAML
+HAML support.
+#+BEGIN_SRC emacs-lisp
+(require 'haml-mode)
+(add-hook 'haml-mode-hook
+	  (lambda ()
+	    (setq indent-tabs-mode nil)
+	    (define-key haml-mode-map "\C-m" 'newline-and-indent)))
 #+END_SRC
 
 * Snippets
@@ -40,4 +108,33 @@ Allows interactive Haskell evaluation in Emacs.
 ** Snippets for programming languages
 #+BEGIN_SRC emacs-lisp
   (require 'haskell-snippets)
+#+END_SRC
+* Customization
+** What face?
+Indicates what face are we using currently under the cursor.
+#+BEGIN_SRC emacs-lisp
+(defun what-face (pos)
+  (interactive "d")
+  (let ((face (or (get-char-property (point) 'read-face-name)
+                  (get-char-property (point) 'face))))
+    (if face (message "Face: %s" face) (message "No face at %d" pos))))
+#+END_SRC
+* Other packages
+** Magit
+Opens *magit* with `f9`.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f9>") 'magit-status)
+#+END_SRC
+** dict-replace
+My dict-replace package.
+#+BEGIN_SRC emacs-lisp
+  (load-file "~/.emacs.d/dict-replace.el")
+  (global-set-key (kbd "<f5>") 'dict-translate)
+#+END_SRC
+** Flycheck
+Flycheck checks the syntax of programming languages.
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
 #+END_SRC
