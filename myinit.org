@@ -45,6 +45,11 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
 #+END_SRC
 
 ** Latex preview
+Requires Latex to use =latex-math-mode=.
+#+BEGIN_SRC emacs-lisp
+(require 'latex)
+#+END_SRC
+
 *** Conmutative diagrams
 Conmutative diagrams with the =tikz-cd= package.
 #+BEGIN_SRC emacs-lisp
@@ -137,4 +142,32 @@ Flycheck checks the syntax of programming languages.
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
+#+END_SRC
+** Engine-mode
+[[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different search engines
+to =C-c / x=, where =x= is a char representing the engine.
+
+#+BEGIN_SRC emacs-lisp
+(use-package engine-mode)
+
+(defengine duckduckgo
+  "https://duckduckgo.com/?q=%s"
+  :keybinding "d")
+(defengine github
+  "https://github.com/search?ref=simplesearch&q=%s"
+  :keybinding "g")
+(defengine google
+  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
+(defengine rfcs
+  "http://pretty-rfc.herokuapp.com/search?q=%s")
+(defengine stack-overflow
+  "https://stackoverflow.com/search?q=%s"
+  :keybinding "s")
+(defengine wikipedia
+  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+  :keybinding "w")
+(defengine wiktionary
+  "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
+
+(engine-mode t)
 #+END_SRC

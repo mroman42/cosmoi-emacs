@@ -75,7 +75,7 @@
      ("melpa-stable" . "http://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
+    (engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
  '(server-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -92,6 +92,4 @@
  '(org-level-5 ((t (:inherit outline-5 :weight normal)))))
 
 
-;; Latex-math-mode
-(require 'latex)
 
