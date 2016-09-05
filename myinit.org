@@ -105,9 +105,11 @@ HAML support.
 * Snippets
 ** Yasnippet support.
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
-  (require 'yasnippet)
-  (yas-global-mode 1)
+  (use-package yasnippet
+    :ensure t
+    :init (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
+    :config (yas-global-mode 1)
+    )
 #+END_SRC
 
 ** Snippets for programming languages
@@ -148,7 +150,8 @@ Flycheck checks the syntax of programming languages.
 to =C-c / x=, where =x= is a char representing the engine.
 
 #+BEGIN_SRC emacs-lisp
-(use-package engine-mode)
+(use-package engine-mode
+  :ensure t)
 
 (defengine duckduckgo
   "https://duckduckgo.com/?q=%s"
