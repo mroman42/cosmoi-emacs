@@ -1,3 +1,9 @@
+* My Emacs configuration file
+This is my Emacs init file, written in org-mode using literate programming.
+I have taken ideas for my configuration mainly from:
+ - [[http://cestlaz.github.io/][C'est la Z]]
+ - [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
+
 * Org-mode
 ** Org-directories
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
