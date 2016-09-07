@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: complex
+# key: complex_
+# --
+\[ $1 \overset{$6}\longrightarrow $2 \overset{$7}\longrightarrow $3 \overset{$8}\longrightarrow $4 \overset{$9}\longrightarrow $5 \]
