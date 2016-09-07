@@ -1,4 +1,12 @@
 * Org-mode
+** Org-directories
+Stores org files in =~/org=. Defines location of index, agenda and todo files.
+#+BEGIN_SRC emacs-lisp
+(setq org-directory "~/org")
+(setq org-agenda-files (list "~/org/todo.org"))
+(setq org-archive-location "~/org/archive.org ::* From %s")
+#+END_SRC
+
 ** Basic keybindings
 Basic keybindings for org-mode.
 #+BEGIN_SRC emacs-lisp
@@ -10,9 +18,9 @@ Basic keybindings for org-mode.
   (global-set-key "\C-cb" 'org-iswitchb)
 #+END_SRC
 
-Opens the TODO file with `f6`.
+Opens the TODO file with =C-c i=.
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f6>")
+  (global-set-key (kbd "C-c i")
                   (lambda() (interactive)
                      (find-file "~/org/todo.org")
                      ))
