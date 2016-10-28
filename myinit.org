@@ -4,6 +4,8 @@ I have taken ideas for my configuration mainly from:
  - [[http://cestlaz.github.io/][C'est la Z]]
  - [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
 
+It works on Emacs 25.1.
+
 * Org-mode
 ** Org-directories
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
@@ -58,14 +60,23 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
     :ensure t)
 #+END_SRC
 
+*** Anki
+Uses a modification of =ox-anki=.
+#+BEGIN_SRC emacs-lisp
+(load-file "~/.emacs.d/ox-anki.el")
+#+END_SRC
 ** Latex preview
-Requires Latex to use =latex-math-mode=.
+*** Latex math mode
+Requires Latex to use =latex-math-mode=. It is activated by default.
+
 #+BEGIN_SRC emacs-lisp
 (require 'latex)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 #+END_SRC
 
 *** Conmutative diagrams
 Conmutative diagrams with the =tikz-cd= package.
+
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-latex-packages-alist '("" "tikz" t))
   (eval-after-load "preview"
@@ -89,6 +100,49 @@ Allows interactive Haskell evaluation in Emacs.
   (require 'haskell-interactive-mode)
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+#+END_SRC
+
+** Proof General
+Loads the Proof General file.
+#+BEGIN_SRC emacs-lisp
+(load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+#+END_SRC
+** Agda
+Agda-mode configuration:
+#+BEGIN_SRC emacs-lisp
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
+;(require 'agda2)
+#+END_SRC
+** Sage
+*** sage-mode
+#+BEGIN_SRC emacs-lisp
+(require 'sage-shell-mode)
+(setq sage-shell:use-prompt-toolkit t)
+#+END_SRC
+
+*** org-babel-sage
+Org-babel-sage configuration:
+#+BEGIN_SRC emacs-lisp
+;; Ob-sagemath supports only evaluating with a session.
+(setq org-babel-default-header-args:sage '((:session . t)
+                                           (:results . "output")))
+
+;; C-c c for asynchronous evaluating (only for SageMath code blocks).
+(with-eval-after-load "org"
+  (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
+
+;; Do not confirm before evaluation
+(setq org-confirm-babel-evaluate nil)
+
+;; Do not evaluate code blocks when exporting.
+(setq org-export-babel-evaluate nil)
+
+;; Show images when opening a file.
+(setq org-startup-with-inline-images t)
+
+;; Show images after evaluating code blocks.
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 #+END_SRC
 
 ** Lisp
@@ -140,6 +194,55 @@ Indicates what face are we using currently under the cursor.
                   (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 #+END_SRC
+* Blog
+** org-page
+#+BEGIN_SRC emacs-lisp
+(require 'org-page)
+(setq op/repository-directory "~/projects/m42.github.io/")
+(setq op/site-domain "http://m42.github.io/")
+;;; for commenting, you can choose either disqus or duoshuo
+;(setq op/personal-disqus-shortname "your_disqus_shortname")
+;(setq op/personal-duoshuo-shortname "your_duoshuo_shortname")
+;;; the configuration below are optional
+(setq op/personal-google-analytics-id "your_google_analytics_id")
+#+END_SRC
+
+Personal configuration.
+
+#+BEGIN_SRC emacs-lisp
+(setq op/site-domain "http://m42.github.io/")
+(setq op/site-main-title "Mario Román")
+(setq op/site-sub-title "M42 - mromang08@gmail.com")
+(setq op/personal-github-link "https://github.com/m42")
+#+END_SRC
+
+Sections of the blog
+
+#+BEGIN_SRC emacs-lisp
+(setq op/category-config-alist
+   '(("blog" 
+      :show-meta t 
+      :show-comment nil 
+      :uri-generator op/generate-uri 
+      :uri-template "/blog/%y/%m/%d/%t/" 
+      :sort-by :date 
+      :category-index t)
+     ("index" 
+      :show-meta nil 
+      :show-comment nil 
+      :uri-generator op/generate-uri 
+      :uri-template "/" 
+      :sort-by :date 
+      :category-index nil)
+     ("about" 
+      :show-meta nil 
+      :show-comment nil 
+      :uri-generator op/generate-uri 
+      :uri-template "/about/" 
+      :sort-by :date 
+      :category-index nil)))
+#+END_SRC
+
 * Other packages
 ** Magit
 Opens *magit* with =C-x g=.

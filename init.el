@@ -2,9 +2,14 @@
 ;; Taken from http://melpa.org/#/getting-started
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(when (< emacs-major-version 24)
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+	     '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+	     '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives
+	     '("gnu" . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives
+	     '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
+
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -23,7 +28,6 @@
 
 
 
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -38,6 +42,7 @@
      ("<left>" "longleftarrow" "" nil)
      ("C-<right>" "Longrightarrow" "" nil)
      ("C-<left>" "Longleftarrow" "" nil))))
+ '(agda2-highlight-face-groups (quote default-faces))
  '(blink-cursor-mode nil)
  '(custom-enabled-themes (quote (wombat)))
  '(delete-selection-mode t)
@@ -68,14 +73,9 @@
  '(org-modules
    (quote
     (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
- '(package-archives
-   (quote
-    (("melpa" . "https://melpa.org/packages/")
-     ("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa-stable" . "http://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
+    (ob-sagemath sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
  '(server-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -83,6 +83,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(agda2-highlight-datatype-face ((t (:foreground "chartreuse"))))
+ '(agda2-highlight-function-face ((t (:foreground "medium spring green"))))
+ '(agda2-highlight-postulate-face ((t (:foreground "lawn green"))))
+ '(agda2-highlight-primitive-face ((t (:foreground "lawn green"))))
+ '(agda2-highlight-primitive-type-face ((t (:foreground "lawn green"))))
+ '(agda2-highlight-record-face ((t (:foreground "lawn green"))))
  '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "dark gray"))))
  '(haskell-constructor-face ((t (:inherit font-lock-type-face))))
  '(haskell-literate-comment-face ((t (:inherit font-lock-doc-face))))
@@ -90,6 +96,3 @@
  '(org-level-1 ((t (:inherit outline-1 :weight bold))))
  '(org-level-3 ((t (:inherit outline-3 :weight normal))))
  '(org-level-5 ((t (:inherit outline-5 :weight normal)))))
-
-
-
