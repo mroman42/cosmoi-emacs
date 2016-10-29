@@ -88,6 +88,42 @@ Zooms latex image previews along with the text using =C-x C-+=.
 )
 (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 #+END_SRC
+** Auxiliary functions
+*** org-pinta
+Creates an image using =imagemagick= and opens
+a =pinta= window to edit it.
+
+#+BEGIN_SRC emacs-lisp
+(setq pinta-dir "./pinta/")
+(setq pinta-dimension "300x300")
+
+(defun org-pinta (filename)
+  "Creates an image using pinta"
+  (interactive "sImage name: ")
+
+  (let ((file (concat pinta-dir "/" filename ".png")))
+    ; creates the image, opens pinta
+    (shell-command (concat "mkdir -p $(dirname " file ") && touch " file))
+    (shell-command (concat "convert -size " pinta-dimension " xc:white png24:" file))
+    (shell-command (concat "pinta " file))
+  
+    ; inserts the image in the current buffer
+    (insert "#+begin_center")
+    (newline)
+    (insert "#+attr_latex: :width 50px")
+    (newline)
+    (insert (concat "[[" file "]]"))
+    (newline)
+    (insert "#+end_center")
+  )
+)
+#+END_SRC
+
+#+begin_center
+#+attr_latex: :width 50px
+[[./pinta//painting.png]]
+#+end_center
+
 * Programming languages
 ** Haskell
 Allows interactive Haskell evaluation in Emacs.
