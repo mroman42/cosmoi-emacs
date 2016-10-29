@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: twopartdefinition
+# key: twopart_
+# --
+\left\{
+\begin{array}{ll} 
+$1  & \mbox{if } $2  \\ 
+$3  & \mbox{if } $4 
+\end{array} 
+\right.
