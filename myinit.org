@@ -60,11 +60,6 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
     :ensure t)
 #+END_SRC
 
-*** Anki
-Uses a modification of =ox-anki=.
-#+BEGIN_SRC emacs-lisp
-(load-file "~/.emacs.d/ox-anki.el")
-#+END_SRC
 ** Latex preview
 *** Latex math mode
 Requires Latex to use =latex-math-mode=. It is activated by default.
