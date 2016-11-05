@@ -72,7 +72,7 @@
      ("colorlinks=true" "hyperref" nil))))
  '(org-modules
    (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
+    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m org-drill)))
  '(package-selected-packages
    (quote
     (ob-sagemath sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
@@ -93,9 +93,9 @@
  '(haskell-constructor-face ((t (:inherit font-lock-type-face))))
  '(haskell-literate-comment-face ((t (:inherit font-lock-doc-face))))
  '(haskell-quasi-quote-face ((t (:inherit font-lock-doc-face))))
- '(org-level-1 ((t (:inherit outline-1 :weight bold :height 1.05))))
+ '(org-level-1 ((t (:inherit outline-1 :foreground "LightGoldenrod1" :weight bold :height 1.05))))
  '(org-level-2 ((t (:inherit outline-1 :weight semi-bold :height 1.0))))
  '(org-level-3 ((t (:inherit outline-3 :weight bold))))
- '(org-level-4 ((t (:inherit outline-3 :weight normal))))
- '(org-level-5 ((t (:inherit outline-4 :weight normal))))
+ '(org-level-4 ((t (:inherit outline-3 :foreground "light steel blue" :weight normal))))
+ '(org-level-5 ((t (:inherit outline-4 :foreground "thistle" :weight normal))))
  '(org-level-6 ((t (:inherit outline-4)))))
