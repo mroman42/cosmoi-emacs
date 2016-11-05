@@ -60,6 +60,18 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
     :ensure t)
 #+END_SRC
 
+** Org-babel
+Loads =org-babel= languages.
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+  '( (ruby . t)
+     (haskell . t)
+     (C . t)
+     (emacs-lisp . t)   
+   ))
+#+END_SRC
+
 ** Latex preview
 *** Latex math mode
 Requires Latex to use =latex-math-mode=. It is activated by default.
@@ -92,6 +104,9 @@ Zooms latex image previews along with the text using =C-x C-+=.
 *** org-pinta
 Creates an image using =imagemagick= and opens
 a =pinta= window to edit it.
+
+# It should be generalized to an editor-agnostic function,
+# not using pinta, but the given editor.
 
 #+BEGIN_SRC emacs-lisp
 (setq pinta-dir "./pinta/")
