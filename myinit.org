@@ -9,14 +9,16 @@ It works on Emacs 25.1.
 * Org-mode
 ** Org-directories
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
+
 #+BEGIN_SRC emacs-lisp
-(setq org-directory "~/org")
-(setq org-agenda-files (list "~/org/todo.org"))
-(setq org-archive-location "~/org/archive.org ::* From %s")
+  (setq org-directory "~/org")
+  (setq org-agenda-files (list "~/org/todo.org"))
+  (setq org-archive-location "~/org/archive.org ::* From %s")
 #+END_SRC
 
 ** Basic keybindings
 Basic keybindings for org-mode.
+
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-files (list "~/org/todo.org"))
   (setq org-export-coding-system 'utf-8)
@@ -27,15 +29,24 @@ Basic keybindings for org-mode.
 #+END_SRC
 
 Opens the TODO file with =C-c i=.
+
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c i")
                   (lambda() (interactive)
                      (find-file "~/org/todo.org")
                      ))
 #+END_SRC
+
+** Org-faces
+Sets attributes for the standard org-mode faces.
+
+#+BEGIN_SRC emacs-lisp
+#+END_SRC
+ 
 ** Org-export
 *** Beamer
 Exports to beamer. Defines the beamer class.
+
 #+BEGIN_SRC emacs-lisp
   (require 'ox-latex)
   (add-to-list 'org-latex-classes
@@ -49,6 +60,7 @@ Exports to beamer. Defines the beamer class.
 *** Reveal.js
 The configuration allowing me to do *Reveal.js* presentations using org-mode.
 This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'est la Z]].
+
 #+BEGIN_SRC emacs-lisp
   (use-package ox-reveal
     :ensure ox-reveal)
@@ -62,14 +74,42 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
 
 ** Org-babel
 Loads =org-babel= languages.
+
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
-  '( (ruby . t)
-     (haskell . t)
-     (C . t)
-     (emacs-lisp . t)   
-   ))
+  (require 'ob-C)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+    '( (ruby . t)
+       (haskell . t)
+       (C . t)
+       (emacs-lisp . t)
+       (ditaa . t)
+     ))
+#+END_SRC
+
+*** Haskell
+Use runhaskell when results is output
+
+#+BEGIN_SRC emacs-lisp
+  (defadvice org-babel-haskell-initiate-session
+    (around org-babel-haskell-initiate-session-advice)
+    (let* ((buff (get-buffer "*haskell*"))
+           (proc (if buff (get-buffer-process buff)))
+           (type (cdr (assoc :result-type params)))
+           (haskell-program-name
+            (if (equal type 'output) "runhaskell-ob" "ghci")))
+      (if proc (kill-process proc))
+      (sit-for 0)
+      (if buff (kill-buffer buff))
+      ad-do-it))
+
+  (ad-activate 'org-babel-haskell-initiate-session)
+#+END_SRC
+
+*** Ditaa
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
 
 ** Latex preview
@@ -77,8 +117,8 @@ Loads =org-babel= languages.
 Requires Latex to use =latex-math-mode=. It is activated by default.
 
 #+BEGIN_SRC emacs-lisp
-(require 'latex)
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (require 'latex)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 #+END_SRC
 
 *** Conmutative diagrams
@@ -90,16 +130,18 @@ Conmutative diagrams with the =tikz-cd= package.
     '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
   (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
+
 *** Zooming
 Zooms latex image previews along with the text using =C-x C-+=.
 
 #+BEGIN_SRC emacs-lisp
-(defun update-org-latex-fragment-scale ()
-  (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
-    (plist-put org-format-latex-options :scale (* 1.2 text-scale-factor)))
-)
-(add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
+  (defun update-org-latex-fragment-scale ()
+    (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
+      (plist-put org-format-latex-options :scale (* 1.2 text-scale-factor)))
+  )
+  (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 #+END_SRC
+
 ** Auxiliary functions
 *** org-pinta
 Creates an image using =imagemagick= and opens
@@ -231,8 +273,17 @@ HAML support.
   (require 'haskell-snippets)
 #+END_SRC
 * Customization
+** Custom file
+Loads the customize file, follows this [[http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/][article]]:
+
+#+BEGIN_SRC emacs-lisp
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror)
+#+END_SRC
+
 ** What face?
 Indicates what face are we using currently under the cursor.
+
 #+BEGIN_SRC emacs-lisp
 (defun what-face (pos)
   (interactive "d")
@@ -240,6 +291,7 @@ Indicates what face are we using currently under the cursor.
                   (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 #+END_SRC
+
 * Blog
 ** org-page
 #+BEGIN_SRC emacs-lisp
