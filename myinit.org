@@ -146,49 +146,83 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
 Loads =org-babel= languages.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'ob-C)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-    '( (ruby . t)
-       (haskell . t)
-       (C . t)
-       (emacs-lisp . t)
-       (ditaa . t)
-     ))
+     (require 'ob-C)
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+       '( (ruby . t)
+          (haskell . t)
+          (C . t)
+          (emacs-lisp . t)
+          (ditaa . t)
+	  (sagemath . t)
+        ))
 #+END_SRC
+
+*** org-babel-sage
+    Org-babel-sage configuration:
+
+    #+BEGIN_SRC emacs-lisp
+      ;; Ob-sagemath supports only evaluating with a session.
+      (setq org-babel-default-header-args:sage '((:session . t)
+                                                 (:results . "output")))
+
+      ;; C-c c for asynchronous evaluating (only for SageMath code blocks).
+      (with-eval-after-load "org"
+        (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
+
+      ;; Do not confirm before evaluation
+      (setq org-confirm-babel-evaluate nil)
+
+      ;; Do not evaluate code blocks when exporting.
+      (setq org-export-babel-evaluate nil)
+
+      ;; Show images when opening a file.
+      (setq org-startup-with-inline-images t)
+
+      ;; Show images after evaluating code blocks.
+      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+   #+END_SRC
 
 *** Haskell
-Use runhaskell when results is output
+    Uses =runhaskell= when it outputs the results. Taken from
+    a great [[http://quickhack.net/nom/blog/2012-08-31-org-babel-and-haskell.html][article]] (in Japanese!) by Yoshinari Nomura.
 
-#+BEGIN_SRC emacs-lisp
-  (defadvice org-babel-haskell-initiate-session
-    (around org-babel-haskell-initiate-session-advice)
-    (let* ((buff (get-buffer "*haskell*"))
-           (proc (if buff (get-buffer-process buff)))
-           (type (cdr (assoc :result-type params)))
-           (haskell-program-name
-            (if (equal type 'output) "runhaskell-ob" "ghci")))
-      (if proc (kill-process proc))
-      (sit-for 0)
-      (if buff (kill-buffer buff))
-      ad-do-it))
+    #+BEGIN_SRC emacs-lisp
+      (defadvice org-babel-haskell-initiate-session
+        (around org-babel-haskell-initiate-session-advice)
+        (let* ((buff (get-buffer "*haskell*"))
+               (proc (if buff (get-buffer-process buff)))
+               (type (cdr (assoc :result-type params)))
+               (haskell-program-name
+                (if (equal type 'output) "runhaskell-ob" "ghci")))
+          (if proc (kill-process proc))
+          (sit-for 0)
+          (if buff (kill-buffer buff))
+          ad-do-it))
 
-  (ad-activate 'org-babel-haskell-initiate-session)
-#+END_SRC
+      (ad-activate 'org-babel-haskell-initiate-session)
+    #+END_SRC
 
 *** Ditaa
-
+Path to Ditaa
 #+BEGIN_SRC emacs-lisp
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
 
 ** Latex preview
+Uses =C-ñ= to preview formulas:
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
+#+END_SRC
+
 *** Latex math mode
 Requires Latex to use =latex-math-mode=. It is activated by default.
 
 #+BEGIN_SRC emacs-lisp
   (require 'latex)
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'org-mode-hook 'LaTeX-math-mode)
 #+END_SRC
 
 *** Conmutative diagrams
@@ -250,84 +284,6 @@ a =pinta= window to edit it.
 #+attr_latex: :width 50px
 [[./pinta//painting.png]]
 #+end_center
-
-* Programming languages
-** Haskell
-Allows interactive Haskell evaluation in Emacs.
-#+BEGIN_SRC emacs-lisp
-  (require 'haskell-interactive-mode)
-  (require 'haskell-process)
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-#+END_SRC
-
-** Proof General
-Loads the Proof General file.
-#+BEGIN_SRC emacs-lisp
-(load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
-#+END_SRC
-** Agda
-Agda-mode configuration:
-#+BEGIN_SRC emacs-lisp
-(load-file (let ((coding-system-for-read 'utf-8))
-                (shell-command-to-string "agda-mode locate")))
-;(require 'agda2)
-#+END_SRC
-** Sage
-*** sage-mode
-#+BEGIN_SRC emacs-lisp
-(require 'sage-shell-mode)
-(setq sage-shell:use-prompt-toolkit t)
-#+END_SRC
-
-*** org-babel-sage
-Org-babel-sage configuration:
-#+BEGIN_SRC emacs-lisp
-;; Ob-sagemath supports only evaluating with a session.
-(setq org-babel-default-header-args:sage '((:session . t)
-                                           (:results . "output")))
-
-;; C-c c for asynchronous evaluating (only for SageMath code blocks).
-(with-eval-after-load "org"
-  (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
-
-;; Do not confirm before evaluation
-(setq org-confirm-babel-evaluate nil)
-
-;; Do not evaluate code blocks when exporting.
-(setq org-export-babel-evaluate nil)
-
-;; Show images when opening a file.
-(setq org-startup-with-inline-images t)
-
-;; Show images after evaluating code blocks.
-(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
-#+END_SRC
-
-** Lisp
-Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/2013/06/21/eval-and-replace/][Emacs Redux]].
-#+BEGIN_SRC emacs-lisp
-  (defun eval-and-replace ()
-    "Replace the preceding sexp with its value."
-    (interactive)
-    (backward-kill-sexp)
-    (condition-case nil
-        (prin1 (eval (read (current-kill 0)))
-               (current-buffer))
-      (error (message "Invalid expression")
-             (insert (current-kill 0)))))
-  (global-set-key (kbd "C-c e") 'eval-and-replace)
-#+END_SRC
-
-** HAML
-HAML support.
-#+BEGIN_SRC emacs-lisp
-(require 'haml-mode)
-(add-hook 'haml-mode-hook
-	  (lambda ()
-	    (setq indent-tabs-mode nil)
-	    (define-key haml-mode-map "\C-m" 'newline-and-indent)))
-#+END_SRC
-
 * Snippets
 ** Yasnippet support.
 #+BEGIN_SRC emacs-lisp
