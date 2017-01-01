@@ -42,7 +42,8 @@
      ("colorlinks=true" "hyperref" nil))))
  '(org-modules
    (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m org-drill)))
+    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-protocol org-rmail org-w3m org-drill)))
+ '(org-startup-indented t)
  '(package-selected-packages
    (quote
     (ob-sagemath sage-mode ob-C ox-latex org-pagefgfgf sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))

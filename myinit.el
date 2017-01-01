@@ -48,7 +48,7 @@
 
 (global-set-key (kbd "C-c i")
 (lambda() (interactive)
-                   (find-file "~/org/todo.org")
+                   (find-file "~/projects/wiki/wiki.org")
                    ))
 
 (require 'org-bullets)
