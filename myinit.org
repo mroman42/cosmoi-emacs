@@ -10,8 +10,72 @@ I have taken ideas for my configuration mainly from:
 
 It works on Emacs 25.1.
 
+* Languages
+** Markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t)
+#+END_SRC
+** Haskell
+Allows interactive Haskell evaluation in Emacs.
+#+BEGIN_SRC emacs-lisp
+  (use-package haskell-mode
+    :ensure t)
+  (require 'haskell-interactive-mode)
+  (require 'haskell-process)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+#+END_SRC
+
+** Proof General
+Loads the Proof General file.
+#+BEGIN_SRC emacs-lisp
+(load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+#+END_SRC
+** Agda
+Agda-mode configuration:
+#+BEGIN_SRC emacs-lisp
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
+#+END_SRC
+** Sage
+*** sage-mode
+    #+BEGIN_SRC emacs-lisp
+      (use-package sage-shell-mode
+        :ensure t)
+
+      (setq sage-shell:use-prompt-toolkit t)
+    #+END_SRC
+
+** Lisp
+Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/2013/06/21/eval-and-replace/][Emacs Redux]].
+
+#+BEGIN_SRC emacs-lisp
+  (defun eval-and-replace ()
+    "Replace the preceding sexp with its value."
+    (interactive)
+    (backward-kill-sexp)
+    (condition-case nil
+        (prin1 (eval (read (current-kill 0)))
+               (current-buffer))
+      (error (message "Invalid expression")
+             (insert (current-kill 0)))))
+  (global-set-key (kbd "C-c e") 'eval-and-replace)
+#+END_SRC
+
+** HAML
+HAML support.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package haml-mode
+    :ensure t)
+  (add-hook 'haml-mode-hook
+            (lambda ()
+              (setq indent-tabs-mode nil)
+              (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+#+END_SRC
+
 * Org-mode
-** Org-directories
+** Directories
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
 #+BEGIN_SRC emacs-lisp
