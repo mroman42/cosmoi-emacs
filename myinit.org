@@ -100,17 +100,19 @@ Opens the TODO file with =C-c i=.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c i")
-                  (lambda() (interactive)
-                     (find-file "~/org/todo.org")
+  (lambda() (interactive)
+                     (find-file "~/projects/wiki/wiki.org")
                      ))
 #+END_SRC
 
 ** Org-faces
 Sets attributes for the standard org-mode faces.
-
+   
 #+BEGIN_SRC emacs-lisp
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
- 
+
 ** Org-export
 *** Beamer
 Exports to beamer. Defines the beamer class.
