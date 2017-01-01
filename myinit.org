@@ -296,7 +296,8 @@ a =pinta= window to edit it.
 
 ** Snippets for programming languages
 #+BEGIN_SRC emacs-lisp
-  (require 'haskell-snippets)
+  (use-package haskell-snippets
+    :ensure t)
 #+END_SRC
 * Customization
 ** Custom file
@@ -311,24 +312,25 @@ Loads the customize file, follows this [[http://emacsblog.org/2008/12/06/quick-t
 Indicates what face are we using currently under the cursor.
 
 #+BEGIN_SRC emacs-lisp
-(defun what-face (pos)
-  (interactive "d")
-  (let ((face (or (get-char-property (point) 'read-face-name)
-                  (get-char-property (point) 'face))))
-    (if face (message "Face: %s" face) (message "No face at %d" pos))))
+  (defun what-face (pos)
+    (interactive "d")
+    (let ((face (or (get-char-property (point) 'read-face-name)
+                    (get-char-property (point) 'face))))
+      (if face (message "Face: %s" face) (message "No face at %d" pos))))
 #+END_SRC
 
 * Blog
 ** org-page
 #+BEGIN_SRC emacs-lisp
-(require 'org-page)
-(setq op/repository-directory "~/projects/m42.github.io/")
-(setq op/site-domain "http://m42.github.io/")
-;;; for commenting, you can choose either disqus or duoshuo
-;(setq op/personal-disqus-shortname "your_disqus_shortname")
-;(setq op/personal-duoshuo-shortname "your_duoshuo_shortname")
-;;; the configuration below are optional
-(setq op/personal-google-analytics-id "your_google_analytics_id")
+  (use-package org-page
+    :ensure t)
+  (setq op/repository-directory "~/projects/m42.github.io/")
+  (setq op/site-domain "http://m42.github.io/")
+  ;;; for commenting, you can choose either disqus or duoshuo
+  ;(setq op/personal-disqus-shortname "your_disqus_shortname")
+  ;(setq op/personal-duoshuo-shortname "your_duoshuo_shortname")
+  ;;; the configuration below are optional
+  ;;(setq op/personal-google-analytics-id "your_google_analytics_id")
 #+END_SRC
 
 Personal configuration.
@@ -368,24 +370,38 @@ Sections of the blog
 #+END_SRC
 
 * Other packages
-** Magit
-Opens *magit* with =C-x g=.
+** Auctex
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-x g") 'magit-status)
+  (use-package tex
+    :ensure auctex)
 #+END_SRC
+** Magit
+Opens *magit* with =C-c g=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :bind ("C-c g" . magit-status)
+    )
+#+END_SRC
+
 ** dict-replace
 My dict-replace package.
+
 #+BEGIN_SRC emacs-lisp
   (load-file "~/.emacs.d/dict-replace.el")
   (global-set-key (kbd "<f5>") 'dict-translate)
 #+END_SRC
+
 ** Flycheck
 Flycheck checks the syntax of programming languages.
+
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
 #+END_SRC
+
 ** Engine-mode
 [[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different search engines
 to =C-c / x=, where =x= is a char representing the engine.
