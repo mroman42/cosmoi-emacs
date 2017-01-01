@@ -1,3 +1,7 @@
+#+TITLE: myinit.org
+#+AUTHOR: Mario Román
+#+STARTUP: indent
+
 * My Emacs configuration file
 This is my Emacs init file, written in org-mode using literate programming.
 I have taken ideas for my configuration mainly from:
