@@ -64,6 +64,12 @@ Allows interactive Haskell evaluation in Emacs.
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 #+END_SRC
+** R
+Emacs Speaks Statistics.
+
+#+BEGIN_SRC emacs-lisp
+(require 'ess-site)
+#+END_SRC
 
 ** Proof General
 Loads the Proof General file.
