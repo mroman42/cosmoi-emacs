@@ -1,3 +1,23 @@
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tooltip-mode -1)
+
+(setq m42/wiki-file "~/projects/wiki/wiki.org")
+(setq m42/math-file "~/projects/math/notes.org")
+(setq m42/exercises-file "~/projects/math/exercises.org")
+(setq m42/init-file "~/.emacs.d/myinit.org")
+
+(global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
+(global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
+(global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/exercises-file)))
+(global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
+
+(setq inhibit-startup-screen t)
+(setq initial-buffer-choice "~/projects/wiki/wiki.org")
+
+(setq-default word-wrap 1)
+
 (use-package markdown-mode
   :ensure t)
 
@@ -6,6 +26,8 @@
 (require 'haskell-interactive-mode)
 (require 'haskell-process)
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+
+(require 'ess-site)
 
 (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 
@@ -34,6 +56,29 @@
           (lambda ()
             (setq indent-tabs-mode nil)
             (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+
+;; (use-package company
+;;   :ensure t
+;;   :config (progn
+;; 	    (global-company-mode 1)))
+
+;; (use-package company-auctex
+;;   :ensure t
+;;   :config (progn
+;;             (defun company-auctex-labels (command &optional arg &rest ignored)
+;; 	      "company-auctex-labels backend"
+;; 	      (interactive (list 'interactive))
+;; 	      (case command
+;;                 (interactive (company-begin-backend 'company-auctex-labels))
+;;                 (prefix (company-auctex-prefix "\\\\.*ref{\\([^}]*\\)\\="))
+;;                 (candidates (company-auctex-label-candidates arg))))
+
+;;             (add-to-list 'company-backends
+;;                          '(company-auctex-macros
+;;                            company-auctex-environments))
+
+;;             (add-to-list 'company-backends #'company-auctex-labels)
+;;             (add-to-list 'company-backends #'company-auctex-bibs)))
 
 (setq org-directory "~/org")
 (setq org-agenda-files (list "~/org/todo.org"))
@@ -79,6 +124,7 @@
      (C . t)
      (emacs-lisp . t)
      (ditaa . t)
+     (R . t)
      (sagemath . t)
    ))
 
@@ -119,6 +165,19 @@
 (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 
 (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
+
+(setq LaTeX-math-abbrev-prefix "ç")
+(setq LaTeX-math-list
+  (quote
+    ((";" "mathbb{" "" nil)
+     ("=" "cong" "" nil)
+     ("<right>" "longrightarrow" "" nil)
+     ("<left>" "longleftarrow" "" nil)
+     ("C-<right>" "Longrightarrow" "" nil)
+     ("C-<left>" "Longleftarrow" "" nil)
+     ("^" "widehat" "" nil)
+     ("'" "\partial" "" nil)
+     )))
 
 (require 'latex)
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
@@ -163,6 +222,7 @@
   :ensure t
   :init (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
   :config (yas-global-mode 1)
+  :bind (("<C-dead-grave>" . yas-insert-snippet))
   )
 
 (use-package haskell-snippets
@@ -223,8 +283,8 @@
   :bind ("C-c g" . magit-status)
   )
 
-(load-file "~/.emacs.d/dict-replace.el")
-(global-set-key (kbd "<f5>") 'dict-translate)
+;(load-file "~/.emacs.d/dict-replace.el")
+;(global-set-key (kbd "<f5>") 'dict-translate)
 
 (use-package flycheck
   :ensure t

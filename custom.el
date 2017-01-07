@@ -4,14 +4,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-math-abbrev-prefix "ç")
- '(LaTeX-math-list
-   (quote
-    ((";" "mathbb{" "" nil)
-     ("=" "cong" "" nil)
-     ("<right>" "longrightarrow" "" nil)
-     ("<left>" "longleftarrow" "" nil)
-     ("C-<right>" "Longrightarrow" "" nil)
-     ("C-<left>" "Longleftarrow" "" nil))))
  '(agda2-highlight-face-groups (quote default-faces))
  '(blink-cursor-mode nil)
  '(custom-enabled-themes (quote (wombat)))
@@ -21,7 +13,6 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-stylish-on-save t)
  '(ido-mode (quote both) nil (ido))
- '(inhibit-startup-screen t)
  '(make-backup-files nil)
  '(menu-bar-mode nil)
  '(org-latex-default-packages-alist
@@ -46,7 +37,7 @@
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (ob-sagemath sage-mode ob-C ox-latex org-pagefgfgf sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
+    (company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-pagefgfgf sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
  '(server-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
