@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: threepartdefinition
+# key: %threepart
+# --
+\left\\{\begin{array}{ll} 
+$1  & \mbox{if } $2 \\\\
+$3  & \mbox{if } $4 \\\\
+$5  & \mbox{if } $6
+\end{array} 
+\right.
