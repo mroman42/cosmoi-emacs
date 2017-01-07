@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: statement
+# key: %state
+# --
+#+begin_statement
+$1
+#+end_statement
