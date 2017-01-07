@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: tikz-cd
-# key: tikz
+# key: %tikz
 # --
-\[ \begin{tikzcd}
-$1 \arrow{$2}{$3} & $4
-\end{tikzcd} \]
+\[\begin{tikzcd}
+$1
+\end{tikzcd}\]
