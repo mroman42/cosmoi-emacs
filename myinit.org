@@ -485,11 +485,11 @@ Opens *magit* with =C-c g=.
 #+END_SRC
 
 ** dict-replace
-My dict-replace package.
+My dict-replace package. I am no longer using it.
 
 #+BEGIN_SRC emacs-lisp
-  (load-file "~/.emacs.d/dict-replace.el")
-  (global-set-key (kbd "<f5>") 'dict-translate)
+  ;(load-file "~/.emacs.d/dict-replace.el")
+  ;(global-set-key (kbd "<f5>") 'dict-translate)
 #+END_SRC
 
 ** Flycheck
