@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: dots
+# key: %dots
+# --
+$1_1,\dots,$1_n
