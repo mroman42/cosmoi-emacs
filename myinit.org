@@ -294,6 +294,26 @@ Uses =C-ñ= to preview formulas:
   (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
 #+END_SRC
 
+*** Latex math mode abbreviations
+Abbreviations on =latex-math-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (setq LaTeX-math-abbrev-prefix "ç")
+  (setq LaTeX-math-list
+    (quote
+      ((";" "mathbb{" "" nil)
+       ("=" "cong" "" nil)
+       ("<right>" "longrightarrow" "" nil)
+       ("<left>" "longleftarrow" "" nil)
+       ("C-<right>" "Longrightarrow" "" nil)
+       ("C-<left>" "Longleftarrow" "" nil)
+       ("^" "widehat" "" nil)
+       ("'" "\partial" "" nil)
+       )))
+#+END_SRC
+
+$\varphi\beta$
+
 *** Latex math mode
 Requires Latex to use =latex-math-mode=. It is activated by default.
 
@@ -369,6 +389,7 @@ a =pinta= window to edit it.
     :ensure t
     :init (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
     :config (yas-global-mode 1)
+    :bind (("<C-dead-grave>" . yas-insert-snippet))
     )
 #+END_SRC
 
