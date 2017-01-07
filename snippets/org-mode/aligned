@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: aligned
+# key: %align
+# --
+\[\begin{aligned}
+$1
+\end{aligned}\]
