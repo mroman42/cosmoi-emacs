@@ -223,16 +223,17 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
 Loads =org-babel= languages.
 
 #+BEGIN_SRC emacs-lisp
-     (require 'ob-C)
-     (org-babel-do-load-languages
-      'org-babel-load-languages
-       '( (ruby . t)
-          (haskell . t)
-          (C . t)
-          (emacs-lisp . t)
-          (ditaa . t)
-	  (sagemath . t)
-        ))
+  (require 'ob-C)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+    '( (ruby . t)
+       (haskell . t)
+       (C . t)
+       (emacs-lisp . t)
+       (ditaa . t)
+       (R . t)
+       (sagemath . t)
+     ))
 #+END_SRC
 
 *** org-babel-sage
