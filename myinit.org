@@ -10,6 +10,45 @@ I have taken ideas for my configuration mainly from:
 
 It works on Emacs 25.1.
 
+** Basic
+Disable the toolbar and menubar
+
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tooltip-mode -1)
+#+END_SRC
+
+** Files
+Quick access to the most important files:
+
+#+BEGIN_SRC emacs-lisp
+  (setq m42/wiki-file "~/projects/wiki/wiki.org")
+  (setq m42/math-file "~/projects/math/notes.org")
+  (setq m42/exercises-file "~/projects/math/exercises.org")
+  (setq m42/init-file "~/.emacs.d/myinit.org")
+
+  (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
+  (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
+  (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/exercises-file)))
+  (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
+#+END_SRC
+
+** Startup
+Inhibits the startup screen and loads an initial buffer:
+
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+(setq initial-buffer-choice "~/projects/wiki/wiki.org")
+#+END_SRC
+
+
+** Word wrapping
+#+BEGIN_SRC emacs-lisp
+(setq-default word-wrap 1)
+#+END_SRC
+
 * Languages
 ** Markdown
 #+BEGIN_SRC emacs-lisp
