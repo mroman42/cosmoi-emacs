@@ -43,12 +43,17 @@ Inhibits the startup screen and loads an initial buffer:
 (setq initial-buffer-choice "~/projects/wiki/wiki.org")
 #+END_SRC
 
-
 ** Word wrapping
 #+BEGIN_SRC emacs-lisp
 (setq-default word-wrap 1)
 #+END_SRC
 
+** Shell
+Starts shell using =C-c s=.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c s") 'shell)
+#+END_SRC
 * Languages
 ** Markdown
 #+BEGIN_SRC emacs-lisp
