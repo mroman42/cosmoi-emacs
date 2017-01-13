@@ -314,10 +314,9 @@ Abbreviations on =latex-math-mode=.
        ("C-<left>" "Longleftarrow" "" nil)
        ("^" "widehat" "" nil)
        ("'" "\partial" "" nil)
+       ("0" "varnothing" "" nil)
        )))
 #+END_SRC
-
-$\varphi\beta$
 
 *** Latex math mode
 Requires Latex to use =latex-math-mode=. It is activated by default.
