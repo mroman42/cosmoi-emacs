@@ -54,6 +54,7 @@ Starts shell using =C-c s=.
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c s") 'shell)
 #+END_SRC
+
 * Languages
 ** Markdown
 #+BEGIN_SRC emacs-lisp
@@ -62,13 +63,17 @@ Starts shell using =C-c s=.
 #+END_SRC
 ** Haskell
 Allows interactive Haskell evaluation in Emacs.
+
 #+BEGIN_SRC emacs-lisp
   (use-package haskell-mode
     :ensure t)
   (require 'haskell-interactive-mode)
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+
+  ;; (add-hook 'haskell-mode-hook 'intero-mode)
 #+END_SRC
+
 ** R
 Emacs Speaks Statistics.
 
