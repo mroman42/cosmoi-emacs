@@ -214,7 +214,7 @@
 )
 (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 
-(setq pinta-dir "./pinta/")
+(setq pinta-dir "./images/")
 (setq pinta-dimension "300x300")
 
 (defun org-pinta (filename)
@@ -226,7 +226,7 @@
     (shell-command (concat "mkdir -p $(dirname " file ") && touch " file))
     (shell-command (concat "convert -size " pinta-dimension " xc:white png24:" file))
     (shell-command (concat "pinta " file))
-  
+
     ; inserts the image in the current buffer
     (insert "#+begin_center")
     (newline)
