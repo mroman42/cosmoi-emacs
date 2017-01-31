@@ -87,15 +87,19 @@
 ;;             (add-to-list 'company-backends #'company-auctex-bibs)))
 
 (setq org-directory "~/org")
-(setq org-agenda-files (list "~/org/todo.org"))
+(setq org-agenda-files (list m42/agenda-file))
 (setq org-archive-location "~/org/archive.org ::* From %s")
 
-(setq org-agenda-files (list "~/org/todo.org"))
 (setq org-export-coding-system 'utf-8)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-cb" 'org-iswitchb)
+
+(add-hook 'org-mode-hook 
+          (lambda ()
+            (local-set-key "\M-n" 'outline-next-visible-heading)
+            (local-set-key "\M-p" 'outline-previous-visible-heading)))
 
 (global-set-key (kbd "C-c i")
 (lambda() (interactive)
