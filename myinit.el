@@ -31,6 +31,8 @@
 (require 'haskell-process)
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 
+;; (add-hook 'haskell-mode-hook 'intero-mode)
+
 (require 'ess-site)
 
 (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
