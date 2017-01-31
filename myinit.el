@@ -186,7 +186,9 @@
      ("C-<right>" "Longrightarrow" "" nil)
      ("C-<left>" "Longleftarrow" "" nil)
      ("^" "widehat" "" nil)
+     ("~" "widetilde" "" nil)
      ("'" "\partial" "" nil)
+     ("0" "varnothing" "" nil)
      )))
 
 (require 'latex)
