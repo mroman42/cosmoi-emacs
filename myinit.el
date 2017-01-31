@@ -174,6 +174,14 @@
 
 (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 
+(setq org-capture-templates
+      (quote (
+	      ("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
+	       "** %c\n" :immediate-finish :kill-buffer :prepend t)
+	      ("i" "idea" entry (file+headline "~/projects/wiki/wiki.org" "Ideas")
+	       "** %?\n%U\n" :kill-buffer :prepend t)
+	     )))
+
 (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
 
 (setq LaTeX-math-abbrev-prefix "ç")
