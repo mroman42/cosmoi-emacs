@@ -53,7 +53,7 @@ Inhibits the startup screen and loads an initial buffer:
 Starts shell using =C-c s=.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-c s") 'shell)
+(global-set-key (kbd "C-c s") 'eshell)
 #+END_SRC
 
 * Languages
@@ -130,7 +130,7 @@ HAML support.
               (define-key haml-mode-map "\C-m" 'newline-and-indent)))
 #+END_SRC
 
-* Company-mode
+* Completion
 Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's emacs.d]].
 
 #+BEGIN_SRC emacs-lisp
@@ -168,7 +168,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-directory "~/org")
-  (setq org-agenda-files (list "~/org/todo.org"))
+  (setq org-agenda-files (list m42/agenda-file))
   (setq org-archive-location "~/org/archive.org ::* From %s")
 #+END_SRC
 
@@ -176,12 +176,20 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 Basic keybindings for org-mode.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (list "~/org/todo.org"))
   (setq org-export-coding-system 'utf-8)
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cc" 'org-capture)
   (global-set-key "\C-cb" 'org-iswitchb)
+#+END_SRC
+
+Navigation between headings:
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook 
+            (lambda ()
+              (local-set-key "\M-n" 'outline-next-visible-heading)
+              (local-set-key "\M-p" 'outline-previous-visible-heading)))
 #+END_SRC
 
 Opens the TODO file with =C-c i=.
@@ -298,6 +306,17 @@ Path to Ditaa
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
 
+** Org-capture
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates
+	(quote (
+		("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
+		 "** %c\n" :immediate-finish :kill-buffer :prepend t)
+		("i" "idea" entry (file+headline "~/projects/wiki/wiki.org" "Ideas")
+		 "** %?\n%U\n" :kill-buffer :prepend t)
+	       )))
+#+END_SRC
+
 ** Latex preview
 Uses =C-ñ= to preview formulas:
 
@@ -319,6 +338,7 @@ Abbreviations on =latex-math-mode=.
        ("C-<right>" "Longrightarrow" "" nil)
        ("C-<left>" "Longleftarrow" "" nil)
        ("^" "widehat" "" nil)
+       ("~" "widetilde" "" nil)
        ("'" "\partial" "" nil)
        ("0" "varnothing" "" nil)
        )))
@@ -363,35 +383,36 @@ a =pinta= window to edit it.
 # not using pinta, but the given editor.
 
 #+BEGIN_SRC emacs-lisp
-(setq pinta-dir "./pinta/")
-(setq pinta-dimension "300x300")
+  (setq pinta-dir "./images/")
+  (setq pinta-dimension "300x300")
 
-(defun org-pinta (filename)
-  "Creates an image using pinta"
-  (interactive "sImage name: ")
+  (defun org-pinta (filename)
+    "Creates an image using pinta"
+    (interactive "sImage name: ")
 
-  (let ((file (concat pinta-dir "/" filename ".png")))
-    ; creates the image, opens pinta
-    (shell-command (concat "mkdir -p $(dirname " file ") && touch " file))
-    (shell-command (concat "convert -size " pinta-dimension " xc:white png24:" file))
-    (shell-command (concat "pinta " file))
-  
-    ; inserts the image in the current buffer
-    (insert "#+begin_center")
-    (newline)
-    (insert "#+attr_latex: :width 50px")
-    (newline)
-    (insert (concat "[[" file "]]"))
-    (newline)
-    (insert "#+end_center")
+    (let ((file (concat pinta-dir "/" filename ".png")))
+      ; creates the image, opens pinta
+      (shell-command (concat "mkdir -p $(dirname " file ") && touch " file))
+      (shell-command (concat "convert -size " pinta-dimension " xc:white png24:" file))
+      (shell-command (concat "pinta " file))
+
+      ; inserts the image in the current buffer
+      (insert "#+begin_center")
+      (newline)
+      (insert "#+attr_latex: :width 50px")
+      (newline)
+      (insert (concat "[[" file "]]"))
+      (newline)
+      (insert "#+end_center")
+    )
   )
-)
 #+END_SRC
 
 #+begin_center
 #+attr_latex: :width 50px
 [[./pinta//painting.png]]
 #+end_center
+
 * Snippets
 ** Yasnippet support.
 #+BEGIN_SRC emacs-lisp
