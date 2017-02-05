@@ -171,7 +171,8 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-archive-location "~/org/archive.org ::* From %s")
 #+END_SRC
 
-** Basic keybindings
+** Keybindings
+*** Agenda and capture
 Basic keybindings for org-mode.
 
 #+BEGIN_SRC emacs-lisp
@@ -182,6 +183,7 @@ Basic keybindings for org-mode.
   (global-set-key "\C-cb" 'org-iswitchb)
 #+END_SRC
 
+*** Navigation
 Navigation between headings:
 
 #+BEGIN_SRC emacs-lisp
@@ -191,16 +193,7 @@ Navigation between headings:
               (local-set-key "\M-p" 'outline-previous-visible-heading)))
 #+END_SRC
 
-Opens the TODO file with =C-c i=.
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c i")
-  (lambda() (interactive)
-                     (find-file "~/projects/wiki/wiki.org")
-                     ))
-#+END_SRC
-
-** Org-faces
+** Customization of org-mode
 Sets attributes for the standard org-mode faces.
    
 #+BEGIN_SRC emacs-lisp
