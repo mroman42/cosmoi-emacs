@@ -366,8 +366,7 @@ Zooms latex image previews along with the text using =C-x C-+=.
   (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 #+END_SRC
 
-** Auxiliary functions
-*** org-pinta
+** org-pinta
 Creates an image using =imagemagick= and opens
 a =pinta= window to edit it.
 
@@ -525,8 +524,8 @@ Flycheck checks the syntax of programming languages.
 #+END_SRC
 
 ** Engine-mode
-[[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different search engines
-to =C-c / x=, where =x= is a char representing the engine.
+[[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different 
+search engines to =C-c / x=, where =x= is a char representing the engine.
 
 #+BEGIN_SRC emacs-lisp
 (use-package engine-mode
