@@ -247,30 +247,30 @@ Loads =org-babel= languages.
      ))
 #+END_SRC
 
-*** org-babel-sage
-    Org-babel-sage configuration:
+*** Sage
+Org-babel-sage configuration:
 
-    #+BEGIN_SRC emacs-lisp
-      ;; Ob-sagemath supports only evaluating with a session.
-      (setq org-babel-default-header-args:sage '((:session . t)
-                                                 (:results . "output")))
+#+BEGIN_SRC emacs-lisp
+  ;; Ob-sagemath supports only evaluating with a session.
+  (setq org-babel-default-header-args:sage '((:session . t)
+                                             (:results . "output")))
 
-      ;; C-c c for asynchronous evaluating (only for SageMath code blocks).
-      (with-eval-after-load "org"
-        (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
+  ;; C-c c for asynchronous evaluating (only for SageMath code blocks).
+  (with-eval-after-load "org"
+    (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
 
-      ;; Do not confirm before evaluation
-      (setq org-confirm-babel-evaluate nil)
+  ;; Do not confirm before evaluation
+  (setq org-confirm-babel-evaluate nil)
 
-      ;; Do not evaluate code blocks when exporting.
-      (setq org-export-babel-evaluate nil)
+  ;; Do not evaluate code blocks when exporting.
+  (setq org-export-babel-evaluate nil)
 
-      ;; Show images when opening a file.
-      (setq org-startup-with-inline-images t)
+  ;; Show images when opening a file.
+  (setq org-startup-with-inline-images t)
 
-      ;; Show images after evaluating code blocks.
-      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
-   #+END_SRC
+  ;; Show images after evaluating code blocks.
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+#+END_SRC
 
 *** Haskell
     Uses =runhaskell= when it outputs the results. Taken from
