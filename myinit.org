@@ -305,7 +305,7 @@ Path to Ditaa
 		("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
 		 "** %c\n" :immediate-finish :kill-buffer :prepend t)
 		("i" "idea" entry (file+headline "~/projects/wiki/wiki.org" "Ideas")
-		 "** %?\n%U\n" :kill-buffer :prepend t)
+		 "*** %?\n%U\n" :kill-buffer :prepend t)
 	       )))
 #+END_SRC
 
