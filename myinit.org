@@ -61,6 +61,7 @@ Starts shell using =C-c s=.
   (use-package markdown-mode
     :ensure t)
 #+END_SRC
+
 ** Haskell
 Allows interactive Haskell evaluation in Emacs.
 
@@ -340,7 +341,7 @@ Path to Ditaa
 	(quote (
 		("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
 		 "** %c\n" :immediate-finish :kill-buffer :prepend t)
-		("i" "idea" entry (file+headline "~/projects/wiki/wiki.org" "Ideas")
+		("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
 		 "*** %?\n%U\n" :kill-buffer :prepend t)
 	       )))
 #+END_SRC
