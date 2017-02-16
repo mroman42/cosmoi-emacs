@@ -82,17 +82,29 @@ Emacs Speaks Statistics.
 (require 'ess-site)
 #+END_SRC
 
+** Python
+Elpy support.
+
+#+BEGIN_SRC emacs-lisp
+(elpy-enable)
+(setq elpy-rpc-python-command "python2")
+#+END_SRC
+
 ** Proof General
 Loads the Proof General file.
+
 #+BEGIN_SRC emacs-lisp
 (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 #+END_SRC
+
 ** Agda
 Agda-mode configuration:
+
 #+BEGIN_SRC emacs-lisp
 (load-file (let ((coding-system-for-read 'utf-8))
                 (shell-command-to-string "agda-mode locate")))
 #+END_SRC
+
 ** Sage
 *** sage-mode
     #+BEGIN_SRC emacs-lisp
