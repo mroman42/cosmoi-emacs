@@ -24,10 +24,10 @@ Disable the toolbar and menubar
 Quick access to the most important files:
 
 #+BEGIN_SRC emacs-lisp
-  (setq m42/wiki-file "~/projects/wiki/wiki.org")
+  (setq m42/wiki-file "~/Dropbox/orgzly/wiki.org")
   (setq m42/math-file "~/projects/math/notes.org")
   (setq m42/init-file "~/.emacs.d/myinit.org")
-  (setq m42/agenda-file "~/projects/wiki/agenda.org")
+  (setq m42/agenda-file "~/Dropbox/orgzly/tasks.org")
 
   (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
@@ -40,7 +40,7 @@ Inhibits the startup screen and loads an initial buffer:
 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
-(setq initial-buffer-choice "~/projects/wiki/wiki.org")
+(setq initial-buffer-choice m42/wiki-file)
 #+END_SRC
 
 ** Word wrapping
@@ -87,7 +87,13 @@ Elpy support.
 
 #+BEGIN_SRC emacs-lisp
 (elpy-enable)
+(elpy-use-ipython)
 (setq elpy-rpc-python-command "python2")
+#+END_SRC
+
+*** Jupyter notebook
+#+BEGIN_SRC emacs-lisp
+(require 'ein)
 #+END_SRC
 
 ** Proof General
