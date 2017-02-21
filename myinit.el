@@ -3,20 +3,18 @@
 (scroll-bar-mode -1)
 (tooltip-mode -1)
 
-(setq m42/wiki-file "~/projects/wiki/wiki.org")
+(setq m42/wiki-file "~/Dropbox/orgzly/wiki.org")
 (setq m42/math-file "~/projects/math/notes.org")
-(setq m42/exercises-file "~/projects/math/exercises.org")
 (setq m42/init-file "~/.emacs.d/myinit.org")
-(setq m42/agenda-file "~/projects/wiki/agenda.org")
+(setq m42/agenda-file "~/Dropbox/orgzly/tasks.org")
 
 (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
 (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
-(global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/exercises-file)))
 (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
 (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
 
 (setq inhibit-startup-screen t)
-(setq initial-buffer-choice "~/projects/wiki/wiki.org")
+(setq initial-buffer-choice m42/wiki-file)
 
 (setq-default word-wrap 1)
 
