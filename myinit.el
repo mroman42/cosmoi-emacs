@@ -33,6 +33,12 @@
 
 (require 'ess-site)
 
+(elpy-enable)
+(elpy-use-ipython)
+(setq elpy-rpc-python-command "python2")
+
+(require 'ein)
+
 (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 
 (load-file (let ((coding-system-for-read 'utf-8))
