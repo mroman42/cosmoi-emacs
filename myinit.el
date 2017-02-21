@@ -212,10 +212,17 @@
 (setq org-capture-templates
       (quote (
 	      ("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
-	       "** %c\n" :immediate-finish :kill-buffer :prepend t)
-	      ("i" "idea" entry (file+headline "~/projects/wiki/wiki.org" "Ideas")
-	       "** %?\n%U\n" :kill-buffer :prepend t)
+	       "** %c %^g" :kill-buffer t :prepend t)
+	      ("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
+	       "*** %?\n%U\n" :kill-buffer t :prepend t)
 	     )))
+
+(defun m42/export-html-if-agenda()
+  "Auto exports an html file"
+  (when (equal buffer-file-name "/home/mario/Dropbox/orgzly/tasks.org")
+    (org-twbs-export-to-html)))
+
+(add-hook 'after-save-hook 'm42/export-html-if-agenda)
 
 (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
 
