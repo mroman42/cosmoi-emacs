@@ -226,7 +226,7 @@ Sets attributes for the standard org-mode faces.
     :height 1.05)
 
   (set-face-attribute 'org-level-2 nil
-    :inherit 'outline-1 
+    :inherit 'outline-1
     :weight 'semi-bold
     :height 1.0)
 
@@ -251,10 +251,12 @@ Sets attributes for the standard org-mode faces.
     :inherit 'outline-7)
 
   (set-face-attribute 'org-link nil
-    :inherit 'link 
+    :inherit 'link
     :foreground "SlateGray1"
     :underline nil)
 #+END_SRC
+
+#+RESULTS:
 
 ** Org-export
 *** Beamer
@@ -336,7 +338,7 @@ Org-babel-sage configuration:
         (around org-babel-haskell-initiate-session-advice)
         (let* ((buff (get-buffer "*haskell*"))
                (proc (if buff (get-buffer-process buff)))
-               (type (cdr (assoc :result-type params)))
+               (type (cdr (assoc :result-type 'params)))
                (haskell-program-name
                 (if (equal type 'output) "runhaskell-ob" "ghci")))
           (if proc (kill-process proc))
@@ -358,13 +360,25 @@ Path to Ditaa
   (setq org-capture-templates
 	(quote (
 		("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
-		 "** %c\n" :immediate-finish :kill-buffer :prepend t)
+		 "** %c %^g" :kill-buffer t :prepend t)
 		("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
-		 "*** %?\n%U\n" :kill-buffer :prepend t)
+		 "*** %?\n%U\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
 
-** Latex preview
+** Tasks & To-read
+Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
+
+#+BEGIN_SRC emacs-lisp
+  (defun m42/export-html-if-agenda()
+    "Auto exports an html file"
+    (when (equal buffer-file-name "/home/mario/Dropbox/orgzly/tasks.org")
+      (org-twbs-export-to-html)))
+
+  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
+#+END_SRC
+
+** Latex
 Uses =C-ñ= to preview formulas:
 
 #+BEGIN_SRC emacs-lisp
