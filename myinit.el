@@ -197,7 +197,7 @@
   (around org-babel-haskell-initiate-session-advice)
   (let* ((buff (get-buffer "*haskell*"))
          (proc (if buff (get-buffer-process buff)))
-         (type (cdr (assoc :result-type params)))
+         (type (cdr (assoc :result-type 'params)))
          (haskell-program-name
           (if (equal type 'output) "runhaskell-ob" "ghci")))
     (if proc (kill-process proc))
