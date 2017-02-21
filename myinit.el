@@ -319,14 +319,14 @@
       :uri-template "/blog/%y/%m/%d/%t/" 
       :sort-by :date 
       :category-index t)
-     ("index" 
+     ("index"
       :show-meta nil 
       :show-comment nil 
       :uri-generator op/generate-uri 
       :uri-template "/" 
       :sort-by :date 
       :category-index nil)
-     ("about" 
+     ("about"
       :show-meta nil 
       :show-comment nil 
       :uri-generator op/generate-uri 
