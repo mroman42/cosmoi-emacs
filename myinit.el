@@ -239,6 +239,8 @@
      ("~" "widetilde" "" nil)
      ("'" "\partial" "" nil)
      ("0" "varnothing" "" nil)
+     ("C-(" "left(" "" nil)
+     ("C-)" "right)" "" nil)
      )))
 
 (require 'latex)
@@ -303,11 +305,6 @@
   :ensure t)
 (setq op/repository-directory "~/projects/m42.github.io/")
 (setq op/site-domain "http://m42.github.io/")
-;;; for commenting, you can choose either disqus or duoshuo
-;(setq op/personal-disqus-shortname "your_disqus_shortname")
-;(setq op/personal-duoshuo-shortname "your_duoshuo_shortname")
-;;; the configuration below are optional
-;;(setq op/personal-google-analytics-id "your_google_analytics_id")
 
 (setq op/site-domain "http://m42.github.io/")
 (setq op/site-main-title "Mario Román")
