@@ -105,13 +105,44 @@
             (local-set-key "\M-n" 'outline-next-visible-heading)
             (local-set-key "\M-p" 'outline-previous-visible-heading)))
 
-(global-set-key (kbd "C-c i")
-(lambda() (interactive)
-                   (find-file "~/projects/wiki/wiki.org")
-                   ))
-
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+(set-face-attribute 'org-level-1 nil
+  :inherit 'outline-1
+  :foreground "LightGoldenrod1"
+  :weight 'bold
+  :height 1.05)
+
+(set-face-attribute 'org-level-2 nil
+  :inherit 'outline-1
+  :weight 'semi-bold
+  :height 1.0)
+
+(set-face-attribute 'org-level-3 nil 
+  :inherit 'outline-3 
+  :weight 'bold)
+
+(set-face-attribute 'org-level-4 nil
+  :inherit 'outline-3 
+  :foreground "light steel blue" 
+  :weight 'normal)
+
+(set-face-attribute 'org-level-5 nil
+  :inherit 'outline-4 
+  :foreground "thistle" 
+  :weight 'normal)
+
+(set-face-attribute 'org-level-6 nil
+  :inherit 'outline-4)
+
+(set-face-attribute 'org-level-8 nil
+  :inherit 'outline-7)
+
+(set-face-attribute 'org-link nil
+  :inherit 'link
+  :foreground "SlateGray1"
+  :underline nil)
 
 (require 'ox-latex)
 (add-to-list 'org-latex-classes
