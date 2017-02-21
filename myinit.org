@@ -402,6 +402,8 @@ Abbreviations on =latex-math-mode=.
        ("~" "widetilde" "" nil)
        ("'" "\partial" "" nil)
        ("0" "varnothing" "" nil)
+       ("C-(" "left(" "" nil)
+       ("C-)" "right)" "" nil)
        )))
 #+END_SRC
 
@@ -516,11 +518,6 @@ Indicates what face are we using currently under the cursor.
     :ensure t)
   (setq op/repository-directory "~/projects/m42.github.io/")
   (setq op/site-domain "http://m42.github.io/")
-  ;;; for commenting, you can choose either disqus or duoshuo
-  ;(setq op/personal-disqus-shortname "your_disqus_shortname")
-  ;(setq op/personal-duoshuo-shortname "your_duoshuo_shortname")
-  ;;; the configuration below are optional
-  ;;(setq op/personal-google-analytics-id "your_google_analytics_id")
 #+END_SRC
 
 Personal configuration.
@@ -543,14 +540,14 @@ Sections of the blog
       :uri-template "/blog/%y/%m/%d/%t/" 
       :sort-by :date 
       :category-index t)
-     ("index" 
+     ("index"
       :show-meta nil 
       :show-comment nil 
       :uri-generator op/generate-uri 
       :uri-template "/" 
       :sort-by :date 
       :category-index nil)
-     ("about" 
+     ("about"
       :show-meta nil 
       :show-comment nil 
       :uri-generator op/generate-uri 
