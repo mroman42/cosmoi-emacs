@@ -26,11 +26,13 @@ Quick access to the most important files:
 #+BEGIN_SRC emacs-lisp
   (setq m42/wiki-file "~/Dropbox/orgzly/wiki.org")
   (setq m42/math-file "~/projects/math/notes.org")
+  (setq m42/links-file "~/Dropbox/orgzly/links.org")
   (setq m42/init-file "~/.emacs.d/myinit.org")
   (setq m42/agenda-file "~/Dropbox/orgzly/tasks.org")
 
   (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
+  (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/links-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
   (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
 #+END_SRC
