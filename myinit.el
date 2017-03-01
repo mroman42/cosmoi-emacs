@@ -1,3 +1,4 @@
+
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
@@ -20,6 +21,9 @@
 
 (global-set-key (kbd "C-c s") 'eshell)
 
+(use-package zenburn-theme
+  :ensure t)
+
 (use-package markdown-mode
   :ensure t)
 
@@ -31,15 +35,21 @@
 
 ;; (add-hook 'haskell-mode-hook 'intero-mode)
 
+(use-package ess
+  :ensure t)
+
 (require 'ess-site)
 
+(use-package elpy
+  :ensure t)
 (elpy-enable)
 (elpy-use-ipython)
 (setq elpy-rpc-python-command "python2")
 
-(require 'ein)
+(use-package ein
+  :ensure t)
 
-(load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+; (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 
 (load-file (let ((coding-system-for-read 'utf-8))
                 (shell-command-to-string "agda-mode locate")))
@@ -62,6 +72,7 @@
 
 (use-package haml-mode
   :ensure t)
+
 (add-hook 'haml-mode-hook
           (lambda ()
             (setq indent-tabs-mode nil)
@@ -70,15 +81,15 @@
 ;; (use-package company
 ;;   :ensure t
 ;;   :config (progn
-;; 	    (global-company-mode 1)))
+;;        (global-company-mode 1)))
 
 ;; (use-package company-auctex
 ;;   :ensure t
 ;;   :config (progn
 ;;             (defun company-auctex-labels (command &optional arg &rest ignored)
-;; 	      "company-auctex-labels backend"
-;; 	      (interactive (list 'interactive))
-;; 	      (case command
+;;          "company-auctex-labels backend"
+;;          (interactive (list 'interactive))
+;;          (case command
 ;;                 (interactive (company-begin-backend 'company-auctex-labels))
 ;;                 (prefix (company-auctex-prefix "\\\\.*ref{\\([^}]*\\)\\="))
 ;;                 (candidates (company-auctex-label-candidates arg))))
@@ -89,6 +100,9 @@
 
 ;;             (add-to-list 'company-backends #'company-auctex-labels)
 ;;             (add-to-list 'company-backends #'company-auctex-bibs)))
+
+(use-package org-plus-contrib
+  :ensure t)
 
 (setq org-directory "~/org")
 (setq org-agenda-files (list m42/agenda-file))
@@ -105,7 +119,8 @@
             (local-set-key "\M-n" 'outline-next-visible-heading)
             (local-set-key "\M-p" 'outline-previous-visible-heading)))
 
-(require 'org-bullets)
+(use-package org-bullets
+  :ensure t)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (set-face-attribute 'org-level-1 nil
@@ -161,6 +176,9 @@
 (use-package htmlize
   :ensure t)
 
+(use-package ob-sagemath
+  :ensure t)
+
 (require 'ob-C)
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -169,7 +187,7 @@
      (C . t)
      (emacs-lisp . t)
      (ditaa . t)
-     (R . t)
+     ;(R . t)
      (sagemath . t)
    ))
 
@@ -211,11 +229,11 @@
 
 (setq org-capture-templates
       (quote (
-	      ("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
-	       "** %c %^g" :kill-buffer t :prepend t)
-	      ("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
-	       "*** %?\n%U\n" :kill-buffer t :prepend t)
-	     )))
+              ("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
+               "** %c %^g" :kill-buffer t :prepend t)
+              ("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
+               "*** %?\n%U\n" :kill-buffer t :prepend t)
+             )))
 
 (defun m42/export-html-if-agenda()
   "Auto exports an html file"
@@ -243,7 +261,9 @@
      ("C-)" "right)" "" nil)
      )))
 
-(require 'latex)
+(use-package ntex
+  :ensure auctex)
+
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 (add-hook 'org-mode-hook 'LaTeX-math-mode)
 

@@ -55,6 +55,12 @@ Starts shell using =C-c s=.
 (global-set-key (kbd "C-c s") 'eshell)
 #+END_SRC
 
+** Theme
+#+BEGIN_SRC emacs-lisp
+(use-package zenburn-theme
+  :ensure t)
+#+END_SRC
+
 * Languages
 ** Markdown
 #+BEGIN_SRC emacs-lisp
@@ -79,6 +85,9 @@ Allows interactive Haskell evaluation in Emacs.
 Emacs Speaks Statistics.
 
 #+BEGIN_SRC emacs-lisp
+(use-package ess
+  :ensure t)
+
 (require 'ess-site)
 #+END_SRC
 
@@ -86,6 +95,8 @@ Emacs Speaks Statistics.
 Elpy support.
 
 #+BEGIN_SRC emacs-lisp
+(use-package elpy
+  :ensure t)
 (elpy-enable)
 (elpy-use-ipython)
 (setq elpy-rpc-python-command "python2")
@@ -93,14 +104,15 @@ Elpy support.
 
 *** Jupyter notebook
 #+BEGIN_SRC emacs-lisp
-(require 'ein)
+(use-package ein
+  :ensure t)
 #+END_SRC
 
-** Proof General
+** TODO Proof General
 Loads the Proof General file.
 
 #+BEGIN_SRC emacs-lisp
-(load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+; (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 #+END_SRC
 
 ** Agda
@@ -142,6 +154,7 @@ HAML support.
 #+BEGIN_SRC emacs-lisp
   (use-package haml-mode
     :ensure t)
+
   (add-hook 'haml-mode-hook
             (lambda ()
               (setq indent-tabs-mode nil)
@@ -181,6 +194,12 @@ I am no longer using company-auctex.
 #+END_SRC
 
 * Org-mode
+** Org-plus-contrib
+#+BEGIN_SRC emacs-lisp
+(use-package org-plus-contrib
+  :ensure t)
+#+END_SRC
+
 ** Directories
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
@@ -216,7 +235,8 @@ Navigation between headings:
 Sets attributes for the standard org-mode faces.
    
 #+BEGIN_SRC emacs-lisp
-  (require 'org-bullets)
+  (use-package org-bullets
+    :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
   (set-face-attribute 'org-level-1 nil
@@ -291,6 +311,11 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
 Loads =org-babel= languages.
 
 #+BEGIN_SRC emacs-lisp
+(use-package ob-sagemath
+  :ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
   (require 'ob-C)
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -299,7 +324,7 @@ Loads =org-babel= languages.
        (C . t)
        (emacs-lisp . t)
        (ditaa . t)
-       (R . t)
+       ;(R . t)
        (sagemath . t)
      ))
 #+END_SRC
@@ -411,7 +436,9 @@ Abbreviations on =latex-math-mode=.
 Requires Latex to use =latex-math-mode=. It is activated by default.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'latex)
+  (use-package ntex
+    :ensure auctex)
+
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   (add-hook 'org-mode-hook 'LaTeX-math-mode)
 #+END_SRC
