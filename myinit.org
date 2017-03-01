@@ -386,7 +386,7 @@ Path to Ditaa
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates
 	(quote (
-		("x" "org-protocol" entry (file+headline "~/projects/wiki/wiki.org" "Inbox")
+		("x" "org-protocol" entry (file+headline m42/links-file "Inbox")
 		 "** %c %^g" :kill-buffer t :prepend t)
 		("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
 		 "*** %?\n%U\n" :kill-buffer t :prepend t)
