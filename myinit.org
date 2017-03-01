@@ -438,8 +438,9 @@ Abbreviations on =latex-math-mode=.
 Requires Latex to use =latex-math-mode=. It is activated by default.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ntex
+  (use-package tex
     :ensure auctex)
+  (require 'latex)
 
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   (add-hook 'org-mode-hook 'LaTeX-math-mode)
