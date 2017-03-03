@@ -45,9 +45,10 @@ Inhibits the startup screen and loads an initial buffer:
 (setq initial-buffer-choice m42/wiki-file)
 #+END_SRC
 
-** Word wrapping
+** Word wrapping and selection mode
 #+BEGIN_SRC emacs-lisp
 (setq-default word-wrap 1)
+(delete-selection-mode 1)
 #+END_SRC
 
 ** Shell
@@ -196,10 +197,24 @@ I am no longer using company-auctex.
 #+END_SRC
 
 * Org-mode
-** Org-plus-contrib
+** Org-contrib and modules
 #+BEGIN_SRC emacs-lisp
 (use-package org-plus-contrib
   :ensure t)
+
+;; List of modules
+(add-to-list 'org-modules "org-bbdb")
+(add-to-list 'org-modules "org-bibtex")
+(add-to-list 'org-modules "org-docview")
+(add-to-list 'org-modules "org-gnus")
+(add-to-list 'org-modules "org-habit")
+(add-to-list 'org-modules "org-info")
+(add-to-list 'org-modules "org-irc")
+(add-to-list 'org-modules "org-mhe")
+(add-to-list 'org-modules "org-protocol")
+(add-to-list 'org-modules "org-rmail")
+(add-to-list 'org-modules "org-w3m")
+(add-to-list 'org-modules "org-drill")
 #+END_SRC
 
 ** Directories
@@ -237,10 +252,15 @@ Navigation between headings:
 Sets attributes for the standard org-mode faces.
    
 #+BEGIN_SRC emacs-lisp
+  ;; Org-bullets
   (use-package org-bullets
     :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+  ;; Indentation
+  (setq org-startup-indented t)
+
+  ;; Faces
   (set-face-attribute 'org-level-1 nil
     :inherit 'outline-1
     :foreground "LightGoldenrod1"
@@ -522,6 +542,11 @@ a =pinta= window to edit it.
     :ensure t)
 #+END_SRC
 * Customization
+** Customize
+#+BEGIN_SRC emacs-lisp
+(setq blink-cursor-mode nil)
+#+END_SRC
+
 ** Custom file
 Loads the customize file, follows this [[http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/][article]]:
 
