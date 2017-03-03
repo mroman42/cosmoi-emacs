@@ -3,18 +3,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(LaTeX-math-abbrev-prefix "ç")
  '(agda2-highlight-face-groups (quote default-faces))
- '(blink-cursor-mode nil)
  '(custom-enabled-themes (quote (wombat)))
- '(delete-selection-mode t)
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-stylish-on-save t)
  '(ido-mode (quote both) nil (ido))
  '(make-backup-files nil)
- '(menu-bar-mode nil)
  '(op/theme (quote mdo-modified))
  '(org-latex-default-packages-alist
    (quote
@@ -32,15 +28,10 @@
      ("" "amssymb" t)
      ("" "capt-of" nil)
      ("colorlinks=true" "hyperref" nil))))
- '(org-modules
-   (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-protocol org-rmail org-w3m org-drill)))
- '(org-startup-indented t)
  '(package-selected-packages
    (quote
     (ein elpy intero company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
- '(server-mode t)
- '(tool-bar-mode nil))
+ '(server-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
