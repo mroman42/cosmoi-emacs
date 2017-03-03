@@ -1,0 +1,7 @@
+myinit.el
+history
+bookmarks
+ido.last
+\#*
+auto-save-list/*
+elpa/*
