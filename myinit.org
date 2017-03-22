@@ -42,7 +42,7 @@ Inhibits the startup screen and loads an initial buffer:
 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
-(setq initial-buffer-choice m42/wiki-file)
+(setq initial-buffer-choice m42/agenda-file)
 #+END_SRC
 
 ** Word wrapping and selection mode
@@ -431,6 +431,10 @@ Uses =C-ñ= to preview formulas:
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
 #+END_SRC
+
+\[
+e^{i\pi} = -1
+\]
 
 *** Latex math mode abbreviations
 Abbreviations on =latex-math-mode=.
