@@ -295,6 +295,7 @@ Sets attributes for the standard org-mode faces.
   (set-face-attribute 'org-link nil
     :inherit 'link
     :foreground "SlateGray1"
+    :weight 'normal
     :underline nil)
 #+END_SRC
 
