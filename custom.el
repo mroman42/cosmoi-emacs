@@ -11,7 +11,6 @@
  '(haskell-stylish-on-save t)
  '(ido-mode (quote both) nil (ido))
  '(make-backup-files nil)
- '(op/theme (quote mdo-modified))
  '(org-latex-default-packages-alist
    (quote
     (("AUTO" "inputenc" t)
