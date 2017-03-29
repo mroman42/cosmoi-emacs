@@ -33,8 +33,7 @@
  '(safe-local-variable-values
    (quote
     ((eval text-scale-increase 1)
-     (eval text-scale-adjust))))
- '(server-mode t))
+     (eval text-scale-adjust)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
