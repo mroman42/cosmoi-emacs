@@ -29,7 +29,11 @@
      ("colorlinks=true" "hyperref" nil))))
  '(package-selected-packages
    (quote
-    (ein elpy intero company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
+    (cdlatex org-gcal ein elpy intero company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
+ '(safe-local-variable-values
+   (quote
+    ((eval text-scale-increase 1)
+     (eval text-scale-adjust))))
  '(server-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
