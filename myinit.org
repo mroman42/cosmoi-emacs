@@ -10,6 +10,18 @@ I have taken ideas for my configuration mainly from:
 
 It works on Emacs 25.1.
 
+** Personal information
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Mario Román"
+      user-mail-address "mromang08@gmail.com")
+#+END_SRC
+
+Sensitive information
+
+#+BEGIN_SRC emacs-lisp
+(load "~/.emacs.d/emacs.secrets" t)
+#+END_SRC
+
 ** Basic
 Disable the toolbar and menubar
 
