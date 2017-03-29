@@ -32,6 +32,10 @@ Disable the toolbar and menubar
 (tooltip-mode -1)
 #+END_SRC
 
+** Reload init.el
+#+BEGIN_SRC emacs-lisp
+(global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
+#+END_SRC
 ** Files
 Quick access to the most important files:
 
@@ -95,8 +99,6 @@ Allows interactive Haskell evaluation in Emacs.
   (require 'haskell-interactive-mode)
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-
-  ;; (add-hook 'haskell-mode-hook 'intero-mode)
 #+END_SRC
 
 ** R
@@ -142,13 +144,12 @@ Agda-mode configuration:
 #+END_SRC
 
 ** Sage
-*** sage-mode
-    #+BEGIN_SRC emacs-lisp
-      (use-package sage-shell-mode
-        :ensure t)
+#+BEGIN_SRC emacs-lisp
+  (use-package sage-shell-mode
+    :ensure t)
 
-      (setq sage-shell:use-prompt-toolkit t)
-    #+END_SRC
+  (setq sage-shell:use-prompt-toolkit t)
+#+END_SRC
 
 ** Lisp
 Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/2013/06/21/eval-and-replace/][Emacs Redux]].
