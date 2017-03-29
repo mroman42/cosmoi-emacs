@@ -41,12 +41,15 @@ Quick access to the most important files:
   (setq m42/links-file "~/Dropbox/orgzly/links.org")
   (setq m42/init-file "~/.emacs.d/myinit.org")
   (setq m42/agenda-file "~/Dropbox/orgzly/tasks.org")
+  (setq m42/calendar-file "~/Dropbox/orgzly/calendar.org")
 
   (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/links-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
   (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
+
+  (setq org-agenda-files (list m42/agenda-file m42/calendar-file))
 #+END_SRC
 
 ** Startup
