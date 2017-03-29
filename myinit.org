@@ -643,6 +643,7 @@ Personal configuration.
 (setq op/site-main-title "Mario Román")
 (setq op/site-sub-title "M42 - mromang08@gmail.com")
 (setq op/personal-github-link "https://github.com/m42")
+(setq op/theme 'mdo_modified)
 #+END_SRC
 
 Sections of the blog
