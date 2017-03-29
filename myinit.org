@@ -425,10 +425,21 @@ Path to Ditaa
 
 ** Org-capture
 #+BEGIN_SRC emacs-lisp
+  (require 'org-protocol)
+
+  (defadvice org-capture
+    (after make-full-window-frame activate)
+    "Advise capture to be the only window when used as a popup"
+    (if (equal "emacs-capture" (frame-parameter nil 'name))
+      (delete-other-windows)))
+
+  (add-hook 'org-capture-mode-hook 'delete-other-windows)
+  (add-hook 'org-capture-after-finalize-hook 'delete-frame)
+
   (setq org-capture-templates
 	(quote (
 		("x" "org-protocol" entry (file+headline m42/links-file "Inbox")
-		 "** %c %^g" :kill-buffer t :prepend t)
+		 "** %c %?" :kill-buffer t :prepend t)
 		("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
 		 "*** %?\n%U\n" :kill-buffer t :prepend t)
 	       )))
