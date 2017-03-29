@@ -445,6 +445,25 @@ Path to Ditaa
 	       )))
 #+END_SRC
 
+** Google Calendar
+Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-gcal
+  :ensure t
+  :config
+  (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com"
+	org-gcal-client-secret m42/gcal-client-secret
+	org-gcal-file-alist '(("mromang08@gmail.com" . "~/Dropbox/orgzly/calendar.org"))))
+#+END_SRC
+
+Hooks for synchronization.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
+(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
+#+END_SRC
+
 ** Tasks & To-read
 Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
 
