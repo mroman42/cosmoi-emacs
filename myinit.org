@@ -470,7 +470,7 @@ Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_e
 #+BEGIN_SRC emacs-lisp
   (defun m42/export-html-if-agenda()
     "Auto exports an html file"
-    (when (equal buffer-file-name "/home/mario/Dropbox/orgzly/tasks.org")
+    (when (equal buffer-file-name "/home/mario/Dropbox/orgzly/links.org")
       (org-twbs-export-to-html)))
 
   (add-hook 'after-save-hook 'm42/export-html-if-agenda)
