@@ -484,8 +484,14 @@ Uses =C-ñ= to preview formulas:
 #+END_SRC
 
 \[
-e^{i\pi} = -1
+e^{i\tau} = 1
 \]
+
+*** cd-latex
+#+BEGIN_SRC emacs-lisp
+  (use-package cdlatex
+    :ensure t)
+#+END_SRC
 
 *** Latex math mode abbreviations
 Abbreviations on =latex-math-mode=.
