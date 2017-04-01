@@ -24,20 +24,13 @@ Sensitive information
 (load "~/.emacs.d/emacs.secrets" t)
 #+END_SRC
 
-** Basic
-Disable the toolbar and menubar
-
-#+BEGIN_SRC emacs-lisp
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tooltip-mode -1)
-#+END_SRC
-
 ** Reload init.el
+Binds the reloading of =init.el= to =M-insert=.
+
 #+BEGIN_SRC emacs-lisp
 (global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
 #+END_SRC
+
 ** Files
 Quick access to the most important files:
 
@@ -78,20 +71,49 @@ Starts shell using =C-c s=.
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c s") 'eshell)
 #+END_SRC
-
+* Customization
 ** Theme
 #+BEGIN_SRC emacs-lisp
 (use-package zenburn-theme
   :ensure t)
 #+END_SRC
 
-* Languages
-** Markdown
+** Toolbar and menubar
+Disable the toolbar and menubar
+
 #+BEGIN_SRC emacs-lisp
-  (use-package markdown-mode
-    :ensure t)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tooltip-mode -1)
 #+END_SRC
 
+Cursor should not blink
+
+#+BEGIN_SRC emacs-lisp
+(setq blink-cursor-mode nil)
+#+END_SRC
+
+** Custom file
+Loads the customize file, follows this [[http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/][article]]:
+
+#+BEGIN_SRC emacs-lisp
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror)
+#+END_SRC
+
+** What face?
+Indicates what face are we using currently under the cursor.
+
+#+BEGIN_SRC emacs-lisp
+  (defun what-face (pos)
+    (interactive "d")
+    (let ((face (or (get-char-property (point) 'read-face-name)
+                    (get-char-property (point) 'face))))
+      (if face (message "Face: %s" face) (message "No face at %d" pos))))
+#+END_SRC
+
+* Languages
 ** Haskell
 Allows interactive Haskell evaluation in Emacs.
 
