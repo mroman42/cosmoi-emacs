@@ -692,14 +692,6 @@ Opens *magit* with =C-c g=.
     )
 #+END_SRC
 
-** dict-replace
-My dict-replace package. I am no longer using it.
-
-#+BEGIN_SRC emacs-lisp
-  ;(load-file "~/.emacs.d/dict-replace.el")
-  ;(global-set-key (kbd "<f5>") 'dict-translate)
-#+END_SRC
-
 ** Flycheck
 Flycheck checks the syntax of programming languages.
 
@@ -737,4 +729,12 @@ search engines to =C-c / x=, where =x= is a char representing the engine.
   "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
 
 (engine-mode t)
+#+END_SRC
+
+** DISABLED dict-replace
+My dict-replace package. I am no longer using it.
+
+#+BEGIN_SRC emacs-lisp
+  ;(load-file "~/.emacs.d/dict-replace.el")
+  ;(global-set-key (kbd "<f5>") 'dict-translate)
 #+END_SRC
