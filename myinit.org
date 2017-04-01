@@ -636,33 +636,7 @@ a =pinta= window to edit it.
   (use-package haskell-snippets
     :ensure t)
 #+END_SRC
-* Customization
-** Customize
-#+BEGIN_SRC emacs-lisp
-(setq blink-cursor-mode nil)
-#+END_SRC
-
-** Custom file
-Loads the customize file, follows this [[http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/][article]]:
-
-#+BEGIN_SRC emacs-lisp
-  (setq custom-file "~/.emacs.d/custom.el")
-  (load custom-file 'noerror)
-#+END_SRC
-
-** What face?
-Indicates what face are we using currently under the cursor.
-
-#+BEGIN_SRC emacs-lisp
-  (defun what-face (pos)
-    (interactive "d")
-    (let ((face (or (get-char-property (point) 'read-face-name)
-                    (get-char-property (point) 'face))))
-      (if face (message "Face: %s" face) (message "No face at %d" pos))))
-#+END_SRC
-
 * Blog
-** org-page
 #+BEGIN_SRC emacs-lisp
   (use-package org-page
     :ensure t)
@@ -680,7 +654,7 @@ Personal configuration.
 (setq op/theme 'mdo_modified)
 #+END_SRC
 
-Sections of the blog
+Blog sections
 
 #+BEGIN_SRC emacs-lisp
 (setq op/category-config-alist
@@ -708,11 +682,6 @@ Sections of the blog
 #+END_SRC
 
 * Other packages
-** Auctex
-#+BEGIN_SRC emacs-lisp
-  (use-package tex
-    :ensure auctex)
-#+END_SRC
 ** Magit
 Opens *magit* with =C-c g=.
 
