@@ -1,5 +1,7 @@
 #+TITLE: myinit.org
 #+AUTHOR: Mario Román
+#+EMAIL: mromang08@gmail.com
+#+TODO: DISABLED WIP | DONE
 
 * My Emacs configuration file
 This is my Emacs init file, written in org-mode using literate programming.
