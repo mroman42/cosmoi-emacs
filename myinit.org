@@ -443,6 +443,8 @@ Path to Ditaa
 		 "** %c %?" :kill-buffer t :prepend t)
 		("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
 		 "*** %?\n%U\n" :kill-buffer t :prepend t)
+		("b" "bug" entry (file+olp "~/Dropbox/orgzly/bugs.org" "Inbox")
+		 "** %?\n%U\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
 
