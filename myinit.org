@@ -188,20 +188,32 @@ Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/20
   (global-set-key (kbd "C-c e") 'eval-and-replace)
 #+END_SRC
 
-** HAML
+** Latex
+#+BEGIN_SRC emacs-lisp
+  (use-package tex
+    :ensure auctex)
+#+END_SRC
+
+** DISABLED HAML
 HAML support.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package haml-mode
-    :ensure t)
+  ;; (use-package haml-mode
+  ;;   :ensure t)
 
-  (add-hook 'haml-mode-hook
-            (lambda ()
-              (setq indent-tabs-mode nil)
-              (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+  ;; (add-hook 'haml-mode-hook
+  ;;           (lambda ()
+  ;;             (setq indent-tabs-mode nil)
+  ;;             (define-key haml-mode-map "\C-m" 'newline-and-indent)))
 #+END_SRC
 
-* Completion
+** DISABLED Proof General
+Loads the Proof General file.
+
+#+BEGIN_SRC emacs-lisp
+; (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+#+END_SRC
+** DISABLED Completion
 Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's emacs.d]].
 
 #+BEGIN_SRC emacs-lisp
@@ -232,7 +244,6 @@ I am no longer using company-auctex.
   ;;             (add-to-list 'company-backends #'company-auctex-labels)
   ;;             (add-to-list 'company-backends #'company-auctex-bibs)))
 #+END_SRC
-
 * Org-mode
 ** Org-contrib and modules
 #+BEGIN_SRC emacs-lisp
@@ -609,9 +620,8 @@ a =pinta= window to edit it.
 #+attr_latex: :width 50px
 [[./pinta//painting.png]]
 #+end_center
-
 * Snippets
-** Yasnippet support.
+** Yasnippet support
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
