@@ -51,7 +51,7 @@ Quick access to the most important files:
   (setq org-agenda-files (list m42/agenda-file m42/calendar-file))
 #+END_SRC
 
-** Startup
+** Initial buffer
 Inhibits the startup screen and loads an initial buffer:
 
 #+BEGIN_SRC emacs-lisp
@@ -124,6 +124,11 @@ Allows interactive Haskell evaluation in Emacs.
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 #+END_SRC
+** Markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t)
+#+END_SRC
 
 ** R
 Emacs Speaks Statistics.
@@ -151,14 +156,6 @@ Elpy support.
 (use-package ein
   :ensure t)
 #+END_SRC
-
-** TODO Proof General
-Loads the Proof General file.
-
-#+BEGIN_SRC emacs-lisp
-; (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
-#+END_SRC
-
 ** Agda
 Agda-mode configuration:
 
