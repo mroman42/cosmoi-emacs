@@ -311,8 +311,7 @@ Navigation between headings:
               (local-set-key "\M-n" 'outline-next-visible-heading)
               (local-set-key "\M-p" 'outline-previous-visible-heading)))
 #+END_SRC
-
-** Customization of org-mode
+** org-mode customization
 Sets attributes for the standard org-mode faces.
    
 #+BEGIN_SRC emacs-lisp
@@ -326,10 +325,9 @@ Sets attributes for the standard org-mode faces.
 
   ;; Faces
   (set-face-attribute 'org-level-1 nil
-    :inherit 'outline-1
-    :foreground "LightGoldenrod1"
-    :weight 'bold
-    :height 1.05)
+     :inherit 'outline-1
+     :weight 'bold
+     :height 1.05)
 
   (set-face-attribute 'org-level-2 nil
     :inherit 'outline-1
@@ -471,8 +469,7 @@ Path to Ditaa
 #+BEGIN_SRC emacs-lisp
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
-
-** Org-capture
+** org-capture
 #+BEGIN_SRC emacs-lisp
   (require 'org-protocol)
 
