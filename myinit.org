@@ -486,9 +486,11 @@ Path to Ditaa
 	(quote (
 		("x" "org-protocol" entry (file+headline m42/links-file "Inbox")
 		 "** %c %?" :kill-buffer t :prepend t)
-		("i" "idea" entry (file+olp "~/projects/wiki/wiki.org" "Ideas" "Fáciles")
+		("i" "idea" entry (file+olp "~/Dropbox/orgzly/ideas.org" "Inbox")
 		 "*** %?\n%U\n" :kill-buffer t :prepend t)
 		("b" "bug" entry (file+olp "~/Dropbox/orgzly/bugs.org" "Inbox")
+		 "** %?\n%U\n" :kill-buffer t :prepend t)
+		("t" "task" entry (file+olp "~/Dropbox/orgzly/tasks.org" "Inbox")
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
