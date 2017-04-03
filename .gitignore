@@ -5,3 +5,4 @@ ido.last
 \#*
 auto-save-list/*
 elpa/*
+/emacs.secrets
