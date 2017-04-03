@@ -255,7 +255,7 @@ I am no longer using company-auctex.
   ;;             (add-to-list 'company-backends #'company-auctex-bibs)))
 #+END_SRC
 * Org-mode
-** Org-contrib and modules
+** org-contrib and modules
 #+BEGIN_SRC emacs-lisp
 (use-package org-plus-contrib
   :ensure t)
@@ -274,13 +274,20 @@ I am no longer using company-auctex.
 (add-to-list 'org-modules "org-w3m")
 (add-to-list 'org-modules "org-drill")
 #+END_SRC
+** org-ref
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref
+  :ensure t)
 
-** Directories
+(setq org-ref-default-bibliography '("~/projects/math/math.bib"))
+#+END_SRC
+
+** org-archive
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/org")
-  (setq org-archive-location "~/org/archive.org ::* From %s")
+  (setq org-directory "~/Dropbox/orgzly")
+  (setq org-archive-location "~/Dropbox/orgzly/archive.org ::* From %s")
 #+END_SRC
 
 ** Keybindings
