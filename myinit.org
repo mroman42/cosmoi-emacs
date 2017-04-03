@@ -194,6 +194,16 @@ Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/20
     :ensure auctex)
 #+END_SRC
 
+*** Pdf generation process
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-pdf-process
+	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %b"
+          "bibtex %b"
+          "makeindex %b"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %b"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %b"))
+#+END_SRC
+
 ** DISABLED HAML
 HAML support.
 
