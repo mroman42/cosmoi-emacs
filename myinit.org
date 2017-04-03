@@ -365,7 +365,7 @@ Sets attributes for the standard org-mode faces.
 
 #+RESULTS:
 
-** Org-export
+** org-export
 *** Beamer
 Exports to beamer. Defines the beamer class.
 
@@ -399,8 +399,7 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
   (use-package ox-twbs
     :ensure ox-twbs)
 #+END_SRC
-
-** Org-babel
+** org-babel
 Loads =org-babel= languages.
 
 #+BEGIN_SRC emacs-lisp
@@ -543,6 +542,8 @@ e^{i\tau} = 1
 #+BEGIN_SRC emacs-lisp
   (use-package cdlatex
     :ensure t)
+
+  (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
 #+END_SRC
 
 *** Latex math mode abbreviations
