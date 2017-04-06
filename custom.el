@@ -4,13 +4,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(agda2-highlight-face-groups (quote default-faces))
- '(custom-enabled-themes (quote (wombat)))
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-stylish-on-save t)
  '(ido-mode (quote both) nil (ido))
- '(make-backup-files nil)
  '(org-latex-default-packages-alist
    (quote
     (("AUTO" "inputenc" t)

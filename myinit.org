@@ -60,6 +60,13 @@ Inhibits the startup screen and loads an initial buffer:
 (setq initial-buffer-choice m42/agenda-file)
 #+END_SRC
 
+** Backup files
+Disables backup files.
+
+#+BEGIN_SRC emacs-lisp
+(setq make-backup-files nil)
+#+END_SRC
+
 ** Word wrapping and selection mode
 #+BEGIN_SRC emacs-lisp
 (setq-default word-wrap 1)
@@ -75,8 +82,12 @@ Starts shell using =C-c s=.
 * Customization
 ** Theme
 #+BEGIN_SRC emacs-lisp
+; Zenburn theme
 (use-package zenburn-theme
   :ensure t)
+
+; Wombat theme
+(load-theme 'wombat t)
 #+END_SRC
 
 ** Toolbar and menubar
