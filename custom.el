@@ -39,12 +39,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-highlight-datatype-face ((t (:foreground "chartreuse"))))
- '(agda2-highlight-function-face ((t (:foreground "medium spring green"))))
- '(agda2-highlight-postulate-face ((t (:foreground "lawn green"))))
- '(agda2-highlight-primitive-face ((t (:foreground "lawn green"))))
- '(agda2-highlight-primitive-type-face ((t (:foreground "lawn green"))))
- '(agda2-highlight-record-face ((t (:foreground "lawn green"))))
  '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "dark gray"))))
  '(haskell-constructor-face ((t (:inherit font-lock-type-face))))
  '(haskell-literate-comment-face ((t (:inherit font-lock-doc-face))))
