@@ -4,13 +4,14 @@
 #+TODO: DISABLED WIP | DONE
 
 * My Emacs configuration file
-This is my Emacs init file, written in org-mode using literate programming.
-I have taken ideas for my configuration mainly from:
+This is my Emacs init file, written in org-mode using literate
+programming and =org-babel= blocks.  I have taken ideas for my
+configuration mainly from:
 
  - [[http://cestlaz.github.io/][C'est la Z]]
  - [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
 
-It works on Emacs 25.1.
+It works for me on Emacs 26.0.
 
 ** Personal information
 #+BEGIN_SRC emacs-lisp
