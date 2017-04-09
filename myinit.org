@@ -266,6 +266,21 @@ I am no longer using company-auctex.
   ;;             (add-to-list 'company-backends #'company-auctex-labels)
   ;;             (add-to-list 'company-backends #'company-auctex-bibs)))
 #+END_SRC
+* Translation
+** Google translate
+#+BEGIN_SRC emacs-lisp
+(use-package google-translate
+  :ensure t)
+
+(require 'google-translate)
+(require 'google-translate-default-ui)
+(global-set-key "\C-ct" 'google-translate-at-point)
+(global-set-key "\C-cT" 'google-translate-query-translate)
+
+(setq google-translate-default-source-language "en")
+(setq google-translate-default-target-language "es")
+#+END_SRC
+
 * Org-mode
 ** org-contrib and modules
 #+BEGIN_SRC emacs-lisp
