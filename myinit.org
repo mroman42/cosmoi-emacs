@@ -479,7 +479,7 @@ a great [[http://quickhack.net/nom/blog/2012-08-31-org-babel-and-haskell.html][a
           ad-do-it))
 
       (ad-activate 'org-babel-haskell-initiate-session)
-    #+END_SRC
+#+END_SRC
 
 *** Ditaa
 Path to Ditaa
@@ -737,7 +737,7 @@ Flycheck checks the syntax of programming languages.
 
 ** Engine-mode
 [[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different 
-search engines to =C-c / x=, where =x= is a char representing the engine.
+search engines to =C-x / ?=, where =?= is a char representing the engine.
 
 #+BEGIN_SRC emacs-lisp
 (use-package engine-mode
