@@ -462,10 +462,10 @@ Org-babel-sage configuration:
 #+END_SRC
 
 *** Haskell
-    Uses =runhaskell= when it outputs the results. Taken from
-    a great [[http://quickhack.net/nom/blog/2012-08-31-org-babel-and-haskell.html][article]] (in Japanese!) by Yoshinari Nomura.
+Uses =runhaskell= when it outputs the results. Taken from
+a great [[http://quickhack.net/nom/blog/2012-08-31-org-babel-and-haskell.html][article]] (in Japanese!) by Yoshinari Nomura.
 
-    #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
       (defadvice org-babel-haskell-initiate-session
         (around org-babel-haskell-initiate-session-advice)
         (let* ((buff (get-buffer "*haskell*"))
