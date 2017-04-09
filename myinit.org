@@ -509,6 +509,8 @@ Path to Ditaa
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
 		("t" "task" entry (file+olp "~/Dropbox/orgzly/tasks.org" "Inbox")
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
+            ("v" "vocabulary" entry (file+olp "~/Dropbox/orgzly/english.org" "Vocabulary")
+		 "** word :drill:\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
 
