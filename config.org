@@ -36,12 +36,14 @@ Binds the reloading of =init.el= to =M-insert=.
 Quick access to the most important files:
 
 #+BEGIN_SRC emacs-lisp
-  (setq m42/wiki-file "~/Dropbox/orgzly/wiki.org")
-  (setq m42/math-file "~/projects/math/notes.org")
-  (setq m42/links-file "~/Dropbox/orgzly/links.org")
-  (setq m42/init-file "~/.emacs.d/config.org")
-  (setq m42/agenda-file "~/Dropbox/orgzly/tasks.org")
-  (setq m42/calendar-file "~/Dropbox/orgzly/calendar.org")
+  (setq m42/wiki-file      (expand-file-name "~/Dropbox/orgzly/wiki.org"))
+  (setq m42/math-file      (expand-file-name "~/projects/math/notes.org"))
+  (setq m42/links-file     (expand-file-name "~/Dropbox/orgzly/links.org"))
+  (setq m42/init-file      (expand-file-name "~/.emacs.d/config.org"))
+  (setq m42/agenda-file    (expand-file-name "~/Dropbox/orgzly/tasks.org"))
+  (setq m42/calendar-file  (expand-file-name "~/Dropbox/orgzly/calendar.org"))
+  (setq m42/ideas-file     (expand-file-name "~/Dropbox/orgzly/ideas.org"))
+  (setq m42/bugs-file      (expand-file-name "~/Dropbox/orgzly/bugs.org"))
 
   (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
@@ -79,6 +81,7 @@ Starts shell using =C-c s=.
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c s") 'eshell)
 #+END_SRC
+
 * Customization
 ** Theme
 #+BEGIN_SRC emacs-lisp
@@ -136,6 +139,7 @@ Allows interactive Haskell evaluation in Emacs.
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 #+END_SRC
+
 ** Markdown
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
@@ -524,16 +528,17 @@ Path to Ditaa
 	(quote (
 		("x" "org-protocol" entry (file+headline m42/links-file "Inbox")
 		 "** %c %?" :kill-buffer t :prepend t)
-		("i" "idea" entry (file+olp "~/Dropbox/orgzly/ideas.org" "Inbox")
+		("i" "idea" entry (file+olp m42/ideas-file "Inbox")
 		 "*** %?\n%U\n" :kill-buffer t :prepend t)
-		("b" "bug" entry (file+olp "~/Dropbox/orgzly/bugs.org" "Inbox")
+		("b" "bug" entry (file+olp m42/bugs-file "Inbox")
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
-		("t" "task" entry (file+olp "~/Dropbox/orgzly/tasks.org" "Inbox")
+		("t" "task" entry (file+olp m42/agenda-file "Inbox")
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
             ("v" "vocabulary" entry (file+olp "~/Dropbox/orgzly/english.org" "Vocabulary")
 		 "** %?\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
+
 ** org-wiki
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/org-wiki")
@@ -566,7 +571,7 @@ Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_e
 #+BEGIN_SRC emacs-lisp
   (defun m42/export-html-if-agenda()
     "Auto exports an html file"
-    (when (equal buffer-file-name "/home/mario/Dropbox/orgzly/links.org")
+    (when (equal buffer-file-name m42/links-file)
       (org-twbs-export-to-html)))
 
   (add-hook 'after-save-hook 'm42/export-html-if-agenda)
