@@ -534,6 +534,12 @@ Path to Ditaa
 		 "** %?\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
+** org-wiki
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/org-wiki")
+(require 'org-wiki)
+(setq org-wiki-location "~/org/wiki")
+#+END_SRC
 
 ** Google Calendar
 Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
