@@ -216,6 +216,12 @@ Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/20
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %b"))
 #+END_SRC
 
+** Dot
+#+BEGIN_SRC emacs-lisp
+(use-package graphviz-dot-mode
+  :ensure t)
+(setq default-tab-width 4)
+#+END_SRC
 ** DISABLED HAML
 HAML support.
 
