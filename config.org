@@ -39,7 +39,7 @@ Quick access to the most important files:
   (setq m42/wiki-file "~/Dropbox/orgzly/wiki.org")
   (setq m42/math-file "~/projects/math/notes.org")
   (setq m42/links-file "~/Dropbox/orgzly/links.org")
-  (setq m42/init-file "~/.emacs.d/myinit.org")
+  (setq m42/init-file "~/.emacs.d/config.org")
   (setq m42/agenda-file "~/Dropbox/orgzly/tasks.org")
   (setq m42/calendar-file "~/Dropbox/orgzly/calendar.org")
 
