@@ -36,16 +36,19 @@ Binds the reloading of =init.el= to =M-insert=.
 Quick access to the most important files:
 
 #+BEGIN_SRC emacs-lisp
-  (setq m42/wiki-file      (expand-file-name "~/Dropbox/orgzly/wiki.org"))
+  (setq m42/index-file     (expand-file-name "~/org/wiki/index.org"))
+  (setq m42/wiki-file      (expand-file-name "~/org/wiki/wiki.org"))
   (setq m42/math-file      (expand-file-name "~/projects/math/notes.org"))
-  (setq m42/links-file     (expand-file-name "~/Dropbox/orgzly/links.org"))
+  (setq m42/links-file     (expand-file-name "~/org/wiki/links.org"))
   (setq m42/init-file      (expand-file-name "~/.emacs.d/config.org"))
-  (setq m42/agenda-file    (expand-file-name "~/Dropbox/orgzly/tasks.org"))
-  (setq m42/calendar-file  (expand-file-name "~/Dropbox/orgzly/calendar.org"))
-  (setq m42/ideas-file     (expand-file-name "~/Dropbox/orgzly/ideas.org"))
-  (setq m42/bugs-file      (expand-file-name "~/Dropbox/orgzly/bugs.org"))
+  (setq m42/agenda-file    (expand-file-name "~/org/wiki/tasks.org"))
+  (setq m42/calendar-file  (expand-file-name "~/org/wiki/calendar.org"))
+  (setq m42/ideas-file     (expand-file-name "~/org/wiki/ideas.org"))
+  (setq m42/bugs-file      (expand-file-name "~/org/wiki/bugs.org"))
+  (setq m42/file-archive   (expand-file-name "~/org/archive.org"))
+  (setq m42/org-folder     (expand-file-name "~/org"))
 
-  (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/wiki-file)))
+  (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/index-file)))
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/links-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
@@ -326,8 +329,8 @@ I am no longer using company-auctex.
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/Dropbox/orgzly")
-  (setq org-archive-location "~/Dropbox/orgzly/archive.org ::* From %s")
+  (setq org-directory m42/org-folder)
+  (setq org-archive-location (concat m42/file-archive " ::* From %s"))
 #+END_SRC
 
 ** Keybindings
@@ -534,7 +537,7 @@ Path to Ditaa
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
 		("t" "task" entry (file+olp m42/agenda-file "Inbox")
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
-            ("v" "vocabulary" entry (file+olp "~/Dropbox/orgzly/english.org" "Vocabulary")
+            ("v" "vocabulary" entry (file+olp "~/org/wiki/english.org" "Vocabulary")
 		 "** %?\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
@@ -555,7 +558,7 @@ Initial configuration, using the Google API. Follows [[https://cestlaz.github.io
   :config
   (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com"
 	org-gcal-client-secret m42/gcal-client-secret
-	org-gcal-file-alist '(("mromang08@gmail.com" . "~/Dropbox/orgzly/calendar.org"))))
+	org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/wiki/calendar.org"))))
 #+END_SRC
 
 Hooks for synchronization.
