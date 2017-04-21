@@ -85,6 +85,23 @@ Starts shell using =C-c s=.
 (global-set-key (kbd "C-c s") 'eshell)
 #+END_SRC
 
+** Smex
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+  :ensure t
+  :config (smex-initialize)
+  :bind (("M-x" . smex)))
+#+END_SRC
+
+** Switching buffers with Ctrl+Tab
+#+BEGIN_SRC emacs-lisp
+(global-set-key [C-tab] 'other-window)
+(global-set-key [C-iso-lefttab]
+  (lambda ()
+    (interactive)
+    (other-window -1)))
+#+END_SRC
+
 * Customization
 ** Theme
 #+BEGIN_SRC emacs-lisp
