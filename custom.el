@@ -10,9 +10,25 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-stylish-on-save t)
  '(ido-mode (quote both) nil (ido))
+ '(org-latex-default-packages-alist
+   (quote
+    (("AUTO" "inputenc" t)
+     ("T1" "fontenc" t)
+     ("" "fixltx2e" nil)
+     ("" "graphicx" t)
+     ("" "grffile" t)
+     ("" "longtable" nil)
+     ("" "wrapfig" nil)
+     ("" "rotating" nil)
+     ("normalem" "ulem" t)
+     ("" "amsmath" t)
+     ("" "textcomp" t)
+     ("" "amssymb" t)
+     ("" "capt-of" nil)
+     ("colorlinks=true" "hyperref" nil))))
  '(package-selected-packages
    (quote
-    (smex graphviz-dot-mode google-translate-default-ui ob-translate define-word org-ref cdlatex org-gcal ein elpy intero company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
+    (calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word org-ref cdlatex org-gcal ein elpy intero company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode)))
  '(safe-local-variable-values
    (quote
     ((eval text-scale-increase 1)
