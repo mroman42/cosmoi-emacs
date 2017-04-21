@@ -567,7 +567,7 @@ Path to Ditaa
 (setq org-wiki-location "~/org/wiki")
 #+END_SRC
 
-** Google Calendar
+** org-gcal
 Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
 
 #+BEGIN_SRC emacs-lisp
@@ -584,6 +584,33 @@ Hooks for synchronization.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
 (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
+#+END_SRC
+
+*** DISABLED calfw
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package calfw
+  ;;   :ensure t
+  ;;   :config
+  ;;   (require 'calfw) 
+  ;;   (require 'calfw-org)
+  ;;   (setq cfw:org-overwrite-default-keybinding t)
+  ;;   (require 'calfw-ical)
+
+  ;;   (defun mycalendar ()
+  ;;     (interactive)
+  ;;     (cfw:open-calendar-buffer
+  ;;      :contents-sources
+  ;;      (list
+  ;;       (cfw:org-create-source "Green")  ; orgmode source
+  ;;       ;(cfw:ical-create-source "gcal" "https://somecalnedaraddress" "IndianRed") ; devorah calender
+  ;;       ;(cfw:ical-create-source "gcal" "https://anothercalendaraddress" "IndianRed") ; google calendar ICS
+  ;;       ))) 
+  ;;   (setq cfw:org-overwrite-default-keybinding t))
+
+  ;; (use-package calfw-gcal
+  ;; 	:ensure t
+  ;; 	:config
+  ;; 	(require 'calfw-gcal))
 #+END_SRC
 
 ** Tasks & To-read
