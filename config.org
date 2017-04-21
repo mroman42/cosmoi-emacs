@@ -102,6 +102,11 @@ Starts shell using =C-c s=.
     (other-window -1)))
 #+END_SRC
 
+** Yes-no to y-n
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
 * Customization
 ** Theme
 #+BEGIN_SRC emacs-lisp
