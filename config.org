@@ -594,7 +594,7 @@ Hooks for synchronization.
 *** DISABLED calfw
 #+BEGIN_SRC emacs-lisp
   ;; (use-package calfw
-  ;;   :ensure t
+  ;;   :ensure
   ;;   :config
   ;;   (require 'calfw) 
   ;;   (require 'calfw-org)
@@ -607,8 +607,8 @@ Hooks for synchronization.
   ;;      :contents-sources
   ;;      (list
   ;;       (cfw:org-create-source "Green")  ; orgmode source
-  ;;       ;(cfw:ical-create-source "gcal" "https://somecalnedaraddress" "IndianRed") ; devorah calender
-  ;;       ;(cfw:ical-create-source "gcal" "https://anothercalendaraddress" "IndianRed") ; google calendar ICS
+  ;;       ;(cfw:ical-create-source "gcal" "https://somecalnedaraddress" "IndianRed")
+  ;;       ;(cfw:ical-create-source "gcal" "https://anothercalendaraddress" "IndianRed")
   ;;       ))) 
   ;;   (setq cfw:org-overwrite-default-keybinding t))
 
