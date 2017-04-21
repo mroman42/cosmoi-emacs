@@ -315,7 +315,8 @@ I am no longer using company-auctex.
 ** org-contrib and modules
 #+BEGIN_SRC emacs-lisp
 (use-package org
-  :ensure org-plus-contrib)
+  :ensure org-plus-contrib
+  :config (define-key org-mode-map (kbd "C-<tab>") nil))
 
 ;; List of modules
 (add-to-list 'org-modules "org-bbdb")
