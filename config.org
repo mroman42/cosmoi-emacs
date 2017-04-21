@@ -609,6 +609,26 @@ Uses =C-ñ= to preview formulas:
 e^{i\tau} = 1
 \]
 
+*** Default packages
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-default-packages-alist
+  (quote
+    (("AUTO" "inputenc" t)
+     ("T1" "fontenc" t)
+     ("" "fixltx2e" nil)
+     ("" "graphicx" t)
+     ("" "grffile" t)
+     ("" "longtable" nil)
+     ("" "wrapfig" nil)
+     ("" "rotating" nil)
+     ("normalem" "ulem" t)
+     ("" "amsmath" t)
+     ("" "textcomp" t)
+     ("" "amssymb" t)
+     ("" "capt-of" nil)
+     ("colorlinks=true" "hyperref" nil))))
+#+END_SRC
+
 *** cd-latex
 #+BEGIN_SRC emacs-lisp
   (use-package cdlatex
