@@ -598,7 +598,7 @@ Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_e
   (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
 
-** Latex
+** org-latex
 Uses =C-ñ= to preview formulas:
 
 #+BEGIN_SRC emacs-lisp
