@@ -353,7 +353,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-directory m42/org-folder)
-  (setq org-archive-location (concat m42/file-archive " ::* From %s"))
+  (setq org-archive-location (concat m42/file-archive "::* From %s"))
 #+END_SRC
 
 ** Keybindings
