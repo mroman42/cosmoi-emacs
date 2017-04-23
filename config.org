@@ -463,6 +463,19 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
   (use-package ox-twbs
     :ensure ox-twbs)
 #+END_SRC
+*** Export all
+#+BEGIN_SRC emacs-lisp
+(defun m42/org-export-all-html ()
+  "Export all subtrees that are *not* tagged with :noexport: to
+separate files.
+
+Note that subtrees must have the :EXPORT_FILE_NAME: property set
+to a unique value for this to work properly."
+ (interactive)
+ (org-map-entries (lambda () (funcall 'org-html-export-to-html nil t)) "-noexport" 'region-start-level)
+ )
+#+END_SRC
+
 ** org-babel
 Loads =org-babel= languages.
 
