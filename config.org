@@ -36,17 +36,18 @@ Binds the reloading of =init.el= to =M-insert=.
 Quick access to the most important files:
 
 #+BEGIN_SRC emacs-lisp
-  (setq m42/index-file     (expand-file-name "~/org/wiki/index.org"))
-  (setq m42/wiki-file      (expand-file-name "~/org/wiki/wiki.org"))
-  (setq m42/math-file      (expand-file-name "~/projects/math/notes.org"))
-  (setq m42/links-file     (expand-file-name "~/org/wiki/links.org"))
-  (setq m42/init-file      (expand-file-name "~/.emacs.d/config.org"))
-  (setq m42/agenda-file    (expand-file-name "~/org/wiki/tasks.org"))
-  (setq m42/calendar-file  (expand-file-name "~/org/wiki/calendar.org"))
-  (setq m42/ideas-file     (expand-file-name "~/org/wiki/ideas.org"))
-  (setq m42/bugs-file      (expand-file-name "~/org/wiki/bugs.org"))
-  (setq m42/file-archive   (expand-file-name "~/org/archive.org"))
-  (setq m42/org-folder     (expand-file-name "~/org"))
+  (setq m42/index-file      (expand-file-name "~/org/wiki/index.org"))
+  (setq m42/wiki-file       (expand-file-name "~/org/wiki/wiki.org"))
+  (setq m42/math-file       (expand-file-name "~/projects/math/notes.org"))
+  (setq m42/math-drill-file (expand-file-name "~/projects/math/drill.org"))
+  (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
+  (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
+  (setq m42/agenda-file     (expand-file-name "~/org/wiki/tasks.org"))
+  (setq m42/calendar-file   (expand-file-name "~/org/wiki/calendar.org"))
+  (setq m42/ideas-file      (expand-file-name "~/org/wiki/ideas.org"))
+  (setq m42/bugs-file       (expand-file-name "~/org/wiki/bugs.org"))
+  (setq m42/file-archive    (expand-file-name "~/org/archive.org"))
+  (setq m42/org-folder      (expand-file-name "~/org"))
 
   (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/index-file)))
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
@@ -575,6 +576,17 @@ Path to Ditaa
 		 "** %?\n%U\n" :kill-buffer t :prepend t)
             ("v" "vocabulary" entry (file+olp "~/org/wiki/english.org" "Vocabulary")
 		 "** %?\n" :kill-buffer t :prepend t)
+            ("m" "math-drill cards")
+            ("mc" "category theory" entry (file+olp m42/math-drill-file "Category theory")
+             "** %? :drill:\n" :kill-buffer t :prepend t)
+            ("ma" "algebra" entry (file+olp m42/math-drill-file "Algebra")
+             "** %? :drill:\n" :kill-buffer t :prepend t)
+            ("mn" "analysis" entry (file+olp m42/math-drill-file "Analysis")
+             "** %? :drill:\n" :kill-buffer t :prepend t)
+            ("mt" "topology" entry (file+olp m42/math-drill-file "Topology")
+             "** %? :drill:\n" :kill-buffer t :prepend t)
+            ("mo" "other" entry (file+olp m42/math-drill-file "Other")
+             "** %? :drill:\n" :kill-buffer t :prepend t)
 	       )))
 #+END_SRC
 
@@ -833,6 +845,13 @@ Blog sections
       :uri-template "/about/" 
       :sort-by :date 
       :category-index nil)))
+#+END_SRC
+* Social
+** Mastodon
+#+BEGIN_SRC emacs-lisp
+(use-package mastodon
+  :config (setq mastodon-instance-url "https://kosmos.social")
+  :ensure t)
 #+END_SRC
 
 * Other packages
