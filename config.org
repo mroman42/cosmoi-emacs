@@ -432,16 +432,23 @@ Navigation between headings:
 #+END_SRC
 ** org-mode customization
 Sets attributes for the standard org-mode faces.
-   
+
+*** org-bullets
 #+BEGIN_SRC emacs-lisp
   ;; Org-bullets
   (use-package org-bullets
     :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
 
+*** Indentation
+#+BEGIN_SRC emacs-lisp
   ;; Indentation
   (setq org-startup-indented t)
+#+END_SRC
 
+*** Faces
+#+BEGIN_SRC emacs-lisp
   ;; Faces
   (set-face-attribute 'org-level-1 nil
      :inherit 'outline-1
@@ -479,8 +486,6 @@ Sets attributes for the standard org-mode faces.
     :weight 'normal
     :underline nil)
 #+END_SRC
-
-#+RESULTS:
 
 ** org-export
 *** Beamer
