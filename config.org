@@ -193,6 +193,20 @@ Indicates what face are we using currently under the cursor.
 #+END_SRC
 
 * Languages
+** Projectile
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode)
+(setq projectile-completion-system 'ivy))
+
+(use-package counsel-projectile
+  :ensure t
+  :config
+  (counsel-projectile-on))
+#+END_SRC
+
 ** Haskell
 Allows interactive Haskell evaluation in Emacs.
 
