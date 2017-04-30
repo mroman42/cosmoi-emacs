@@ -184,6 +184,14 @@ Indicates what face are we using currently under the cursor.
     (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
     ))
 #+END_SRC
+
+** Which-key
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config (which-key-mode))
+#+END_SRC
+
 * Languages
 ** Haskell
 Allows interactive Haskell evaluation in Emacs.
