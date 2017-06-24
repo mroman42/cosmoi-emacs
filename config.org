@@ -914,6 +914,11 @@ a =pinta= window to edit it.
 #+attr_latex: :width 50px
 [[./pinta//painting.png]]
 #+end_center
+** org-pomodoro
+#+BEGIN_SRC emacs-lisp
+(use-package org-pomodoro
+  :ensure t)
+#+END_SRC
 * Snippets
 ** Yasnippet support
 #+BEGIN_SRC emacs-lisp
