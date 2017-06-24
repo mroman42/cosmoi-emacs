@@ -39,6 +39,7 @@ Quick access to the most important files:
   (setq m42/index-file      (expand-file-name "~/org/wiki/index.org"))
   (setq m42/wiki-file       (expand-file-name "~/org/wiki/wiki.org"))
   (setq m42/math-file       (expand-file-name "~/projects/math/notes.org"))
+  (setq m42/tfg-file        (expand-file-name "~/projects/math/tfg.org"))
   (setq m42/math-drill-file (expand-file-name "~/projects/math/drill.org"))
   (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
@@ -50,7 +51,7 @@ Quick access to the most important files:
   (setq m42/org-folder      (expand-file-name "~/org"))
 
   (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/index-file)))
-  (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/math-file)))
+  (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/tfg-file)))
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/links-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
   (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
@@ -250,6 +251,7 @@ Elpy support.
 (use-package ein
   :ensure t)
 #+END_SRC
+
 ** Agda
 Agda-mode configuration:
 
