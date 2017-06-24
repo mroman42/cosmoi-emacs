@@ -429,8 +429,18 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-archive-location (concat m42/file-archive "::* From %s"))
 #+END_SRC
 
+** org-agenda
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+	'(("c" "Complete agenda and todo"
+           ((agenda "")
+            (tags-todo "-habit")
+            ))
+            ))
+#+END_SRC
+
 ** Keybindings
-*** Agenda and capture
+*** org-agenda and org-capture
 Basic keybindings for org-mode.
 
 #+BEGIN_SRC emacs-lisp
@@ -442,7 +452,7 @@ Basic keybindings for org-mode.
 #+END_SRC
 
 *** Navigation
-Navigation between headings:
+Navigation between headings.
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook 
