@@ -381,6 +381,7 @@ I am no longer using company-auctex.
   :config (define-key org-mode-map (kbd "C-<tab>") nil))
 
 ;; List of modules
+(add-to-list 'org-modules "org-drill")
 (add-to-list 'org-modules "org-bbdb")
 (add-to-list 'org-modules "org-bibtex")
 (add-to-list 'org-modules "org-docview")
@@ -392,9 +393,14 @@ I am no longer using company-auctex.
 (add-to-list 'org-modules "org-protocol")
 (add-to-list 'org-modules "org-rmail")
 (add-to-list 'org-modules "org-w3m")
-(add-to-list 'org-modules "org-drill")
 
 (require 'org-drill)
+(require 'org-habit)
+#+END_SRC
+
+** org-habit
+#+BEGIN_SRC emacs-lisp
+(setq org-habit-show-habits-only-for-today t)
 #+END_SRC
 
 ** org-ref
