@@ -306,6 +306,15 @@ Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/20
   :ensure t)
 (setq default-tab-width 4)
 #+END_SRC
+
+** Proof General
+Loads the Proof General file. Proof General can be installed directly
+from AUR.
+
+#+BEGIN_SRC emacs-lisp
+(load "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site")
+#+END_SRC
+
 ** DISABLED HAML
 HAML support.
 
@@ -317,13 +326,6 @@ HAML support.
   ;;           (lambda ()
   ;;             (setq indent-tabs-mode nil)
   ;;             (define-key haml-mode-map "\C-m" 'newline-and-indent)))
-#+END_SRC
-
-** DISABLED Proof General
-Loads the Proof General file.
-
-#+BEGIN_SRC emacs-lisp
-; (load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 #+END_SRC
 ** DISABLED Completion
 Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's emacs.d]].
