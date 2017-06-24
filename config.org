@@ -32,6 +32,12 @@ Binds the reloading of =init.el= to =M-insert=.
 (global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
 #+END_SRC
 
+** Restart emacs
+#+BEGIN_SRC emacs-lisp
+(use-package restart-emacs
+  :ensure t)
+#+END_SRC
+
 ** Files
 Quick access to the most important files:
 
@@ -756,22 +762,22 @@ e^{i\tau} = 1
 
 *** Default packages
 #+BEGIN_SRC emacs-lisp
-  (setq org-latex-default-packages-alist
-    (quote
-      (("utf8" "inputenc" t)
-       ("T1" "fontenc" t)
-       ("" "fixltx2e" nil)
-       ("" "graphicx" t)
-       ("" "grffile" t)
-       ("" "longtable" nil)
-       ("" "wrapfig" nil)
-       ("" "rotating" nil)
-       ("normalem" "ulem" t)
-       ("" "amsmath" t)
-       ("" "textcomp" t)
-       ("" "amssymb" t)
-       ("" "capt-of" nil)
-       ("colorlinks=true" "hyperref" nil))))
+  ;; (setq org-latex-default-packages-alist
+  ;;   (quote
+  ;;     (("utf8" "inputenc" t)
+  ;;      ("T1" "fontenc" t)
+  ;;      ("" "fixltx2e" nil)
+  ;;      ("" "graphicx" t)
+  ;;      ("" "grffile" t)
+  ;;      ("" "longtable" nil)
+  ;;      ("" "wrapfig" nil)
+  ;;      ("" "rotating" nil)
+  ;;      ("normalem" "ulem" t)
+  ;;      ("" "amsmath" t)
+  ;;      ("" "textcomp" t)
+  ;;      ("" "amssymb" t)
+  ;;      ("" "capt-of" nil)
+  ;;      ("colorlinks=true" "hyperref" nil))))
 #+END_SRC
 
 *** Ignore headlines
