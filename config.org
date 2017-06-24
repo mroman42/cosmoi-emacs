@@ -411,7 +411,17 @@ I am no longer using company-auctex.
 (setq org-ref-default-bibliography '("~/projects/math/math.bib"))
 #+END_SRC
 
-** org-archive
+** org-refile
+From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/czg008y/][this reddit comment]].
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets '((nil :maxlevel . 2)
+                                (org-agenda-files :maxlevel . 9)))
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+#+END_SRC
+
+*** archive
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
 #+BEGIN_SRC emacs-lisp
