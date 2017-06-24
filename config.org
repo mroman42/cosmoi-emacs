@@ -460,6 +460,7 @@ Navigation between headings.
               (local-set-key "\M-n" 'outline-next-visible-heading)
               (local-set-key "\M-p" 'outline-previous-visible-heading)))
 #+END_SRC
+
 ** org-mode customization
 Sets attributes for the standard org-mode faces.
 
@@ -757,7 +758,7 @@ e^{i\tau} = 1
 #+BEGIN_SRC emacs-lisp
 (setq org-latex-default-packages-alist
   (quote
-    (("AUTO" "inputenc" t)
+    (("utf8" "inputenc" t)
      ("T1" "fontenc" t)
      ("" "fixltx2e" nil)
      ("" "graphicx" t)
