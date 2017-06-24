@@ -774,6 +774,46 @@ e^{i\tau} = 1
      ("colorlinks=true" "hyperref" nil))))
 #+END_SRC
 
+*** Ignore headlines
+#+BEGIN_SRC emacs-lisp
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+#+END_SRC
+
+*** scrbook
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("scrbook" "\\documentclass{scrbook}"
+                 ("\\part{%s}" . "\\part*{%s}")
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
+#+END_SRC
+
+*** scrrept
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("scrreprt" "\\documentclass{scrreprt}"
+                 ("\\part{%s}" . "\\part*{%s}")
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
+#+END_SRC
+
+*** minted
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-listings 'minted
+      org-latex-packages-alist '(("" "minted")))
+(setq org-latex-minted-options
+     '(("frame" "lines") 
+       ))
+#+END_SRC
 *** cd-latex
 #+BEGIN_SRC emacs-lisp
   (use-package cdlatex
