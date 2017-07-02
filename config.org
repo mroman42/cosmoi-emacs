@@ -1,18 +1,19 @@
-#+TITLE: myinit.org
+#+TITLE: config.org
 #+AUTHOR: Mario Román
 #+EMAIL: mromang08@gmail.com
 #+TODO: DISABLED WIP | DONE
 
-* My Emacs configuration file
 This is my Emacs init file, written in org-mode using literate
-programming and =org-babel= blocks.  I have taken ideas for my
-configuration mainly from:
+programming and =org-babel= blocks. The =init.el= file tangles the
+Elisp code blocks of this file into =config.el=. I have taken ideas
+for my configuration mainly from:
 
  - [[http://cestlaz.github.io/][C'est la Z]]
  - [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
 
-It works for me on Emacs 26.0.
+It /works for me/ on Emacs 26.0.
 
+* Basic
 ** Personal information
 #+BEGIN_SRC emacs-lisp
 (setq user-full-name "Mario Román"
