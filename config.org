@@ -6,41 +6,42 @@
 This is my Emacs init file, written in org-mode using literate
 programming and =org-babel= blocks. The =init.el= file tangles the
 Elisp code blocks of this file into =config.el=. I have taken ideas
-for my configuration mainly from:
+for my configuration mainly from
 
- - [[http://cestlaz.github.io/][C'est la Z]]
- - [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
+  - [[http://cestlaz.github.io/][C'est la Z]]
+  - [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
 
-It /works for me/ on Emacs 26.0.
+and from many other configuration files and blogs such as
+
+  - [[http://emacsredux.com/][Emacs Redux]]
+  - [[http://irreal.org/blog/][Irreal]]
+  - [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's configuration file]]
+  - [[http://karl-voit.at/2017/06/03/emacs-org/][Karl Voit's configuration file]]
+
+It /works for me/ on Emacs 26.0.50 and org-version 9.0.9. You can check
+your Emacs version with =M-x version= and your org-mode version with
+=M-x org-version=.
 
 * Basic
 ** Personal information
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html][User information]] used by Emacs in frame titles and email.
+
 #+BEGIN_SRC emacs-lisp
 (setq user-full-name "Mario Román"
       user-mail-address "mromang08@gmail.com")
 #+END_SRC
 
-Sensitive information
+Sensitive information is stored into a different file which I do not
+upload to GitHub. It sets some variables.
 
 #+BEGIN_SRC emacs-lisp
 (load "~/.emacs.d/emacs.secrets" t)
 #+END_SRC
 
-** Reload init.el
-Binds the reloading of =init.el= to =M-insert=.
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
-#+END_SRC
-
-** Restart emacs
-#+BEGIN_SRC emacs-lisp
-(use-package restart-emacs
-  :ensure t)
-#+END_SRC
-
 ** Files
-Quick access to the most important files:
+A list of the most important files on my workflow. Those variables are
+used all across the configuration file; and listing them here eases
+the process of rewriting directory paths.
 
 #+BEGIN_SRC emacs-lisp
   (setq m42/index-file      (expand-file-name "~/org/wiki/index.org"))
