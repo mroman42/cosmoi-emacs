@@ -813,7 +813,7 @@ e^{i\tau} = 1
 #+BEGIN_SRC emacs-lisp
   ;; (setq org-latex-default-packages-alist
   ;;   (quote
-  ;;     (("utf8" "inputenc" t)
+  ;;     (("utf8x" "inputenc" t)
   ;;      ("T1" "fontenc" t)
   ;;      ("" "fixltx2e" nil)
   ;;      ("" "graphicx" t)
