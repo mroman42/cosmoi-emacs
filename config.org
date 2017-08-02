@@ -68,11 +68,31 @@ the process of rewriting directory paths.
 #+END_SRC
 
 ** Initial buffer
-Inhibits the startup screen and loads an initial buffer:
+Inhibits the startup screen and loads an initial buffer.
 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
 (setq initial-buffer-choice m42/agenda-file)
+#+END_SRC
+
+** Reload init.el
+The configuration files can be reloaded at any time using =M-insert=.
+This eases the process of writing, debugging and testing the
+configuration file. Current set variables will not be removed; and
+Emacs will need a complete restart to clean them.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
+#+END_SRC
+
+** Restart emacs
+[[https://github.com/iqbalansari/restart-emacs][Restart-emacs]] is a package to restart Emacs from within Emacs. It
+offers the command =restart-emacs=, which kills the current Emacs
+session and starts a new session.
+
+#+BEGIN_SRC emacs-lisp
+(use-package restart-emacs
+  :ensure t)
 #+END_SRC
 
 ** Backup files
@@ -80,12 +100,6 @@ Disables backup files.
 
 #+BEGIN_SRC emacs-lisp
 (setq make-backup-files nil)
-#+END_SRC
-
-** Word wrapping and selection mode
-#+BEGIN_SRC emacs-lisp
-(setq-default word-wrap 1)
-(delete-selection-mode 1)
 #+END_SRC
 
 ** Shell
@@ -96,6 +110,10 @@ Starts shell using =C-c s=.
 #+END_SRC
 
 ** Smex
+[[https://www.emacswiki.org/emacs/Smex][Smex]] provides an enhancement to the =M-x= command. Uses =ido= for
+autocompletion and provides a convenient interface to the most
+frequently used commands.
+
 #+BEGIN_SRC emacs-lisp
 (use-package smex
   :ensure t
@@ -103,7 +121,10 @@ Starts shell using =C-c s=.
   :bind (("M-x" . smex)))
 #+END_SRC
 
-** Switching buffers with Ctrl+Tab
+** Switching windows with ctrl+tab
+It is possible to change windows in Emacs using =C-x o=, but
+sometimes =C-tab= still feels more intuitive to me.
+
 #+BEGIN_SRC emacs-lisp
 (global-set-key [C-tab] 'other-window)
 (global-set-key [C-iso-lefttab]
@@ -112,13 +133,12 @@ Starts shell using =C-c s=.
     (other-window -1)))
 #+END_SRC
 
-** Yes-no to y-n
-#+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
-
 * Customization
 ** Theme
+Uses the [[https://github.com/bbatsov/zenburn-emacs][Zenburn color theme]], which is a dark, low-contrast theme
+ported from Vim. It also loads the [[https://github.com/jasonblewis/color-theme-wombat][Wombat theme]], also a dark theme
+ported from Vim.
+
 #+BEGIN_SRC emacs-lisp
 ; Zenburn theme
 (use-package zenburn-theme
@@ -138,10 +158,24 @@ Disable the toolbar and menubar
 (tooltip-mode -1)
 #+END_SRC
 
+** Cursor
 Cursor should not blink
 
 #+BEGIN_SRC emacs-lisp
 (setq blink-cursor-mode nil)
+#+END_SRC
+
+** Yes-no to y-n
+Yes-no questions are unnecessarily long.
+
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+** Word wrapping and selection mode
+#+BEGIN_SRC emacs-lisp
+(setq-default word-wrap 1)
+(delete-selection-mode 1)
 #+END_SRC
 
 ** Custom file
