@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: product
+# key: %product
+# --
+\[\begin{tikzcd}[column sep=tiny]
+& $1 \ar[bend left]{ddr}{$2}\ar[swap,bend right]{ddl}{$3}\dar[dashed]{\exists!} & \\
+& $4 \drar[swap]{$5} \dlar{$6} & \\
+$7 && $8
+\end{tikzcd}\]

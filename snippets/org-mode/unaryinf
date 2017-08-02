@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: unaryinf
+# key: %unary
+# --
+\begin{prooftree}
+\AxiomC{$1}
+\UnaryInfC{$2}
+\end{prooftree}

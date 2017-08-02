@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: binaryinf
+# key: %binary
+# --
+\begin{prooftree}
+\AxiomC{$1}
+\AxiomC{$2}
+\BinaryInfC{$3}
+\end{prooftree}

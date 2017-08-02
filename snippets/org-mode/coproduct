@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: coproduct
+# key: %coproduct
+# --
+\[\begin{tikzcd}[column sep=tiny]
+& $1  & \\\\
+& $2  \uar[dashed]{\exists!}  & \\\\
+$3 \ar[bend left]{uur}{$5}       \urar[swap]{$7} &&
+$4 \ar[swap,bend right]{uul}{$6} \ular{$8}
+\end{tikzcd}\]
