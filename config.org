@@ -655,6 +655,16 @@ of its configuration file with the command =agda-mode locate=.
                 (shell-command-to-string "agda-mode locate")))
 #+END_SRC
 
+*** Customization
+Little tweak on agda colors. Original blue was too dark.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'agda-mode-hook
+    (lambda ()
+      (set-face-attribute 'agda2-highlight-record-face nil
+        :foreground "light steel blue")))
+#+END_SRC
+
 ** Sage
 #+BEGIN_SRC emacs-lisp
   (use-package sage-shell-mode
