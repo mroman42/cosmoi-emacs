@@ -236,6 +236,15 @@ Indicates what face are we using currently under the cursor.
 #+END_SRC
 
 * Programming
+** Flycheck
+Flycheck checks the syntax of programming languages.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+#+END_SRC
+
 ** Magit
 [[https://magit.vc/][Magit]] is an interface to the version control system [[https://git-scm.com/][Git]]. The main
 function is =magit-status=, which shows the status of the files on the
@@ -1164,14 +1173,7 @@ A Hugo blogging solution based on [[http://www.holgerschurig.de/en/emacs-blog-fr
 #+END_SRC
 
 * Other packages
-** Flycheck
-Flycheck checks the syntax of programming languages.
 
-#+BEGIN_SRC emacs-lisp
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
-#+END_SRC
 
 ** Engine-mode
 [[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different 
