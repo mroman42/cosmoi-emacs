@@ -1,0 +1,36 @@
+* org-mode
+** ams environment
+#+begin_$1
+$0
+#+end_$1
+** theorem
+#+BEGIN_THEOREM
+$0
+#+END_THEOREM
+** lemma
+#+BEGIN_LEMMA
+$0
+#+END_LEMMA
+** definition
+#+BEGIN_DEFINITION
+$0
+#+END_DEFINITION
+** remark
+#+BEGIN_REMARK
+$0
+#+END_REMARK
+** binary inference
+\begin{prooftree}
+\AXC{$$1$}
+\AXC{$$2$}
+\BIC{$$3$}
+\end{prooftree}
+** unary inference
+\begin{prooftree}
+\AXC{$$1$}
+\UIC{$$2$}
+\end{prooftree}
+* haskell-mode
+** function haskell                                             :indent_nil:
+$1 :: $2
+$1 = $0

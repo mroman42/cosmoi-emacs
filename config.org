@@ -992,7 +992,8 @@ a =pinta= window to edit it.
 #+END_SRC
 ** Yankpad
 [[https://github.com/Kungsgeten/yankpad][Yankpad]] provides a simpler way of managing snippets within an
-org-mode file. Snippets are stored in the =yankpad-file=.
+org-mode file. Snippets are stored in the =yankpad-file=, which
+in my case is [[file:yankpad.org][this]] file.
 
  * Snippets can be inserted with =yankpad-insert=.
  * Current category of snippets can be set with =yankpad-capture=.
@@ -1003,8 +1004,8 @@ org-mode file. Snippets are stored in the =yankpad-file=.
   (use-package yankpad
     :ensure t
     :defer 10
-    :init
-    (setq yankpad-file "~/org/yankpad.org")
+    :init (setq yankpad-file "~/.emacs.d/yankpad.org")
+    :bind (("M-ñ" . yankpad-insert))
   )
 #+END_SRC
 
