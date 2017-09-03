@@ -46,6 +46,7 @@ the process of rewriting directory paths.
 #+BEGIN_SRC emacs-lisp
   (setq m42/index-file      (expand-file-name "~/org/wiki/index.org"))
   (setq m42/wiki-file       (expand-file-name "~/org/wiki/wiki.org"))
+  (setq m42/math-index-file (expand-file-name "~/projects/math/index.org"))
   (setq m42/math-file       (expand-file-name "~/projects/math/notes.org"))
   (setq m42/tfg-file        (expand-file-name "~/projects/math/tfg.org"))
   (setq m42/math-drill-file (expand-file-name "~/projects/math/drill.org"))
@@ -60,7 +61,7 @@ the process of rewriting directory paths.
 
   (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/index-file)))
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/tfg-file)))
-  (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/links-file)))
+  (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-index-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
   (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
 
