@@ -1,24 +1,43 @@
 * org-mode
 ** ams environment
-#+begin_$1
+#+attr_latex: :options [$1]
+#+begin_$2
 $0
-#+end_$1
+#+end_$2
 ** theorem
-#+BEGIN_THEOREM
+#+attr_latex: :options [$1]
+#+begin_theorem 
 $0
-#+END_THEOREM
+#+end_theorem
+** proposition
+#+attr_latex: :options [$1]
+#+begin_proposition
+$0
+#+end_proposition
 ** lemma
-#+BEGIN_LEMMA
+#+attr_latex: :options [$1]
+#+BEGIN_lemma
 $0
-#+END_LEMMA
+#+END_lemma
 ** definition
-#+BEGIN_DEFINITION
+#+attr_latex: :options [$1]
+#+begin_definition
 $0
-#+END_DEFINITION
+#+end_definition
 ** remark
-#+BEGIN_REMARK
+#+attr_latex: :options [$1]
+#+begin_remark
 $0
-#+END_REMARK
+#+end_remark
+** example
+#+attr_latex: :options [$1]
+#+begin_exampleth
+$0
+#+end_exampleth
+** proof
+#+begin_proof
+$0
+#+end_proof
 ** binary inference
 \begin{prooftree}
 \AXC{$$1$}
@@ -30,7 +49,33 @@ $0
 \AXC{$$1$}
 \UIC{$$2$}
 \end{prooftree}
+** tikz square
+\[\begin{tikzcd}
+$1 \rar{$5} \dar[swap]{$6} & 
+$2 \dar{$7} \\
+$3 \rar{$8} &
+$4
+\end{tikzcd}\]
+$0
+** mikrokosmos code
+#+BEGIN_export html
+<div class="mikrojs-console">
+<script type="text/mikrokosmos">
+$0</script>
+</div>
+#+END_export
 * haskell-mode
 ** function haskell                                             :indent_nil:
 $1 :: $2
 $1 = $0
+* markdown-mode
+** libreim resource
+---
+title: "$1"
+authors:
+- $2
+link: "$3"
+license: $4
+tags:
+- $5
+---
