@@ -142,6 +142,15 @@ sometimes =C-tab= still feels more intuitive to me.
     (other-window -1)))
 #+END_SRC
 
+** Multiple cursors
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         )
+)
+#+END_SRC
 * Customization
 ** Theme
 Uses the [[https://github.com/bbatsov/zenburn-emacs][Zenburn color theme]], which is a dark, low-contrast theme
