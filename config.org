@@ -677,7 +677,7 @@ of its configuration file with the command =agda-mode locate=.
 Little tweak on agda colors. Original blue was too dark.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'agda-mode-hook
+  (add-hook 'agda2-mode-hook
     (lambda ()
       (set-face-attribute 'agda2-highlight-record-face nil
         :foreground "light steel blue")))
