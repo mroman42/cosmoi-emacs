@@ -38,6 +38,13 @@ $0
 #+begin_proof
 $0
 #+end_proof
+** trinary inference
+\begin{prooftree}
+\AXC{$$1$}
+\AXC{$$2$}
+\AXC{$$3$}
+\TIC{$$4$}
+\end{prooftree}
 ** binary inference
 \begin{prooftree}
 \AXC{$$1$}
