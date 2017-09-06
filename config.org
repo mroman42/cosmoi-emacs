@@ -887,6 +887,11 @@ Navigation between headings.
 ** org-mode customization
 Sets attributes for the standard org-mode faces.
 
+*** org-pretty-entities
+#+BEGIN_SRC emacs-lisp
+(setq org-pretty-entities t)
+#+END_SRC
+
 *** org-bullets
 #+BEGIN_SRC emacs-lisp
   ;; Org-bullets
