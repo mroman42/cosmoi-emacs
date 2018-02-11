@@ -2649,6 +2649,15 @@ a =pinta= window to edit it.
 #+BEGIN_SRC emacs-lisp
 (setq org-checkbox-hierarchical-statistics t)
 #+END_SRC
+** org-timer
+From http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-clock-in-hook 'save-buffer)
+(add-hook 'org-clock-out-hook 'save-buffer)
+(find-file-noselect "~/org/wiki/timelog.org")
+#+END_SRC
+
 * Snippets
 ** Yasnippet support
 #+BEGIN_SRC emacs-lisp
