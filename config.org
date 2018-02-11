@@ -386,11 +386,28 @@ feedback.
     ))
 #+END_SRC
 
-** Which-key
+** Smartparens
 #+BEGIN_SRC emacs-lisp
-(use-package which-key
+(use-package smartparens
+  :ensure t)
+;; (require 'smartparens-config)
+#+END_SRC
+** Avy
+#+BEGIN_SRC emacs-lisp
+(use-package avy
   :ensure t
-  :config (which-key-mode))
+  :bind ("C-:" . avy-goto-char)
+)
+#+END_SRC
+** Anzu
+#+BEGIN_SRC emacs-lisp
+(use-package anzu
+  :ensure t
+  :init
+    (anzu-mode +1)
+    (global-anzu-mode +1)
+  :config
+    (setq anzu-cons-mode-line-p nil))
 #+END_SRC
 
 * Programming
@@ -402,7 +419,11 @@ Flycheck checks the syntax of programming languages.
   :ensure t
   :init (global-flycheck-mode))
 #+END_SRC
-
+** Polymode
+#+BEGIN_SRC emacs-lisp
+  (use-package polymode
+    :ensure t)
+#+END_SRC
 ** Magit
 [[https://magit.vc/][Magit]] is an interface to the version control system [[https://git-scm.com/][Git]]. The main
 function is =magit-status=, which shows the status of the files on the
