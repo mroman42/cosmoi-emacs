@@ -843,6 +843,14 @@ Little tweak on agda colors. Original blue was too dark.
     (lambda ()
       (set-face-attribute 'agda2-highlight-record-face nil
         :foreground "light steel blue")))
+  (add-hook 'agda2-mode-hook
+    (lambda ()
+      (set-face-attribute 'agda2-highlight-postulate-face nil
+        :foreground "light steel blue")))
+  (add-hook 'agda2-mode-hook
+    (lambda ()
+      (set-face-attribute 'agda2-highlight-primitive-face nil
+        :foreground "light steel blue")))
 #+END_SRC
 
 ** Sage
