@@ -2170,7 +2170,8 @@ Navigation between headings.
   (add-hook 'org-mode-hook 
             (lambda ()
               (local-set-key "\M-n" 'outline-next-visible-heading)
-              (local-set-key "\M-p" 'outline-previous-visible-heading)))
+              (local-set-key "\M-p" 'outline-previous-visible-heading)
+              ))
 #+END_SRC
 
 ** org-mode customization
@@ -2178,7 +2179,7 @@ Sets attributes for the standard org-mode faces.
 
 *** org-pretty-entities
 #+BEGIN_SRC emacs-lisp
-(setq org-pretty-entities t)
+(setq org-pretty-entities nil)
 #+END_SRC
 
 *** org-bullets
@@ -2187,6 +2188,8 @@ Sets attributes for the standard org-mode faces.
   (use-package org-bullets
     :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+  (setq org-bullets-bullet-list '("◉" "○" "✸" "●"))
 #+END_SRC
 
 *** Indentation
@@ -2247,6 +2250,7 @@ Exports to beamer. Defines the beamer class.
                  ("\\section\{%s\}" . "\\section*\{%s\}")
                  ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
                  ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
+  (require 'ox-beamer)
 #+END_SRC
 
 *** Reveal.js
