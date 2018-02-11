@@ -156,8 +156,32 @@ sometimes =C-tab= still feels more intuitive to me.
          )
 )
 #+END_SRC
+
+** Rainbow delimiters
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+    (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
+)
+
+#+END_SRC
+** Visual-regexp
+#+BEGIN_SRC emacs-lisp
+(use-package visual-regexp
+  :ensure t
+  :bind (
+    ("C-c C-r" . vr/replace)
+    ("C-c q" . vr/query-replace)
+    ("C-c m" . vr/mc-mark)
+    )
+)
+#+END_SRC
+
 * Customization
 ** Theme
+*** Zenburn
 Uses the [[https://github.com/bbatsov/zenburn-emacs][Zenburn color theme]], which is a dark, low-contrast theme
 ported from Vim. It also loads the [[https://github.com/jasonblewis/color-theme-wombat][Wombat theme]], also a dark theme
 ported from Vim.
