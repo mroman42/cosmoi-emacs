@@ -81,7 +81,7 @@ Inhibits the startup screen and loads an initial buffer.
 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
-(setq initial-buffer-choice m42/agenda-file)
+(setq initial-buffer-choice m42/init-file)
 #+END_SRC
 
 ** Reload init.el
@@ -104,6 +104,11 @@ session and starts a new session.
   :ensure t)
 #+END_SRC
 
+** Better defaults
+#+BEGIN_SRC emacs-lisp
+(use-package better-defaults
+  :ensure t)
+#+END_SRC
 ** Backup files
 Disables backup files.
 
