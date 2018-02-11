@@ -2310,6 +2310,17 @@ Loads =org-babel= languages.
      ))
 #+END_SRC
 
+*** org-edit-special
+https://emacs.stackexchange.com/a/8168/12208
+
+#+BEGIN_SRC emacs-lisp
+(setq org-src-window-setup 'current-window)
+;  (defadvice org-edit-src-code (around set-buffer-file-name activate compile)
+;    (let ((file-name (buffer-file-name))) ;; (1)
+;      ad-do-it                            ;; (2)
+;      (setq buffer-file-name file-name))) ;; (3)
+#+END_SRC
+
 *** Sage
 Org-babel-sage configuration:
 
@@ -2363,15 +2374,6 @@ Path to Ditaa
 ** org-capture
 #+BEGIN_SRC emacs-lisp
   (require 'org-protocol)
-
-  (defadvice org-capture
-    (after make-full-window-frame activate)
-    "Advise capture to be the only window when used as a popup"
-    (if (equal "emacs-capture" (frame-parameter nil 'name))
-      (delete-other-windows)))
-
-  (add-hook 'org-capture-mode-hook 'delete-other-windows)
-  (add-hook 'org-capture-after-finalize-hook 'delete-frame)
 
   (setq org-capture-templates
 	(quote (
