@@ -195,6 +195,68 @@ ported from Vim.
 (load-theme 'wombat t)
 #+END_SRC
 
+Uses Fira as default font
+
+#+BEGIN_SRC emacs-lisp
+; Fira code
+(add-to-list 'default-frame-alist '(font . "Fira Mono-10" ))
+(set-face-attribute 'default t :font "Fira Mono-10" )
+(set-default-font "Fira Mono")
+#+END_SRC
+
+*** DISABLED Spacemacs theme
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package spacemacs-theme
+  ;;   :ensure t
+  ;;   :init
+  ;;   (load-theme 'spacemacs-dark t)
+  ;;   (setq spacemacs-theme-org-agenda-height nil)
+  ;;   (setq spacemacs-theme-org-height nil)
+  ;;   :config
+  ;;   (set-face-attribute 'org-level-1 nil :height 1.0)
+  ;;   (set-face-attribute 'org-level-2 nil :height 1.0)
+  ;;   (set-face-attribute 'org-level-3 nil :height 1.0)
+  ;;   (set-face-attribute 'org-scheduled-today nil :height 1.0)
+  ;;   (set-face-attribute 'org-agenda-date-today nil :height 1.1)
+  ;;   (set-face-attribute 'org-table nil :foreground "#008787")
+  ;; )
+#+END_SRC
+** DISABLED Fira code
+#+BEGIN_SRC emacs-lisp
+  ;; (when (window-system)
+  ;;   (set-default-font "Fira Code-10")
+  ;; )
+  ;; (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+  ;;                (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+  ;;                (36 . ".\\(?:>\\)")
+  ;;                (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+  ;;                (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+  ;;                (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+  ;;                (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+  ;;                (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+  ;;                (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+  ;;                (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+  ;;                (48 . ".\\(?:x[a-zA-Z]\\)")
+  ;;                (58 . ".\\(?:::\\|[:=]\\)")
+  ;;                (59 . ".\\(?:;;\\|;\\)")
+  ;;                (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+  ;;                (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+  ;;                (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+  ;;                (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+  ;;                (91 . ".\\(?:]\\)")
+  ;;                (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+  ;;                (94 . ".\\(?:=\\)")
+  ;;                (119 . ".\\(?:ww\\)")
+  ;;                (123 . ".\\(?:-\\)")
+  ;;                (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+  ;;                (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
+  ;;                )
+  ;;              ))
+  ;;   (dolist (char-regexp alist)
+  ;;     (set-char-table-range composition-function-table (car char-regexp)
+  ;;                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
+#+END_SRC
+
 ** Toolbar and menubar
 Disable the toolbar and menubar
 
