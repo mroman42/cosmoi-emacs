@@ -71,6 +71,12 @@ $0
 $0</script>
 </div>
 #+END_export
+** two part definition
+\left\{\begin{array}{ll}
+$1  & \mbox{if } $2 \\
+$3 & \mbox{if } $4
+\end{array}\right.
+
 * haskell-mode
 ** function haskell                                             :indent_nil:
 $1 :: $2
@@ -86,3 +92,10 @@ license: $4
 tags:
 - $5
 ---
+* agda2-mode
+** literary latex snippet
+%<*$1>
+\begin{code}
+
+\end{code}
+%</$1>
