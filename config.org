@@ -306,6 +306,55 @@ Indicates what face are we using currently under the cursor.
       (if face (message "Face: %s" face) (message "No face at %d" pos))))
 #+END_SRC
 
+** Which-key
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config (which-key-mode))
+#+END_SRC
+
+** Electric pair mode
+#+BEGIN_SRC emacs-lisp
+(electric-pair-mode 1)
+#+END_SRC
+
+** Spaceline
+#+BEGIN_SRC emacs-lisp
+(use-package spaceline
+  :ensure t
+  :demand t
+  :init
+    (setq powerline-default-separator 'contour)
+  :config
+    (require 'spaceline-config)
+    (spaceline-emacs-theme)
+    (setq-default spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+    (spaceline-toggle-minor-modes-off)
+)
+#+END_SRC
+** Golden ratio
+#+BEGIN_SRC emacs-lisp
+(use-package golden-ratio
+  :ensure t
+  :init
+    (golden-ratio-mode 1))
+#+END_SRC
+** Volatile highlights
+([[http://pragmaticemacs.com/emacs/volatile-highlights/][From Pragmatic Emacs]]) The package volatile highlights temporarily
+highlights changes to the buffer associated with certain commands that
+add blocks of text at once. An example is that if you paste (yank) a
+block of text, it will be highlighted until you press the next
+key. This is just a small tweak, but gives a nice bit of visual
+feedback.
+
+#+BEGIN_SRC emacs-lisp
+(use-package volatile-highlights
+  :ensure t
+  :config
+    (volatile-highlights-mode t)
+)
+#+END_SRC
+* Navigation
 ** Swiper
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
