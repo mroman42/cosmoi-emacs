@@ -447,7 +447,8 @@ current repository.
 (use-package counsel-projectile
   :ensure t
   :config
-  (counsel-projectile-on))
+  ;(counsel-projectile-on)
+)
 #+END_SRC
 
 ** Haskell
@@ -808,15 +809,15 @@ Emacs Speaks Statistics.
 (require 'ess-site)
 #+END_SRC
 
-** Python
+** DISABLED Python
 Elpy support.
 
 #+BEGIN_SRC emacs-lisp
-(use-package elpy
-  :ensure t)
-(elpy-enable)
-(elpy-use-ipython)
-(setq elpy-rpc-python-command "python2")
+  ;; (use-package elpy
+  ;;   :ensure t)
+  ;; (elpy-enable)
+  ;; (elpy-use-ipython)
+  ;; (setq elpy-rpc-python-command "python2")
 #+END_SRC
 
 *** Jupyter notebook
