@@ -2837,6 +2837,16 @@ A Hugo blogging solution based on [[http://www.holgerschurig.de/en/emacs-blog-fr
 #+END_SRC
 
 * Social
+** Wikipedia
+#+BEGIN_SRC emacs-lisp
+(use-package mediawiki
+  :ensure t)
+
+(setq mediawiki-site-alist
+      (append '(("ArchWiki" "https://wiki.archlinux.org/" "username" "password" "Main page"))
+              mediawiki-site-alist))
+#+END_SRC
+
 ** Mastodon
 [[https://en.wikipedia.org/wiki/Mastodon_(software)][Mastodon]] is a free software federated social network. A specific
 [[https://github.com/jdenen/mastodon.el][mastodon-mode]] was written by Johnson Denen (@jdenen).
