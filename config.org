@@ -425,7 +425,13 @@ feedback.
   :config
     (setq anzu-cons-mode-line-p nil))
 #+END_SRC
-
+** Pdf-tools
+#+BEGIN_SRC emacs-lisp
+(use-package pdf-tools
+  :ensure t
+  :config
+    (pdf-tools-install))
+#+END_SRC
 * Programming
 ** Flycheck
 Flycheck checks the syntax of programming languages.
