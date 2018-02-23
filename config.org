@@ -2495,12 +2495,8 @@ Uses =C-ñ= to preview formulas:
   (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
 
   ;; Zoom
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.3))
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2))
 #+END_SRC
-
-\[
-e^{i\tau} = 1
-\]
 
 *** Default packages
 #+BEGIN_SRC emacs-lisp
@@ -2614,7 +2610,7 @@ Conmutative diagrams with the =tikz-cd= package.
   (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
 
-*** Zooming
+*** Zooming & scale
 Zooms latex image previews along with the text using =C-x C-+=.
 
 #+BEGIN_SRC emacs-lisp
