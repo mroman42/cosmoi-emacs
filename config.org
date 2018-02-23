@@ -349,7 +349,11 @@ Indicates what face are we using currently under the cursor.
 (use-package golden-ratio
   :ensure t
   :init
-    (golden-ratio-mode 1))
+    (golden-ratio-mode 1)
+  :config
+    (add-to-list 'golden-ratio-exclude-modes "agda2-mode")
+    (add-to-list 'golden-ratio-exclude-modes "compilation-mode")
+)
 #+END_SRC
 ** Volatile highlights
 ([[http://pragmaticemacs.com/emacs/volatile-highlights/][From Pragmatic Emacs]]) The package volatile highlights temporarily
