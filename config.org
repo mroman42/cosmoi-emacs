@@ -46,14 +46,14 @@ the process of rewriting directory paths.
 #+BEGIN_SRC emacs-lisp
   (setq m42/index-file      (expand-file-name "~/org/wiki/index.org"))
   (setq m42/wiki-file       (expand-file-name "~/org/wiki/wiki.org"))
-  (setq m42/math-index-file (expand-file-name "~/projects/math/index.org"))
-  (setq m42/math-file       (expand-file-name "~/projects/math/notes.org"))
+  (setq m42/math-index-file (expand-file-name "~/projects/math/math.org"))
+  (setq m42/math-file       (expand-file-name "~/projects/math/math.org"))
   (setq m42/tfg-file        (expand-file-name "~/projects/math/tfg.org"))
   (setq m42/math-drill-file (expand-file-name "~/projects/math/drill.org"))
   (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
   (setq m42/agenda-file     (expand-file-name "~/org/wiki/tasks.org"))
-  (setq m42/calendar-file   (expand-file-name "~/org/wiki/calendar.org"))
+;  (setq m42/calendar-file   (expand-file-name "~/org/wiki/calendar.org"))
   (setq m42/ideas-file      (expand-file-name "~/org/wiki/ideas.org"))
   (setq m42/bugs-file       (expand-file-name "~/org/wiki/bugs.org"))
   (setq m42/file-archive    (expand-file-name "~/org/archive.org"))
@@ -65,12 +65,12 @@ the process of rewriting directory paths.
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
   (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
 
-  (setq org-agenda-files (list m42/agenda-file m42/calendar-file))
+  ;  (setq org-agenda-files (list m42/agenda-file m42/calendar-file))
 #+END_SRC
 
 *** Local bin
-Includes the local bin on the =exec-path=. This allows Emacs to find executables
-between the local binaries.
+Includes the local bin on the =exec-path=. This allows Emacs to find
+executables in the local binaries folder.
 
 #+BEGIN_SRC emacs-lisp
 (setq exec-path (cons "/home/mario/.local/bin" exec-path))
