@@ -221,6 +221,18 @@ Uses Fira as default font
   ;;   (set-face-attribute 'org-table nil :foreground "#008787")
   ;; )
 #+END_SRC
+** Dashboard
+#+BEGIN_SRC emacs-lisp
+(use-package dashboard
+    :ensure t
+    :diminish dashboard-mode
+    :config
+    (setq dashboard-banner-logo-title "Welcome to Emacs!")
+    (setq dashboard-items '((recents  . 10)
+                            (bookmarks . 10)))
+    (dashboard-setup-startup-hook))
+#+END_SRC
+
 ** DISABLED Fira code
 #+BEGIN_SRC emacs-lisp
   ;; (when (window-system)
