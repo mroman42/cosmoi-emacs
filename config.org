@@ -2211,7 +2211,7 @@ Sets attributes for the standard org-mode faces.
     :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-  (setq org-bullets-bullet-list '("◉" "○" "✸" "●"))
+  (setq org-bullets-bullet-list '("◉" "○" "◉" "○"))
 #+END_SRC
 
 *** Indentation
@@ -2430,16 +2430,16 @@ Path to Ditaa
 (setq org-wiki-location "~/org/wiki")
 #+END_SRC
 
-** org-gcal
+** DISABLED org-gcal
 Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-gcal
-  :ensure t
-  :config
-  (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com"
-	org-gcal-client-secret m42/gcal-client-secret
-	org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/wiki/calendar.org"))))
+  ;; (use-package org-gcal
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com"
+  ;; 	org-gcal-client-secret m42/gcal-client-secret
+  ;; 	org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/wiki/calendar.org"))))
 #+END_SRC
 
 Hooks for synchronization.
