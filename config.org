@@ -53,22 +53,22 @@ the process of rewriting directory paths.
   (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
   (setq m42/agenda-file     (expand-file-name "~/org/wiki/tasks.org"))
-;  (setq m42/calendar-file   (expand-file-name "~/org/wiki/calendar.org"))
   (setq m42/ideas-file      (expand-file-name "~/org/wiki/ideas.org"))
   (setq m42/bugs-file       (expand-file-name "~/org/wiki/bugs.org"))
   (setq m42/file-archive    (expand-file-name "~/org/archive.org"))
   (setq m42/org-folder      (expand-file-name "~/org"))
+  ;(setq m42/calendar-file   (expand-file-name "~/org/wiki/calendar.org"))
 
-  (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/index-file)))
-  (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/tfg-file)))
-  (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-index-file)))
+;  (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/index-file)))
+;  (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/tfg-file)))
+  (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
   (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
 
-  ;  (setq org-agenda-files (list m42/agenda-file m42/calendar-file))
+  ;(setq org-agenda-files (list m42/agenda-file m42/calendar-file))
 #+END_SRC
 
-*** Local bin
+** Local bin
 Includes the local bin on the =exec-path=. This allows Emacs to find
 executables in the local binaries folder.
 
@@ -91,7 +91,9 @@ configuration file. Current set variables will not be removed; and
 Emacs will need a complete restart to clean them.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
+(global-set-key [M-insert] 
+  '(lambda() (interactive) (load-file "~/.emacs.d/init.el"))
+  )
 #+END_SRC
 
 ** Restart emacs
@@ -123,30 +125,6 @@ Starts shell using =C-c s=.
 (global-set-key (kbd "C-c s") 'eshell)
 #+END_SRC
 
-** Smex
-[[https://www.emacswiki.org/emacs/Smex][Smex]] provides an enhancement to the =M-x= command. Uses =ido= for
-autocompletion and provides a convenient interface to the most
-frequently used commands.
-
-#+BEGIN_SRC emacs-lisp
-(use-package smex
-  :ensure t
-  :config (smex-initialize)
-  :bind (("M-x" . smex)))
-#+END_SRC
-
-** Switching windows with ctrl+tab
-It is possible to change windows in Emacs using =C-x o=, but
-sometimes =C-tab= still feels more intuitive to me.
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key [C-tab] 'other-window)
-(global-set-key [C-iso-lefttab]
-  (lambda ()
-    (interactive)
-    (other-window -1)))
-#+END_SRC
-
 ** Multiple cursors
 #+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
@@ -157,16 +135,6 @@ sometimes =C-tab= still feels more intuitive to me.
 )
 #+END_SRC
 
-** Rainbow delimiters
-#+BEGIN_SRC emacs-lisp
-(use-package rainbow-delimiters
-  :ensure t
-  :config
-    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-    (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
-)
-
-#+END_SRC
 ** Visual-regexp
 #+BEGIN_SRC emacs-lisp
 (use-package visual-regexp
@@ -175,8 +143,7 @@ sometimes =C-tab= still feels more intuitive to me.
     ("C-c C-r" . vr/replace)
     ("C-c q" . vr/query-replace)
     ("C-c m" . vr/mc-mark)
-    )
-)
+    ))
 #+END_SRC
 
 * Customization
@@ -353,6 +320,9 @@ Indicates what face are we using currently under the cursor.
   :config
     (add-to-list 'golden-ratio-exclude-modes "agda2-mode")
     (add-to-list 'golden-ratio-exclude-modes "compilation-mode")
+    (add-to-list 'golden-ratio-exclude-modes "coq-mode")
+    (add-to-list 'golden-ratio-exclude-modes "coq-goals-mode")
+    (add-to-list 'golden-ratio-exclude-modes "coq-response-mode")
 )
 #+END_SRC
 ** Volatile highlights
@@ -370,7 +340,41 @@ feedback.
     (volatile-highlights-mode t)
 )
 #+END_SRC
+** Rainbow delimiters
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+    (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
+)
+
+#+END_SRC
 * Navigation
+** Smex
+[[https://www.emacswiki.org/emacs/Smex][Smex]] provides an enhancement to the =M-x= command. Uses =ido= for
+autocompletion and provides a convenient interface to the most
+frequently used commands.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+  :ensure t
+  :config (smex-initialize)
+  :bind (("M-x" . smex)))
+#+END_SRC
+
+** Switching windows with ctrl+tab
+It is possible to change windows in Emacs using =C-x o=, but
+sometimes =C-tab= still feels more intuitive to me.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [C-tab] 'other-window)
+(global-set-key [C-iso-lefttab]
+  (lambda ()
+    (interactive)
+    (other-window -1)))
+#+END_SRC
+
 ** Swiper
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
@@ -2091,6 +2095,43 @@ I am no longer using company-auctex.
 (setq google-translate-default-source-language "en")
 (setq google-translate-default-target-language "es")
 #+END_SRC
+** Engine-mode
+[[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different 
+search engines to =C-x / ?=, where =?= is a char representing the engine.
+
+#+BEGIN_SRC emacs-lisp
+(use-package engine-mode
+  :ensure t)
+
+(defengine duckduckgo
+  "https://duckduckgo.com/?q=%s"
+  :keybinding "d")
+(defengine github
+  "https://github.com/search?ref=simplesearch&q=%s"
+  :keybinding "g")
+(defengine google
+  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
+(defengine rfcs
+  "http://pretty-rfc.herokuapp.com/search?q=%s")
+(defengine stack-overflow
+  "https://stackoverflow.com/search?q=%s"
+  :keybinding "s")
+(defengine wikipedia
+  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+  :keybinding "w")
+(defengine wiktionary
+  "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
+
+(engine-mode t)
+#+END_SRC
+** DISABLED dict-replace
+My dict-replace package. I am no longer using it.
+
+#+BEGIN_SRC emacs-lisp
+  ;(load-file "~/.emacs.d/dict-replace.el")
+  ;(global-set-key (kbd "<f5>") 'dict-translate)
+#+END_SRC
+
 * Evil
 Use Emacs keybindings by default. Change to Vi keybindings using =C-z=.
 Spaceline is colored in blue or orange depending on the current mode.
@@ -2675,6 +2716,16 @@ From http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
 (add-hook 'org-clock-out-hook 'save-buffer)
 (find-file-noselect "~/org/wiki/timelog.org")
 #+END_SRC
+** org-id
+:PROPERTIES:
+:ID:       b3cc359a-f2da-4fa9-917f-9d9bc59ffd1f
+:END:
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-id)
+(setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+(org-id-update-id-locations)
+#+END_SRC
 
 * Snippets
 ** Yasnippet support
@@ -2712,137 +2763,138 @@ in my case is [[file:yankpad.org][this]] file.
 #+END_SRC
 
 * Blog
-** org-page
+** DISABLED org-page
 I use =org-page= to generate [[https://m42.github.io/][my blog]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-page
-    :ensure t)
+  ;; (use-package org-page
+  ;;   :ensure t)
 
-  (setq op/repository-directory "~/projects/m42.github.io/")
-  (setq op/site-domain "http://m42.github.io/")
-  (setq op/site-main-title "Mario Román")
-  (setq op/site-sub-title "M42 - mromang08@gmail.com")
-  (setq op/personal-github-link "https://github.com/m42")
-  (setq op/theme 'mdo_modified)
+  ;; (setq op/repository-directory "~/projects/m42.github.io/")
+  ;; (setq op/site-domain "http://m42.github.io/")
+  ;; (setq op/site-main-title "Mario Román")
+  ;; (setq op/site-sub-title "M42 - mromang08@gmail.com")
+  ;; (setq op/personal-github-link "https://github.com/m42")
+  ;; (setq op/theme 'mdo_modified)
 #+END_SRC
 
 the blog sections are specified here
 
 #+BEGIN_SRC emacs-lisp
-(setq op/category-config-alist
-   '(("blog" 
-      :show-meta t 
-      :show-comment nil 
-      :uri-generator op/generate-uri 
-      :uri-template "/blog/%y/%m/%d/%t/" 
-      :sort-by :date 
-      :category-index t)
-     ("index"
-      :show-meta nil 
-      :show-comment nil 
-      :uri-generator op/generate-uri 
-      :uri-template "/" 
-      :sort-by :date 
-      :category-index nil)
-     ("about"
-      :show-meta nil 
-      :show-comment nil 
-      :uri-generator op/generate-uri 
-      :uri-template "/about/" 
-      :sort-by :date 
-      :category-index nil)))
+  ;; (setq op/category-config-alist
+  ;;    '(("blog" 
+  ;;       :show-meta t 
+  ;;       :show-comment nil 
+  ;;       :uri-generator op/generate-uri 
+  ;;       :uri-template "/blog/%y/%m/%d/%t/" 
+  ;;       :sort-by :date 
+  ;;       :category-index t)
+  ;;      ("index"
+  ;;       :show-meta nil 
+  ;;       :show-comment nil 
+  ;;       :uri-generator op/generate-uri 
+  ;;       :uri-template "/" 
+  ;;       :sort-by :date 
+  ;;       :category-index nil)
+  ;;      ("about"
+  ;;       :show-meta nil 
+  ;;       :show-comment nil 
+  ;;       :uri-generator op/generate-uri 
+  ;;       :uri-template "/about/" 
+  ;;       :sort-by :date 
+  ;;       :category-index nil)))
 #+END_SRC
-** hugo
+
+** DISABLED hugo
 A Hugo blogging solution based on [[http://www.holgerschurig.de/en/emacs-blog-from-org-to-hugo/][this post]].
 
 #+BEGIN_SRC emacs-lisp
-  (defvar hugo-content-dir "~/projects/blog/content/"
-    "Path to Hugo's content directory")
+  ;; (defvar hugo-content-dir "~/projects/blog/content/"
+  ;;   "Path to Hugo's content directory")
 
-  (defun hugo-ensure-property (property)
-    "Make sure that a property exists. If not, it will be created.
+  ;; (defun hugo-ensure-property (property)
+  ;;   "Make sure that a property exists. If not, it will be created.
 
-  Returns the property name if the property has been created,
-  otherwise nil."
-    (if (org-entry-get nil property)
-        nil
-      (progn (org-entry-put nil property "")
-             property)))
+  ;; Returns the property name if the property has been created,
+  ;; otherwise nil."
+  ;;   (if (org-entry-get nil property)
+  ;;       nil
+  ;;     (progn (org-entry-put nil property "")
+  ;;            property)))
 
-  (defun hugo-ensure-properties ()
-    "This ensures that several properties exists. If not, these
-  properties will be created in an empty form. In this case, the
-  drawer will also be opened and the cursor will be positioned
-  at the first element that needs to be filled.
+  ;; (defun hugo-ensure-properties ()
+  ;;   "This ensures that several properties exists. If not, these
+  ;; properties will be created in an empty form. In this case, the
+  ;; drawer will also be opened and the cursor will be positioned
+  ;; at the first element that needs to be filled.
 
-  Returns list of properties that still must be filled in"
-    (require 'dash)
-    (let ((current-time (format-time-string (org-time-stamp-format t t) (org-current-time)))
-          first)
-      (save-excursion
-        (unless (org-entry-get nil "TITLE")
-          (org-entry-put nil "TITLE" (nth 4 (org-heading-components))))
-        (setq first (--first it (mapcar #'hugo-ensure-property '("HUGO_TAGS" "HUGO_TOPICS" "HUGO_FILE"))))
-        (unless (org-entry-get nil "HUGO_DATE")
-          (org-entry-put nil "HUGO_DATE" current-time)))
-      (when first
-        (goto-char (org-entry-beginning-position))
-        ;; The following opens the drawer
-        (forward-line 1)
-        (beginning-of-line 1)
-        (when (looking-at org-drawer-regexp)
-          (org-flag-drawer nil))
-        ;; And now move to the drawer property
-        (search-forward (concat ":" first ":"))
-        (end-of-line))
-      first))
+  ;; Returns list of properties that still must be filled in"
+  ;;   (require 'dash)
+  ;;   (let ((current-time (format-time-string (org-time-stamp-format t t) (org-current-time)))
+  ;;         first)
+  ;;     (save-excursion
+  ;;       (unless (org-entry-get nil "TITLE")
+  ;;         (org-entry-put nil "TITLE" (nth 4 (org-heading-components))))
+  ;;       (setq first (--first it (mapcar #'hugo-ensure-property '("HUGO_TAGS" "HUGO_TOPICS" "HUGO_FILE"))))
+  ;;       (unless (org-entry-get nil "HUGO_DATE")
+  ;;         (org-entry-put nil "HUGO_DATE" current-time)))
+  ;;     (when first
+  ;;       (goto-char (org-entry-beginning-position))
+  ;;       ;; The following opens the drawer
+  ;;       (forward-line 1)
+  ;;       (beginning-of-line 1)
+  ;;       (when (looking-at org-drawer-regexp)
+  ;;         (org-flag-drawer nil))
+  ;;       ;; And now move to the drawer property
+  ;;       (search-forward (concat ":" first ":"))
+  ;;       (end-of-line))
+  ;;     first))
 
-  (defun hugo ()
-    (interactive)
-    (unless (hugo-ensure-properties)
-      (let* ((title    (concat "title = \"" (org-entry-get nil "TITLE") "\"\n"))
-             (date     (concat "date = \"" (format-time-string "%Y-%m-%d" (apply 'encode-time (org-parse-time-string (org-entry-get nil "HUGO_DATE"))) t) "\"\n"))
-             (topics   (concat "topics = [ \"" (mapconcat 'identity (split-string (org-entry-get nil "HUGO_TOPICS") "\\( *, *\\)" t) "\", \"") "\" ]\n"))
-             (tags     (concat "tags = [ \"" (mapconcat 'identity (split-string (org-entry-get nil "HUGO_TAGS") "\\( *, *\\)" t) "\", \"") "\" ]\n"))
-             (fm (concat "+++\n"
-                         title
-                         date
-                         tags
-                         topics
-                         "+++\n\n"))
-             (file     (org-entry-get nil "HUGO_FILE"))
-             (coding-system-for-write buffer-file-coding-system)
-             (backend  'md)
-             (blog))
-        ;; try to load org-mode/contrib/lisp/ox-gfm.el and use it as backend
-        (if (require 'ox-gfm nil t)
-            (setq backend 'gfm)
-          (require 'ox-md))
-        (setq blog (org-export-as backend t))
-        ;; Normalize save file path
-        (unless (string-match "^[/~]" file)
-          (setq file (concat hugo-content-dir file))
-        (unless (string-match "\\.md$" file)
-          (setq file (concat file ".md")))
-        ;; save markdown
-        (with-temp-buffer
-          (insert fm)
-          (insert blog)
-          ;; mathjax
-          (save-excursion 
-            (goto-char (point-min)) (replace-string "\\\(" "\\\\\(")
-            (goto-char (point-min)) (replace-string "\\\)" "\\\\\)")
-            (goto-char (point-min)) (replace-string "\\\[" "\\\\\[")
-            (goto-char (point-min)) (replace-string "\\\]" "\\\\\]")
-            )
+  ;; (defun hugo ()
+  ;;   (interactive)
+  ;;   (unless (hugo-ensure-properties)
+  ;;     (let* ((title    (concat "title = \"" (org-entry-get nil "TITLE") "\"\n"))
+  ;;            (date     (concat "date = \"" (format-time-string "%Y-%m-%d" (apply 'encode-time (org-parse-time-string (org-entry-get nil "HUGO_DATE"))) t) "\"\n"))
+  ;;            (topics   (concat "topics = [ \"" (mapconcat 'identity (split-string (org-entry-get nil "HUGO_TOPICS") "\\( *, *\\)" t) "\", \"") "\" ]\n"))
+  ;;            (tags     (concat "tags = [ \"" (mapconcat 'identity (split-string (org-entry-get nil "HUGO_TAGS") "\\( *, *\\)" t) "\", \"") "\" ]\n"))
+  ;;            (fm (concat "+++\n"
+  ;;                        title
+  ;;                        date
+  ;;                        tags
+  ;;                        topics
+  ;;                        "+++\n\n"))
+  ;;            (file     (org-entry-get nil "HUGO_FILE"))
+  ;;            (coding-system-for-write buffer-file-coding-system)
+  ;;            (backend  'md)
+  ;;            (blog))
+  ;;       ;; try to load org-mode/contrib/lisp/ox-gfm.el and use it as backend
+  ;;       (if (require 'ox-gfm nil t)
+  ;;           (setq backend 'gfm)
+  ;;         (require 'ox-md))
+  ;;       (setq blog (org-export-as backend t))
+  ;;       ;; Normalize save file path
+  ;;       (unless (string-match "^[/~]" file)
+  ;;         (setq file (concat hugo-content-dir file))
+  ;;       (unless (string-match "\\.md$" file)
+  ;;         (setq file (concat file ".md")))
+  ;;       ;; save markdown
+  ;;       (with-temp-buffer
+  ;;         (insert fm)
+  ;;         (insert blog)
+  ;;         ;; mathjax
+  ;;         (save-excursion 
+  ;;           (goto-char (point-min)) (replace-string "\\\(" "\\\\\(")
+  ;;           (goto-char (point-min)) (replace-string "\\\)" "\\\\\)")
+  ;;           (goto-char (point-min)) (replace-string "\\\[" "\\\\\[")
+  ;;           (goto-char (point-min)) (replace-string "\\\]" "\\\\\]")
+  ;;           )
 
-          (untabify (point-min) (point-max))
-          (write-file file)
-          (message "Exported to %s" file))
-        ))))
+  ;;         (untabify (point-min) (point-max))
+  ;;         (write-file file)
+  ;;         (message "Exported to %s" file))
+  ;;       ))))
 
-  (bind-key "M-g h" #'hugo)
+  ;; (bind-key "M-g h" #'hugo)
 #+END_SRC
 
 *** ox-gfm
@@ -2855,16 +2907,6 @@ A Hugo blogging solution based on [[http://www.holgerschurig.de/en/emacs-blog-fr
 #+END_SRC
 
 * Social
-** Wikipedia
-#+BEGIN_SRC emacs-lisp
-(use-package mediawiki
-  :ensure t)
-
-(setq mediawiki-site-alist
-      (append '(("ArchWiki" "https://wiki.archlinux.org/" "username" "password" "Main page"))
-              mediawiki-site-alist))
-#+END_SRC
-
 ** Mastodon
 [[https://en.wikipedia.org/wiki/Mastodon_(software)][Mastodon]] is a free software federated social network. A specific
 [[https://github.com/jdenen/mastodon.el][mastodon-mode]] was written by Johnson Denen (@jdenen).
@@ -2874,40 +2916,6 @@ A Hugo blogging solution based on [[http://www.holgerschurig.de/en/emacs-blog-fr
   :config (setq mastodon-instance-url "https://mastodon.social")
   :ensure t)
 #+END_SRC
-
-* Other packages
-
-
-** Engine-mode
-[[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different 
-search engines to =C-x / ?=, where =?= is a char representing the engine.
-
-#+BEGIN_SRC emacs-lisp
-(use-package engine-mode
-  :ensure t)
-
-(defengine duckduckgo
-  "https://duckduckgo.com/?q=%s"
-  :keybinding "d")
-(defengine github
-  "https://github.com/search?ref=simplesearch&q=%s"
-  :keybinding "g")
-(defengine google
-  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
-(defengine rfcs
-  "http://pretty-rfc.herokuapp.com/search?q=%s")
-(defengine stack-overflow
-  "https://stackoverflow.com/search?q=%s"
-  :keybinding "s")
-(defengine wikipedia
-  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
-  :keybinding "w")
-(defengine wiktionary
-  "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
-
-(engine-mode t)
-#+END_SRC
-
 ** Stackoverflow
 #+BEGIN_SRC emacs-lisp
 (use-package sx
@@ -2924,10 +2932,14 @@ search engines to =C-x / ?=, where =?= is a char representing the engine.
              ("s" . sx-search)))
 #+END_SRC
 
-** DISABLED dict-replace
-My dict-replace package. I am no longer using it.
-
+** DISABLED Wikipedia
 #+BEGIN_SRC emacs-lisp
-  ;(load-file "~/.emacs.d/dict-replace.el")
-  ;(global-set-key (kbd "<f5>") 'dict-translate)
+  ;; (use-package mediawiki
+  ;;   :ensure t)
+
+  ;; (setq mediawiki-site-alist
+  ;;       (append '(("ArchWiki" "https://wiki.archlinux.org/" "username" "password" "Main page"))
+  ;;               mediawiki-site-alist))
 #+END_SRC
+
+
