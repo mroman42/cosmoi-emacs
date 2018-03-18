@@ -44,11 +44,7 @@ used all across the configuration file; and listing them here eases
 the process of rewriting directory paths.
 
 #+BEGIN_SRC emacs-lisp
-  (setq m42/index-file      (expand-file-name "~/org/wiki/index.org"))
-  (setq m42/wiki-file       (expand-file-name "~/org/wiki/wiki.org"))
-  (setq m42/math-index-file (expand-file-name "~/projects/math/math.org"))
   (setq m42/math-file       (expand-file-name "~/projects/math/math.org"))
-  (setq m42/tfg-file        (expand-file-name "~/projects/math/tfg.org"))
   (setq m42/math-drill-file (expand-file-name "~/projects/math/drill.org"))
   (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
@@ -57,15 +53,10 @@ the process of rewriting directory paths.
   (setq m42/bugs-file       (expand-file-name "~/org/wiki/bugs.org"))
   (setq m42/file-archive    (expand-file-name "~/org/archive.org"))
   (setq m42/org-folder      (expand-file-name "~/org"))
-  ;(setq m42/calendar-file   (expand-file-name "~/org/wiki/calendar.org"))
 
-;  (global-set-key (kbd "<f5>") (lambda() (interactive) (find-file m42/index-file)))
-;  (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/tfg-file)))
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
   (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
-
-  ;(setq org-agenda-files (list m42/agenda-file m42/calendar-file))
 #+END_SRC
 
 ** Local bin
@@ -81,7 +72,7 @@ Inhibits the startup screen and loads an initial buffer.
 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
-(setq initial-buffer-choice m42/init-file)
+(setq initial-buffer-choice m42/agenda-file)
 #+END_SRC
 
 ** Reload init.el
@@ -162,15 +153,6 @@ ported from Vim.
 (load-theme 'wombat t)
 #+END_SRC
 
-Uses Fira as default font
-
-#+BEGIN_SRC emacs-lisp
-; Fira code
-(add-to-list 'default-frame-alist '(font . "Fira Mono-10" ))
-(set-face-attribute 'default t :font "Fira Mono-10" )
-(set-default-font "Fira Mono")
-#+END_SRC
-
 *** DISABLED Spacemacs theme
 #+BEGIN_SRC emacs-lisp
   ;; (use-package spacemacs-theme
@@ -188,6 +170,12 @@ Uses Fira as default font
   ;;   (set-face-attribute 'org-table nil :foreground "#008787")
   ;; )
 #+END_SRC
+*** DISABLED Nord
+#+BEGIN_SRC emacs-lisp
+;(use-package nord-theme :ensure t)
+;(load-theme 'nord t)
+#+END_SRC
+
 ** Dashboard
 #+BEGIN_SRC emacs-lisp
 (use-package dashboard
@@ -200,40 +188,425 @@ Uses Fira as default font
     (dashboard-setup-startup-hook))
 #+END_SRC
 
-** DISABLED Fira code
+** Font
+*** Fira mono
+Uses Fira as default font.
+
 #+BEGIN_SRC emacs-lisp
-  ;; (when (window-system)
-  ;;   (set-default-font "Fira Code-10")
-  ;; )
-  ;; (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-  ;;                (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-  ;;                (36 . ".\\(?:>\\)")
-  ;;                (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-  ;;                (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-  ;;                (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-  ;;                (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-  ;;                (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-  ;;                (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-  ;;                (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-  ;;                (48 . ".\\(?:x[a-zA-Z]\\)")
-  ;;                (58 . ".\\(?:::\\|[:=]\\)")
-  ;;                (59 . ".\\(?:;;\\|;\\)")
-  ;;                (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-  ;;                (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-  ;;                (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-  ;;                (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-  ;;                (91 . ".\\(?:]\\)")
-  ;;                (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-  ;;                (94 . ".\\(?:=\\)")
-  ;;                (119 . ".\\(?:ww\\)")
-  ;;                (123 . ".\\(?:-\\)")
-  ;;                (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-  ;;                (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
-  ;;                )
-  ;;              ))
-  ;;   (dolist (char-regexp alist)
-  ;;     (set-char-table-range composition-function-table (car char-regexp)
-  ;;                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
+; Fira mono
+(add-to-list 'default-frame-alist '(font . "Fira Mono-10" ))
+(set-face-attribute 'default t :font "Fira Mono-10" )
+(set-default-font "Fira Mono")
+#+END_SRC
+
+*** DejaVu Sans
+Fallback unicode font for Agda. It works great with Fira mono.
+#+BEGIN_SRC emacs-lisp
+(set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
+#+END_SRC
+*** DISABLED Iosevka
+#+BEGIN_SRC emacs-lisp
+; Iosevka
+;(add-to-list 'default-frame-alist '(font . "Iosevka Term-11" ))
+;(set-face-attribute 'default t :font "Iosevka Term-11" )
+;(set-default-font "Iosevka Term")
+#+END_SRC
+
+*** DISABLED Fira code
+https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
+
+#+BEGIN_SRC emacs-lisp
+  ;; This works when using emacs --daemon + emacsclient
+  (add-hook 'after-make-frame-functions (lambda (frame) (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")))
+  ;; This works when using emacs without server/client
+  (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+   ; https://github.com/ekaschalk/.spacemacs.d/blob/master/layers/display/local/pretty-fonts/pretty-fonts.el
+   ;;; API
+
+   ;;;###autoload
+   (defun pretty-fonts-set-fontsets (CODE-FONT-ALIST)
+     "Utility to associate many unicode points with specified fonts."
+     (--each CODE-FONT-ALIST
+       (-let (((font . codes) it))
+         (--each codes
+           (set-fontset-font t `(,it . ,it) font)))))
+
+   ;;;###autoload
+   (defun pretty-fonts--add-kwds (FONT-LOCK-ALIST)
+     "Exploits `font-lock-add-keywords' to apply regex-unicode replacements."
+     (font-lock-add-keywords
+      nil (--map (-let (((rgx uni-point) it))
+                  `(,rgx (0 (progn
+                              (compose-region
+                               (match-beginning 1) (match-end 1)
+                               ,(concat "\t" (list uni-point)))
+                              nil))))
+                FONT-LOCK-ALIST)))
+
+   ;;;###autoload
+   (defmacro pretty-fonts-set-kwds (FONT-LOCK-HOOKS-ALIST)
+     "Set regex-unicode replacements to many modes."
+     `(--each ,FONT-LOCK-HOOKS-ALIST
+        (-let (((font-locks . mode-hooks) it))
+          (--each mode-hooks
+            (add-hook it (-partial 'pretty-fonts--add-kwds
+                                   (symbol-value font-locks)))))))
+
+   ;;; Fira Font
+
+   (defconst pretty-fonts-fira-font
+     '(;; OPERATORS
+       ;; Pipes
+       ("\\(<|\\)" #Xe14d) ("\\(<>\\)" #Xe15b) ("\\(<|>\\)" #Xe14e) ("\\(|>\\)" #Xe135)
+
+       ;; Brackets
+       ("\\(<\\*\\)" #Xe14b) ("\\(<\\*>\\)" #Xe14c) ("\\(\\*>\\)" #Xe104)
+       ("\\(<\\$\\)" #Xe14f) ("\\(<\\$>\\)" #Xe150) ("\\(\\$>\\)" #Xe137)
+       ("\\(<\\+\\)" #Xe155) ("\\(<\\+>\\)" #Xe156) ("\\(\\+>\\)" #Xe13a)
+
+       ;; Equality
+       ("\\(!=\\)" #Xe10e) ("\\(!==\\)"         #Xe10f) ("\\(=/=\\)" #Xe143)
+       ("\\(/=\\)" #Xe12c) ("\\(/==\\)"         #Xe12d)
+       ("\\(===\\)"#Xe13d) ("[^!/]\\(==\\)[^>]" #Xe13c)
+
+       ;; Equality Special
+       ("\\(||=\\)"  #Xe133) ("[^|]\\(|=\\)" #Xe134)
+       ("\\(~=\\)"   #Xe166)
+       ("\\(\\^=\\)" #Xe136)
+       ("\\(=:=\\)"  #Xe13b)
+
+       ;; Comparisons
+       ("\\(<=\\)" #Xe141) ("\\(>=\\)" #Xe145)
+       ("\\(</\\)" #Xe162) ("\\(</>\\)" #Xe163)
+
+       ;; Shifts
+       ("[^-=]\\(>>\\)" #Xe147) ("\\(>>>\\)" #Xe14a)
+       ("[^-=]\\(<<\\)" #Xe15c) ("\\(<<<\\)" #Xe15f)
+
+       ;; Dots
+       ("\\(\\.-\\)"    #Xe122) ("\\(\\.=\\)" #Xe123)
+       ("\\(\\.\\.<\\)" #Xe125)
+
+       ;; Hashes
+       ("\\(#{\\)"  #Xe119) ("\\(#(\\)"   #Xe11e) ("\\(#_\\)"   #Xe120)
+       ("\\(#_(\\)" #Xe121) ("\\(#\\?\\)" #Xe11f) ("\\(#\\[\\)" #Xe11a)
+
+       ;; REPEATED CHARACTERS
+       ;; 2-Repeats
+       ("\\(||\\)" #Xe132)
+       ("\\(!!\\)" #Xe10d)
+       ("\\(%%\\)" #Xe16a)
+       ("\\(&&\\)" #Xe131)
+
+       ;; 2+3-Repeats
+       ("\\(##\\)"       #Xe11b) ("\\(###\\)"         #Xe11c) ("\\(####\\)" #Xe11d)
+       ("\\(--\\)"       #Xe111) ("\\(---\\)"         #Xe112)
+       ("\\({-\\)"       #Xe108) ("\\(-}\\)"          #Xe110)
+       ("\\(\\\\\\\\\\)" #Xe106) ("\\(\\\\\\\\\\\\\\)" #Xe107)
+       ("\\(\\.\\.\\)"   #Xe124) ("\\(\\.\\.\\.\\)"   #Xe126)
+       ("\\(\\+\\+\\)"   #Xe138) ("\\(\\+\\+\\+\\)"   #Xe139)
+       ("\\(//\\)"       #Xe12f) ("\\(///\\)"         #Xe130)
+       ("\\(::\\)"       #Xe10a) ("\\(:::\\)"         #Xe10b)
+
+       ;; ARROWS
+       ;; Direct
+       ("[^-]\\(->\\)" #Xe114) ("[^=]\\(=>\\)" #Xe13f)
+       ("\\(<-\\)"     #Xe152)
+       ("\\(-->\\)"    #Xe113) ("\\(->>\\)"    #Xe115)
+       ("\\(==>\\)"    #Xe13e) ("\\(=>>\\)"    #Xe140)
+       ("\\(<--\\)"    #Xe153) ("\\(<<-\\)"    #Xe15d)
+       ("\\(<==\\)"    #Xe158) ("\\(<<=\\)"    #Xe15e)
+       ("\\(<->\\)"    #Xe154) ("\\(<=>\\)"    #Xe159)
+
+       ;; Branches
+       ("\\(-<\\)"  #Xe116) ("\\(-<<\\)" #Xe117)
+       ("\\(>-\\)"  #Xe144) ("\\(>>-\\)" #Xe148)
+       ("\\(=<<\\)" #Xe142) ("\\(>>=\\)" #Xe149)
+       ("\\(>=>\\)" #Xe146) ("\\(<=<\\)" #Xe15a)
+
+       ;; Squiggly
+       ("\\(<~\\)" #Xe160) ("\\(<~~\\)" #Xe161)
+       ("\\(~>\\)" #Xe167) ("\\(~~>\\)" #Xe169)
+       ("\\(-~\\)" #Xe118) ("\\(~-\\)"  #Xe165)
+
+       ;; MISC
+       ("\\(www\\)"                   #Xe100)
+       ("\\(<!--\\)"                  #Xe151)
+       ("\\(~@\\)"                    #Xe164)
+       ("[^<]\\(~~\\)"                #Xe168)
+       ("\\(\\?=\\)"                  #Xe127)
+       ("[^=]\\(:=\\)"                #Xe10c)
+       ("\\(/>\\)"                    #Xe12e)
+       ("[^\\+<>]\\(\\+\\)[^\\+<>]"   #Xe16d)
+       ("[^:=]\\(:\\)[^:=]"           #Xe16c)
+       ("\\(<=\\)"                    #Xe157))
+     "Fira font ligatures and their regexes")
+
+   (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+;(pretty-fonts-set-kwds
+;  '((pretty-fonts-fira-font prog-mode-hook org-mode-hook)))
+#+END_SRC
+*** DISABLED Iosevka ligatures
+Iosevka-haskell must be installed.
+
+#+BEGIN_SRC emacs-lisp
+  ;; ;; https://gist.github.com/mrkgnao/49c7480e1df42405a36b7ab09fe87f3d
+
+  ;; ;; I use Spacemacs, so I put this in user-config
+  ;; ;; Note that the script above only generates the long list of pairs.
+  ;; ;; The surrounding code is stolen from the PragmataPro scripts floating around on Gist.
+
+  ;;   (setq prettify-symbols-unprettify-at-point 'right-edge)
+
+  ;;   (defun setup-iosevka-ligatures ()
+  ;;     (setq prettify-symbols-alist
+  ;;           (append prettify-symbols-alist '(
+
+  ;; ;; Double-ended hyphen arrows ----------------
+  ;; ("<->" . #Xe100)
+  ;; ("<-->" . #Xe101)
+  ;; ("<--->" . #Xe102)
+  ;; ("<---->" . #Xe103)
+  ;; ("<----->" . #Xe104)
+
+  ;; ;; Double-ended equals arrows ----------------
+  ;; ("<=>" . #Xe105)
+  ;; ("<==>" . #Xe106)
+  ;; ("<===>" . #Xe107)
+  ;; ("<====>" . #Xe108)
+  ;; ("<=====>" . #Xe109)
+
+  ;; ;; Double-ended asterisk operators ----------------
+  ;; ("<**>" . #Xe10a)
+  ;; ("<***>" . #Xe10b)
+  ;; ("<****>" . #Xe10c)
+  ;; ("<*****>" . #Xe10d)
+
+  ;; ;; HTML comments ----------------
+  ;; ("<!--" . #Xe10e)
+  ;; ("<!---" . #Xe10f)
+
+  ;; ;; Three-char ops with discards ----------------
+  ;; ("<$" . #Xe110)
+  ;; ("<$>" . #Xe111)
+  ;; ("$>" . #Xe112)
+  ;; ("<." . #Xe113)
+  ;; ("<.>" . #Xe114)
+  ;; (".>" . #Xe115)
+  ;; ("<*" . #Xe116)
+  ;; ("<*>" . #Xe117)
+  ;; ("*>" . #Xe118)
+  ;; ("<\\" . #Xe119)
+  ;; ("<\\>" . #Xe11a)
+  ;; ("\\>" . #Xe11b)
+  ;; ("</" . #Xe11c)
+  ;; ("</>" . #Xe11d)
+  ;; ("/>" . #Xe11e)
+  ;; ("<\"" . #Xe11f)
+  ;; ("<\">" . #Xe120)
+  ;; ("\">" . #Xe121)
+  ;; ("<'" . #Xe122)
+  ;; ("<'>" . #Xe123)
+  ;; ("'>" . #Xe124)
+  ;; ("<^" . #Xe125)
+  ;; ("<^>" . #Xe126)
+  ;; ("^>" . #Xe127)
+  ;; ("<&" . #Xe128)
+  ;; ("<&>" . #Xe129)
+  ;; ("&>" . #Xe12a)
+  ;; ("<%" . #Xe12b)
+  ;; ("<%>" . #Xe12c)
+  ;; ("%>" . #Xe12d)
+  ;; ("<@" . #Xe12e)
+  ;; ("<@>" . #Xe12f)
+  ;; ("@>" . #Xe130)
+  ;; ("<#" . #Xe131)
+  ;; ("<#>" . #Xe132)
+  ;; ("#>" . #Xe133)
+  ;; ("<+" . #Xe134)
+  ;; ("<+>" . #Xe135)
+  ;; ("+>" . #Xe136)
+  ;; ("<-" . #Xe137)
+  ;; ("<->" . #Xe138)
+  ;; ("->" . #Xe139)
+  ;; ("<!" . #Xe13a)
+  ;; ("<!>" . #Xe13b)
+  ;; ("!>" . #Xe13c)
+  ;; ("<?" . #Xe13d)
+  ;; ("<?>" . #Xe13e)
+  ;; ("?>" . #Xe13f)
+  ;; ("<|" . #Xe140)
+  ;; ("<|>" . #Xe141)
+  ;; ("|>" . #Xe142)
+  ;; ("<:" . #Xe143)
+  ;; ("<:>" . #Xe144)
+  ;; (":>" . #Xe145)
+
+  ;; ;; Colons ----------------
+  ;; ("::" . #Xe146)
+  ;; (":::" . #Xe147)
+  ;; ("::::" . #Xe148)
+
+  ;; ;; Arrow-like operators ----------------
+  ;; ("->" . #Xe149)
+  ;; ("->-" . #Xe14a)
+  ;; ("->--" . #Xe14b)
+  ;; ("->>" . #Xe14c)
+  ;; ("->>-" . #Xe14d)
+  ;; ("->>--" . #Xe14e)
+  ;; ("->>>" . #Xe14f)
+  ;; ("->>>-" . #Xe150)
+  ;; ("->>>--" . #Xe151)
+  ;; ("-->" . #Xe152)
+  ;; ("-->-" . #Xe153)
+  ;; ("-->--" . #Xe154)
+  ;; ("-->>" . #Xe155)
+  ;; ("-->>-" . #Xe156)
+  ;; ("-->>--" . #Xe157)
+  ;; ("-->>>" . #Xe158)
+  ;; ("-->>>-" . #Xe159)
+  ;; ("-->>>--" . #Xe15a)
+  ;; (">-" . #Xe15b)
+  ;; (">--" . #Xe15c)
+  ;; (">>-" . #Xe15d)
+  ;; (">>--" . #Xe15e)
+  ;; (">>>-" . #Xe15f)
+  ;; (">>>--" . #Xe160)
+  ;; ("=>" . #Xe161)
+  ;; ("=>=" . #Xe162)
+  ;; ("=>==" . #Xe163)
+  ;; ("=>>" . #Xe164)
+  ;; ("=>>=" . #Xe165)
+  ;; ("=>>==" . #Xe166)
+  ;; ("=>>>" . #Xe167)
+  ;; ("=>>>=" . #Xe168)
+  ;; ("=>>>==" . #Xe169)
+  ;; ("==>" . #Xe16a)
+  ;; ("==>=" . #Xe16b)
+  ;; ("==>==" . #Xe16c)
+  ;; ("==>>" . #Xe16d)
+  ;; ("==>>=" . #Xe16e)
+  ;; ("==>>==" . #Xe16f)
+  ;; ("==>>>" . #Xe170)
+  ;; ("==>>>=" . #Xe171)
+  ;; ("==>>>==" . #Xe172)
+  ;; (">=" . #Xe173)
+  ;; (">==" . #Xe174)
+  ;; (">>=" . #Xe175)
+  ;; (">>==" . #Xe176)
+  ;; (">>>=" . #Xe177)
+  ;; (">>>==" . #Xe178)
+  ;; ("<-" . #Xe179)
+  ;; ("-<-" . #Xe17a)
+  ;; ("--<-" . #Xe17b)
+  ;; ("<<-" . #Xe17c)
+  ;; ("-<<-" . #Xe17d)
+  ;; ("--<<-" . #Xe17e)
+  ;; ("<<<-" . #Xe17f)
+  ;; ("-<<<-" . #Xe180)
+  ;; ("--<<<-" . #Xe181)
+  ;; ("<--" . #Xe182)
+  ;; ("-<--" . #Xe183)
+  ;; ("--<--" . #Xe184)
+  ;; ("<<--" . #Xe185)
+  ;; ("-<<--" . #Xe186)
+  ;; ("--<<--" . #Xe187)
+  ;; ("<<<--" . #Xe188)
+  ;; ("-<<<--" . #Xe189)
+  ;; ("--<<<--" . #Xe18a)
+  ;; ("-<" . #Xe18b)
+  ;; ("--<" . #Xe18c)
+  ;; ("-<<" . #Xe18d)
+  ;; ("--<<" . #Xe18e)
+  ;; ("-<<<" . #Xe18f)
+  ;; ("--<<<" . #Xe190)
+  ;; ("<=" . #Xe191)
+  ;; ("=<=" . #Xe192)
+  ;; ("==<=" . #Xe193)
+  ;; ("<<=" . #Xe194)
+  ;; ("=<<=" . #Xe195)
+  ;; ("==<<=" . #Xe196)
+  ;; ("<<<=" . #Xe197)
+  ;; ("=<<<=" . #Xe198)
+  ;; ("==<<<=" . #Xe199)
+  ;; ("<==" . #Xe19a)
+  ;; ("=<==" . #Xe19b)
+  ;; ("==<==" . #Xe19c)
+  ;; ("<<==" . #Xe19d)
+  ;; ("=<<==" . #Xe19e)
+  ;; ("==<<==" . #Xe19f)
+  ;; ("<<<==" . #Xe1a0)
+  ;; ("=<<<==" . #Xe1a1)
+  ;; ("==<<<==" . #Xe1a2)
+  ;; ("=<" . #Xe1a3)
+  ;; ("==<" . #Xe1a4)
+  ;; ("=<<" . #Xe1a5)
+  ;; ("==<<" . #Xe1a6)
+  ;; ("=<<<" . #Xe1a7)
+  ;; ("==<<<" . #Xe1a8)
+
+  ;; ;; Monadic operators ----------------
+  ;; (">=>" . #Xe1a9)
+  ;; (">->" . #Xe1aa)
+  ;; (">-->" . #Xe1ab)
+  ;; (">==>" . #Xe1ac)
+  ;; ("<=<" . #Xe1ad)
+  ;; ("<-<" . #Xe1ae)
+  ;; ("<--<" . #Xe1af)
+  ;; ("<==<" . #Xe1b0)
+
+  ;; ;; Composition operators ----------------
+  ;; (">>" . #Xe1b1)
+  ;; (">>>" . #Xe1b2)
+  ;; ("<<" . #Xe1b3)
+  ;; ("<<<" . #Xe1b4)
+
+  ;; ;; Lens operators ----------------
+  ;; (":+" . #Xe1b5)
+  ;; (":-" . #Xe1b6)
+  ;; (":=" . #Xe1b7)
+  ;; ("+:" . #Xe1b8)
+  ;; ("-:" . #Xe1b9)
+  ;; ("=:" . #Xe1ba)
+  ;; ("=^" . #Xe1bb)
+  ;; ("=+" . #Xe1bc)
+  ;; ("=-" . #Xe1bd)
+  ;; ("=*" . #Xe1be)
+  ;; ("=/" . #Xe1bf)
+  ;; ("=%" . #Xe1c0)
+  ;; ("^=" . #Xe1c1)
+  ;; ("+=" . #Xe1c2)
+  ;; ("-=" . #Xe1c3)
+  ;; ("*=" . #Xe1c4)
+  ;; ("/=" . #Xe1c5)
+  ;; ("%=" . #Xe1c6)
+
+  ;; ;; Logical ----------------
+  ;; ("/\\" . #Xe1c7)
+  ;; ("\\/" . #Xe1c8)
+
+  ;; ;; Semigroup/monoid operators ----------------
+  ;; ("<>" . #Xe1c9)
+  ;; ("<+" . #Xe1ca)
+  ;; ("<+>" . #Xe1cb)
+  ;; ("+>" . #Xe1cc)
+  ;; ))))
+
+  ;;   (defun refresh-pretty ()
+  ;;     (prettify-symbols-mode -1)
+  ;;     (prettify-symbols-mode +1))
+
+  ;;   ;; Hooks for modes in which to install the Iosevka ligatures
+  ;;   (mapc (lambda (hook)
+  ;;           (add-hook hook (lambda () (setup-iosevka-ligatures) (refresh-pretty))))
+  ;;         '(text-mode-hook
+  ;;           prog-mode-hook
+  ;;           haskell-mode-hook))
+  ;; (global-prettify-symbols-mode +1)
 #+END_SRC
 
 ** Toolbar and menubar
@@ -349,6 +722,10 @@ feedback.
     (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
 )
 
+#+END_SRC
+** Centered window
+#+BEGIN_SRC emacs-lisp
+(use-package centered-window :ensure t)
 #+END_SRC
 * Navigation
 ** Smex
@@ -481,20 +858,17 @@ current repository.
 Allows interactive Haskell evaluation in Emacs.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package haskell-mode
-    :ensure t)
+  (use-package haskell-mode :ensure t)
   (require 'haskell-interactive-mode)
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (setq haskell-process-type 'cabal-repl)
 #+END_SRC
 
 *** Intero
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck-haskell
-  :ensure t)
-
-(use-package intero
-  :ensure t)
+(use-package flycheck-haskell :ensure t)
+(use-package intero :ensure t)
 (add-hook 'haskell-mode-hook 'intero-mode)
 
 (with-eval-after-load 'intero
@@ -2724,7 +3098,7 @@ From http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
 #+BEGIN_SRC emacs-lisp
 (require 'org-id)
 (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-(org-id-update-id-locations)
+;; (org-id-update-id-locations)
 #+END_SRC
 
 * Snippets
