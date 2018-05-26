@@ -1,6 +1,6 @@
-#+TITLE: config.org
-#+AUTHOR: Mario Román
-#+EMAIL: mromang08@gmail.com
+#+Title: config.org
+#+Author: Mario Román
+#+Email: mromang08@gmail.com
 #+TODO: DISABLED WIP | DONE
 
 This is my Emacs init file, written in org-mode using literate
@@ -46,13 +46,13 @@ the process of rewriting directory paths.
 #+BEGIN_SRC emacs-lisp
   (setq m42/math-file       (expand-file-name "~/projects/math/math.org"))
   (setq m42/math-drill-file (expand-file-name "~/projects/math/drill.org"))
-  (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
-  (setq m42/agenda-file     (expand-file-name "~/org/wiki/tasks.org"))
-  (setq m42/ideas-file      (expand-file-name "~/org/wiki/ideas.org"))
-  (setq m42/bugs-file       (expand-file-name "~/org/wiki/bugs.org"))
+  (setq m42/agenda-file     (expand-file-name "~/Dropbox/orgzly/Tasks.org"))
+  (setq m42/org-folder      (expand-file-name "~/Dropbox/orgzly"))
+  (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
   (setq m42/file-archive    (expand-file-name "~/org/archive.org"))
-  (setq m42/org-folder      (expand-file-name "~/org"))
+  (setq m42/bugs-file       (expand-file-name "~/org/wiki/bugs.org"))
+  (setq m42/ideas-file      (expand-file-name "~/org/wiki/ideas.org"))
 
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
@@ -136,6 +136,11 @@ Starts shell using =C-c s=.
     ("C-c m" . vr/mc-mark)
     ))
 #+END_SRC
+** Autorevert
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode 1)
+#+END_SRC
+
 * Navigation
 ** Smex
 [[https://www.emacswiki.org/emacs/Smex][Smex]] provides an enhancement to the =M-x= command. Uses =ido= for
@@ -221,6 +226,13 @@ sometimes =C-tab= still feels more intuitive to me.
   :ensure t
   :config
     (pdf-tools-install))
+#+END_SRC
+** openwith
+#+BEGIN_SRC emacs-lisp
+;(use-package crux
+;  :ensure t
+;  :bind (("C-c o" . crux-open-with))
+;  )
 #+END_SRC
 * Programming
 ** Flycheck
@@ -1961,13 +1973,21 @@ ported from Vim.
 #+END_SRC
 
 ** Font
-*** Fira mono
+*** Iosevka
+#+BEGIN_SRC emacs-lisp
+; Iosevka
+(add-to-list 'default-frame-alist '(font . "Iosevka-11" ))
+(set-face-attribute 'default t :font "Iosevka-11" )
+;(set-default-font "Iosevka")
+#+END_SRC
+
+*** DISABLED Fira mono
 Uses Fira as default font.
 
 #+BEGIN_SRC emacs-lisp
 ; Fira mono
-(add-to-list 'default-frame-alist '(font . "Fira Mono-10" ))
-(set-face-attribute 'default t :font "Fira Mono-10" )
+;(add-to-list 'default-frame-alist '(font . "Fira Mono-10" ))
+;(set-face-attribute 'default t :font "Fira Mono-10" )
 ;(set-default-font "Fira Mono")
 #+END_SRC
 
@@ -1976,14 +1996,6 @@ Fallback unicode font for Agda. It works great with Fira mono.
 
 #+BEGIN_SRC emacs-lisp
 (set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
-#+END_SRC
-
-*** DISABLED Iosevka
-#+BEGIN_SRC emacs-lisp
-; Iosevka
-;(add-to-list 'default-frame-alist '(font . "Iosevka Term-11" ))
-;(set-face-attribute 'default t :font "Iosevka Term-11" )
-;(set-default-font "Iosevka Term")
 #+END_SRC
 
 *** DISABLED Fira code
@@ -2599,6 +2611,11 @@ Spaceline is colored in blue or orange depending on the current mode.
 (setq org-habit-show-habits-only-for-today t)
 #+END_SRC
 
+** org-tags
+#+BEGIN_SRC emacs-lisp
+(setq org-tags-column -100)
+#+END_SRC
+
 ** org-ref
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
@@ -2611,8 +2628,7 @@ Spaceline is colored in blue or orange depending on the current mode.
 From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/czg008y/][this reddit comment]].
 
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets '((nil :maxlevel . 2)
-                                (org-agenda-files :maxlevel . 9)))
+(setq org-refile-targets '((nil :maxlevel . 2) (org-agenda-files :maxlevel . 9)))
 (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 #+END_SRC
@@ -2630,9 +2646,9 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-agenda-custom-commands
 	'(("c" "Complete agenda and todo"
            ((agenda "")
-            (tags-todo "-habit")
-            ))
-            ))
+            (tags-todo "-habit")))))
+  (setq org-agenda-tag-filter-preset '("-notask"))
+  (setq org-agenda-files '("~/Dropbox/orgzly/Tasks.org"))
 #+END_SRC
 
 ** Keybindings
@@ -2697,7 +2713,7 @@ Sets attributes for the standard org-mode faces.
 
   (set-face-attribute 'org-level-3 nil 
     :inherit 'outline-3 
-    :weight 'bold)
+    :weight 'semi-bold)
 
   (set-face-attribute 'org-level-4 nil
     :inherit 'outline-3 
@@ -2728,6 +2744,16 @@ Sets attributes for the standard org-mode faces.
     :underline nil)
 #+END_SRC
 
+*** Ultra-bold emphasis
+#+BEGIN_SRC emacs-lisp
+(setq org-emphasis-alist 
+  '(("*" (:weight ultra-bold)) 
+    ("/" italic) 
+    ("_" underline) 
+    ("=" org-verbatim verbatim) 
+    ("~" org-code verbatim) 
+    ("+" (:strike-through t))))
+#+END_SRC
 ** org-export
 *** Beamer
 Exports to beamer. Defines the beamer class.
@@ -2765,15 +2791,16 @@ This was taken from [[http://cestlaz.github.io/posts/using-emacs-11-reveal][C'es
 #+END_SRC
 *** Export all
 #+BEGIN_SRC emacs-lisp
-(defun m42/org-export-all-html ()
-  "Export all subtrees that are *not* tagged with :noexport: to
-separate files.
-
-Note that subtrees must have the :EXPORT_FILE_NAME: property set
-to a unique value for this to work properly."
- (interactive)
- (org-map-entries (lambda () (funcall 'org-html-export-to-html nil t)) "-noexport" 'region-start-level)
- )
+  (defun m42/org-export-all-html ()
+    "Export all subtrees that are *not* tagged with :noexport: to
+    separate files. Note that subtrees must have the
+    :EXPORT_FILE_NAME: property set to a unique value for this to
+    work properly."
+   (interactive)
+   (org-map-entries 
+      (lambda () 
+         (if (org-entry-get (point) "EXPORT_FILE_NAME") 
+           (funcall 'org-html-export-to-html nil t))) "-noexport" nil))
 #+END_SRC
 
 ** org-babel
@@ -2913,8 +2940,8 @@ Initial configuration, using the Google API. Follows [[https://cestlaz.github.io
 Hooks for synchronization.
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
-(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
+; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
+; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
 #+END_SRC
 
 *** DISABLED calfw
@@ -3158,14 +3185,13 @@ From http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
 (defun m42/org-drill-cram-tree ()
   (interactive)
   (org-drill-cram 'tree))
-(setq org-drill-learn-fraction 0.3)
+(setq org-drill-learn-fraction 0.35)
 ;(setq org-drill-scope 'tree)
 (setq org-drill-add-random-noise-to-intervals-p t)
-(setq org-drill-spaced-repetition-algorithm 'sm2)
+;(setq org-drill-spaced-repetition-algorithm 'sm2)
 (setq org-drill-maximum-duration 25)
 (setq org-drill-save-buffers-after-drill-sessions-p nil)
 #+END_SRC
-
 * Snippets
 ** Yasnippet support
 #+BEGIN_SRC emacs-lisp
