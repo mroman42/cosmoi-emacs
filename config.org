@@ -2777,6 +2777,19 @@ Sets attributes for the standard org-mode faces.
     ("+" (:strike-through t))))
 #+END_SRC
 ** org-export
+*** Report without parts
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+           '("report-noparts"
+              "\\documentclass{report}"
+              ("\\chapter{%s}" . "\\chapter*{%s}")
+              ("\\section{%s}" . "\\section*{%s}")
+              ("\\subsection{%s}" . "\\subsection*{%s}")
+              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+
 *** Beamer
 Exports to beamer. Defines the beamer class.
 
