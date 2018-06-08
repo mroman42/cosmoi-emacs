@@ -2889,7 +2889,7 @@ Org-babel-sage configuration:
   (setq org-confirm-babel-evaluate nil)
 
   ;; Do not evaluate code blocks when exporting.
-  (setq org-export-babel-evaluate nil)
+  ; (setq org-export-babel-evaluate nil)
 
   ;; Show images when opening a file.
   (setq org-startup-with-inline-images t)
