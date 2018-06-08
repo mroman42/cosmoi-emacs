@@ -2624,13 +2624,45 @@ Spaceline is colored in blue or orange depending on the current mode.
 (setq org-ref-default-bibliography '("~/projects/math/math.bib"))
 #+END_SRC
 
+** org-agenda
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+	'(("c" "Complete agenda, todo and waiting tasks"
+           ((agenda "")
+            (tags-todo "-habit+TODO=\"TODO\"")
+            (tags-todo "-habit+TODO=\"WAIT\"")
+            ))))
+  (setq org-agenda-tag-filter-preset '("-notask"))
+  (setq org-agenda-files '("~/Dropbox/orgzly/Tasks.org"))
+;  (setq org-agenda-prefix-format '(
+;    (agenda . " %i %-12:c%?-12t% s") 
+;    (todo . " %i %-12:c") 
+;    (tags . " %i %-12:c %b ") 
+;    (search . " %i %-12:c")))
+#+END_SRC
+
 ** org-refile
 From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/czg008y/][this reddit comment]].
 
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets '((nil :maxlevel . 2) (org-agenda-files :maxlevel . 9)))
+(setq org-refile-targets '(
+   (nil :maxlevel . 2) 
+   (org-agenda-files :maxlevel . 2) 
+   ("~/Dropbox/orgzly/Someday.org" :maxlevel . 2)
+   ("~/Dropbox/orgzly/Tasks.org" :maxlevel . 2)
+   ("~/Dropbox/orgzly/Reference.org" :maxlevel . 2)
+   ("~/Dropbox/orgzly/Inbox.org" :maxlevel . 1)
+   ("~/Dropbox/orgzly/Archive.org" :maxlevel . 1)
+))
 (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+#+END_SRC
+
+From [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][this post]], how to refile to the top level.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-use-outline-path 'file)
+(setq org-outline-path-complete-in-steps nil)
 #+END_SRC
 
 *** archive
@@ -2639,16 +2671,6 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 #+BEGIN_SRC emacs-lisp
   (setq org-directory m42/org-folder)
   (setq org-archive-location (concat m42/file-archive "::* From %s"))
-#+END_SRC
-
-** org-agenda
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-custom-commands
-	'(("c" "Complete agenda and todo"
-           ((agenda "")
-            (tags-todo "-habit")))))
-  (setq org-agenda-tag-filter-preset '("-notask"))
-  (setq org-agenda-files '("~/Dropbox/orgzly/Tasks.org"))
 #+END_SRC
 
 ** Keybindings
@@ -2703,17 +2725,17 @@ Sets attributes for the standard org-mode faces.
   ;; Faces
   (set-face-attribute 'org-level-1 nil
      :inherit 'outline-1
-     :weight 'bold
+     :weight 'semi-bold
      :height 1.0)
 
   (set-face-attribute 'org-level-2 nil
     :inherit 'outline-1
-    :weight 'semi-bold
+    :weight 'normal
     :height 1.0)
 
   (set-face-attribute 'org-level-3 nil 
     :inherit 'outline-3 
-    :weight 'semi-bold)
+    :weight 'normal)
 
   (set-face-attribute 'org-level-4 nil
     :inherit 'outline-3 
