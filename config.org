@@ -2979,31 +2979,17 @@ Hooks for synchronization.
 ; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
 #+END_SRC
 
-*** DISABLED calfw
+** calfw
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package calfw
-  ;;   :ensure
-  ;;   :config
-  ;;   (require 'calfw) 
-  ;;   (require 'calfw-org)
-  ;;   (setq cfw:org-overwrite-default-keybinding t)
-  ;;   (require 'calfw-ical)
+  (use-package calfw
+    :ensure t
+    :config
+      (setq cfw:org-overwrite-default-keybinding t)
+    )
 
-  ;;   (defun mycalendar ()
-  ;;     (interactive)
-  ;;     (cfw:open-calendar-buffer
-  ;;      :contents-sources
-  ;;      (list
-  ;;       (cfw:org-create-source "Green")  ; orgmode source
-  ;;       ;(cfw:ical-create-source "gcal" "https://somecalnedaraddress" "IndianRed")
-  ;;       ;(cfw:ical-create-source "gcal" "https://anothercalendaraddress" "IndianRed")
-  ;;       ))) 
-  ;;   (setq cfw:org-overwrite-default-keybinding t))
-
-  ;; (use-package calfw-gcal
-  ;; 	:ensure t
-  ;; 	:config
-  ;; 	(require 'calfw-gcal))
+  (use-package calfw-org
+    :ensure t
+    )
 #+END_SRC
 
 ** Tasks & To-read
