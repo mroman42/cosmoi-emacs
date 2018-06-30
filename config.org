@@ -2628,17 +2628,18 @@ Spaceline is colored in blue or orange depending on the current mode.
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-custom-commands
 	'(("c" "Complete agenda, todo and waiting tasks"
-           ((agenda "")
-            (tags-todo "-habit+TODO=\"TODO\"")
-            (tags-todo "-habit+TODO=\"WAIT\"")
+           ((agenda)
+            (tags-todo "-habit-notask+TODO=\"TODO\"")
+            (tags-todo "-habit-notask+TODO=\"WAIT\"")
             ))))
   (setq org-agenda-tag-filter-preset '("-notask"))
   (setq org-agenda-files '("~/Dropbox/orgzly/Tasks.org"))
-;  (setq org-agenda-prefix-format '(
-;    (agenda . " %i %-12:c%?-12t% s") 
-;    (todo . " %i %-12:c") 
-;    (tags . " %i %-12:c %b ") 
-;    (search . " %i %-12:c")))
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-todo-ignore-scheduled 'past)
+  (setq org-agenda-show-future-repeats nil)
+  (setq org-agenda-start-day "-1d")
+  (setq org-agenda-span 7)
+  (setq org-agenda-start-on-weekday nil)
 #+END_SRC
 
 ** org-refile
@@ -2990,6 +2991,8 @@ Hooks for synchronization.
   (use-package calfw-org
     :ensure t
     )
+
+  (setq cfw:display-calendar-holidays nil)
 #+END_SRC
 
 ** Tasks & To-read
