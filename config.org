@@ -3418,6 +3418,26 @@ A Hugo blogging solution based on [[http://www.holgerschurig.de/en/emacs-blog-fr
 #+END_SRC
 
 * Social
+** RSS
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed
+    :ensure t)
+
+  (use-package elfeed-org
+    :ensure t
+    :config
+      (elfeed-org)
+      (setq rhm-elfeed-org-files (list "~/.emacs.d/elfeed.org")))
+
+  (use-package elfeed-goodies
+    :ensure t)
+
+  (set-face-attribute 'variable-pitch nil
+     :font "Iosevka"
+     )
+
+#+END_SRC
+
 ** Mastodon
 [[https://en.wikipedia.org/wiki/Mastodon_(software)][Mastodon]] is a free software federated social network. A specific
 [[https://github.com/jdenen/mastodon.el][mastodon-mode]] was written by Johnson Denen (@jdenen).
