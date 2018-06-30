@@ -29,9 +29,43 @@
      ("" "capt-of" nil)
      ("colorlinks=true" "hyperref" nil)))
  '(package-selected-packages
-   '(calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu avy smartparens-config smartparens volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp polymode multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm yankpad restart-emacs org-pomodoro which-key try counsel counsel-projectile projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word org-ref cdlatex org-gcal ein elpy intero company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode))
+   '(interleave elfeed-goodies elfeed-org elfeed calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu avy smartparens-config smartparens volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp polymode multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm yankpad restart-emacs org-pomodoro which-key try counsel counsel-projectile projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word org-ref cdlatex org-gcal ein elpy intero company-auctex company ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-plus-contrib org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term org fsharp-mode haskell-mode))
  '(safe-local-variable-values
-   '((eval setq org-latex-default-packages-alist
+   '((org-tags-column . -119)
+     (org-tags-column . -120)
+     (org-tags-column . -130)
+     (eval setq org-html-postamble-format
+           '(("en" "<div id=\"footer\"><p class=\"postamble\">Last edited %d. Written by %c</p></div>")))
+     (eval setq org-tags-exclude-from-inheritance
+           '("post"))
+     (eval defun cosmoi/publish nil
+           (interactive)
+           (org-map-entries
+            (lambda nil
+              (if
+                  (org-entry-get
+                   (point)
+                   "EXPORT_FILE_NAME")
+                  (funcall 'org-html-export-to-html nil t)))
+            "-noexport" nil))
+     (org-latex-pdf-process "xelatex --shell-escape -interaction nonstopmode %f" "bibtex %b" "xelatex --shell-escape -interaction nonstopmode %f")
+     (org-latex-pdf-process "xelatex -interaction nonstopmode %f" "bibtex %b" "xelatex -interaction nonstopmode %f")
+     (org-latex-default-packages-alist
+      ("T1" "fontenc" t)
+      ("" "fixltx2e" nil)
+      ("" "graphicx" t)
+      ("" "grffile" t)
+      ("" "longtable" nil)
+      ("" "wrapfig" nil)
+      ("" "rotating" nil)
+      ("normalem" "ulem" t)
+      ("" "amsmath" t)
+      ("" "textcomp" t)
+      ("" "amssymb" t)
+      ("" "capt-of" nil))
+     (org-latex-packages-alist)
+     (org-latex-pdf-process "xelatex -interaction nonstopmode %f" "bibtex" "xelatex -interaction nonstopmode %f")
+     (eval setq org-latex-default-packages-alist
            (cons
             '("mathletters" "ucs" nil)
             org-latex-default-packages-alist))
