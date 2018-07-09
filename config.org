@@ -44,15 +44,10 @@ used all across the configuration file; and listing them here eases
 the process of rewriting directory paths.
 
 #+BEGIN_SRC emacs-lisp
-  (setq m42/math-file       (expand-file-name "~/projects/math/math.org"))
-  (setq m42/math-drill-file (expand-file-name "~/projects/math/drill.org"))
+  (setq m42/math-file       (expand-file-name "~/Dropbox/orgzly/Math.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
   (setq m42/agenda-file     (expand-file-name "~/Dropbox/orgzly/Tasks.org"))
   (setq m42/org-folder      (expand-file-name "~/Dropbox/orgzly"))
-  (setq m42/links-file      (expand-file-name "~/org/wiki/links.org"))
-  (setq m42/file-archive    (expand-file-name "~/org/archive.org"))
-  (setq m42/bugs-file       (expand-file-name "~/org/wiki/bugs.org"))
-  (setq m42/ideas-file      (expand-file-name "~/org/wiki/ideas.org"))
 
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
@@ -102,6 +97,13 @@ session and starts a new session.
 (use-package better-defaults
   :ensure t)
 #+END_SRC
+
+Really open large files.
+
+#+BEGIN_SRC emacs-lisp
+(setq large-file-warning-threshold nil)
+#+END_SRC
+
 ** Backup files
 Disables backup files.
 
@@ -139,6 +141,10 @@ Starts shell using =C-c s=.
 ** Autorevert
 #+BEGIN_SRC emacs-lisp
 (global-auto-revert-mode 1)
+#+END_SRC
+** Setting emacs window title
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format "%f")
 #+END_SRC
 
 * Navigation
@@ -718,11 +724,11 @@ Evaluates Lisp in place with `C-c e`. Taken from [[http://emacsredux.com/blog/20
 *** Pdf generation process
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-pdf-process
-	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %b"
-          "bibtex %b"
-          "makeindex %b"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %b"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %b"))
+	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+    "bibtex %b"
+    "makeindex %b"
+    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+END_SRC
 
 *** Fontify-titles
@@ -2588,6 +2594,10 @@ Spaceline is colored in blue or orange depending on the current mode.
   :ensure org-plus-contrib
   :config (define-key org-mode-map (kbd "C-<tab>") nil))
 
+(require 'org-drill)
+(require 'org-habit)
+(require 'org-checklist)
+
 ;; List of modules
 (add-to-list 'org-modules "org-drill")
 (add-to-list 'org-modules "org-bbdb")
@@ -2601,9 +2611,7 @@ Spaceline is colored in blue or orange depending on the current mode.
 (add-to-list 'org-modules "org-protocol")
 (add-to-list 'org-modules "org-rmail")
 (add-to-list 'org-modules "org-w3m")
-
-(require 'org-drill)
-(require 'org-habit)
+;(add-to-list 'org-modules "org-checklist")
 #+END_SRC
 
 ** org-habit
@@ -2664,6 +2672,14 @@ From [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
 #+BEGIN_SRC emacs-lisp
 (setq org-refile-use-outline-path 'file)
 (setq org-outline-path-complete-in-steps nil)
+#+END_SRC
+
+Save after refiling ([[https://emacs.stackexchange.com/questions/26923/org-mode-getting-errors-when-auto-saving-after-refiling][from SO]]).
+
+#+BEGIN_SRC emacs-lisp
+(advice-add 'org-refile :after
+        (lambda (&rest _)
+        (org-save-all-org-buffers)))
 #+END_SRC
 
 *** archive
@@ -2860,6 +2876,7 @@ Loads =org-babel= languages.
        (ditaa . t)
        (sagemath . t)
        (translate . t)
+       (latex . t)
      ))
 #+END_SRC
 
@@ -3232,10 +3249,26 @@ http://endlessparentheses.com/ispell-and-org-mode.html
   (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
 (add-hook 'org-mode-hook #'endless/org-ispell)
 #+END_SRC
-** Interleave
+** DISABLED Interleave
+Deprecated in favour of org-noter.
+
 #+BEGIN_SRC emacs-lisp
-(use-package interleave
+;(use-package interleave
+;  :ensure t)
+
+;(eval-after-load "interleave-mode"
+;  '(progn
+;    (define-key interleave-mode-map (kbd "M-n") nil) ;; unbind M-n
+;    (define-key interleave-mode-map (kbd "M-p") nil))) ;; unbind M-p
+#+END_SRC
+
+** org-noter
+#+BEGIN_SRC emacs-lisp
+(use-package org-noter
   :ensure t)
+
+(setq org-noter-property-doc-file "INTERLEAVE_PDF"
+      org-noter-property-note-location "INTERLEAVE_PAGE_NOTE")
 #+END_SRC
 
 * Snippets
