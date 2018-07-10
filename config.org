@@ -47,6 +47,7 @@ the process of rewriting directory paths.
   (setq m42/math-file       (expand-file-name "~/Dropbox/orgzly/Math.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
   (setq m42/agenda-file     (expand-file-name "~/Dropbox/orgzly/Tasks.org"))
+  (setq m42/archive-file    (expand-file-name "~/Dropbox/orgzly/Archive.org"))
   (setq m42/org-folder      (expand-file-name "~/Dropbox/orgzly"))
 
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-file)))
@@ -145,6 +146,11 @@ Starts shell using =C-c s=.
 ** Setting emacs window title
 #+BEGIN_SRC emacs-lisp
 (setq frame-title-format "%f")
+#+END_SRC
+** Helpful
+#+BEGIN_SRC emacs-lisp
+(use-package helpful
+  :ensure t)
 #+END_SRC
 
 * Navigation
@@ -1915,7 +1921,7 @@ I am no longer using company-auctex.
 #+END_SRC
 * Customization
 ** Theme
-*** Tomorrow night
+*** DISABLED Tomorrow night
 #+BEGIN_SRC emacs-lisp
 ;(use-package base16-theme
 ;  :ensure t
@@ -1929,13 +1935,13 @@ ported from Vim. It also loads the [[https://github.com/jasonblewis/color-theme-
 ported from Vim.
 
 #+BEGIN_SRC emacs-lisp
- ; Zenburn theme
- (use-package zenburn-theme
+; Zenburn theme
+(use-package zenburn-theme
    :ensure t)
- ; (load-theme 'zenburn)
+; (load-theme 'zenburn)
 
- ; Wombat theme
- (load-theme 'wombat t)
+; Wombat theme
+(load-theme 'wombat t)
 #+END_SRC
 
 *** DISABLED Spacemacs theme
@@ -2687,7 +2693,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-directory m42/org-folder)
-  (setq org-archive-location (concat m42/file-archive "::* From %s"))
+  (setq org-archive-location (concat m42/archive-file "::* From %s"))
 #+END_SRC
 
 ** Keybindings
@@ -2742,43 +2748,59 @@ Sets attributes for the standard org-mode faces.
   ;; Faces
   (set-face-attribute 'org-level-1 nil
      :inherit 'outline-1
-     :weight 'semi-bold
+     :weight 'normal
+;     :foreground "#d08770" ; Nord Aurora 12
+;    :foreground "#5e81ac" ; Nord Frost 10
      :height 1.0)
 
   (set-face-attribute 'org-level-2 nil
     :inherit 'outline-1
     :weight 'normal
+;    :foreground "#ebcb8b" ; Nord Aurora 13
+;    :foreground "#81a1c1" ; Nord Frost 9
     :height 1.0)
 
   (set-face-attribute 'org-level-3 nil 
     :inherit 'outline-3 
+;    :foreground "#a3be8c" ; Nord Aurora 14
+;    :foreground "#88c0d0" ; Nord Frost 8
     :weight 'normal)
 
   (set-face-attribute 'org-level-4 nil
     :inherit 'outline-3 
-    :foreground "light steel blue" 
+    :foreground "light steel blue"
+;    :foreground "#5e81ac" ; Nord Frost 10
+;    :foreground "#8fbcbb" ; Nord Frost 7
     :weight 'normal)
 
   (set-face-attribute 'org-level-5 nil
     :inherit 'outline-4 
-    :foreground "light sky blue" 
+;    :foreground "light sky blue" 
+    :foreground "#81a1c1" ; Nord Frost 9
     :weight 'normal)
 
   (set-face-attribute 'org-level-6 nil
     :inherit 'outline-4
-    :foreground "powder blue")
+    ;:foreground "powder blue"
+    :foreground "#88c0d0" ; Nord Frost 8
+    )
 
   (set-face-attribute 'org-level-7 nil
     :inherit 'outline-7
-    :foreground "pale green")
+    :foreground "#8fbcbb" ; Nord Frost 7
+    ;:foreground "pale green"
+    )
 
   (set-face-attribute 'org-level-8 nil
     :inherit 'outline-7
-    :foreground "light green")
+    ;:foreground "light green"
+    :foreground "#b48ead" ; Nord Aurora 15
+    )
 
   (set-face-attribute 'org-link nil
     :inherit 'link
 ;    :foreground "SlateGray1"
+;    :foreground "#e5e9f0" ; Nord Snow Storm 5
     :weight 'normal
     :underline nil)
 #+END_SRC
@@ -2941,34 +2963,34 @@ Path to Ditaa
 #+BEGIN_SRC emacs-lisp
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
-** org-capture
+** DISABLED org-capture
 #+BEGIN_SRC emacs-lisp
   (require 'org-protocol)
 
-  (setq org-capture-templates
-	(quote (
-		("x" "org-protocol" entry (file+headline m42/links-file "Inbox")
-		 "** %c %?" :kill-buffer t :prepend t)
-		("i" "idea" entry (file+olp m42/ideas-file "Inbox")
-		 "*** %?\n%U\n" :kill-buffer t :prepend t)
-		("b" "bug" entry (file+olp m42/bugs-file "Inbox")
-		 "** %?\n%U\n" :kill-buffer t :prepend t)
-		("t" "task" entry (file+olp m42/agenda-file "Inbox")
-		 "** %?\n%U\n" :kill-buffer t :prepend t)
-            ("v" "vocabulary" entry (file+olp "~/org/wiki/english.org" "Vocabulary")
-		 "** %?\n" :kill-buffer t :prepend t)
-            ("m" "math-drill cards")
-            ("mc" "category theory" entry (file+olp m42/math-drill-file "Category theory")
-             "** %? :drill:\n" :kill-buffer t :prepend t)
-            ("ma" "algebra" entry (file+olp m42/math-drill-file "Algebra")
-             "** %? :drill:\n" :kill-buffer t :prepend t)
-            ("mn" "analysis" entry (file+olp m42/math-drill-file "Analysis")
-             "** %? :drill:\n" :kill-buffer t :prepend t)
-            ("mt" "topology" entry (file+olp m42/math-drill-file "Topology")
-             "** %? :drill:\n" :kill-buffer t :prepend t)
-            ("mo" "other" entry (file+olp m42/math-drill-file "Other")
-             "** %? :drill:\n" :kill-buffer t :prepend t)
-	       )))
+;  (setq org-capture-templates
+;	(quote (
+;		("x" "org-protocol" entry (file+headline m42/links-file "Inbox")
+;		 "** %c %?" :kill-buffer t :prepend t)
+;		("i" "idea" entry (file+olp m42/ideas-file "Inbox")
+;		 "*** %?\n%U\n" :kill-buffer t :prepend t)
+;		("b" "bug" entry (file+olp m42/bugs-file "Inbox")
+;		 "** %?\n%U\n" :kill-buffer t :prepend t)
+;		("t" "task" entry (file+olp m42/agenda-file "Inbox")
+;		 "** %?\n%U\n" :kill-buffer t :prepend t)
+;            ("v" "vocabulary" entry (file+olp "~/org/wiki/english.org" "Vocabulary")
+;		 "** %?\n" :kill-buffer t :prepend t)
+;            ("m" "math-drill cards")
+;            ("mc" "category theory" entry (file+olp m42/math-drill-file "Category theory")
+;             "** %? :drill:\n" :kill-buffer t :prepend t)
+;            ("ma" "algebra" entry (file+olp m42/math-drill-file "Algebra")
+;             "** %? :drill:\n" :kill-buffer t :prepend t)
+;            ("mn" "analysis" entry (file+olp m42/math-drill-file "Analysis")
+;             "** %? :drill:\n" :kill-buffer t :prepend t)
+;            ("mt" "topology" entry (file+olp m42/math-drill-file "Topology")
+;             "** %? :drill:\n" :kill-buffer t :prepend t)
+;            ("mo" "other" entry (file+olp m42/math-drill-file "Other")
+;             "** %? :drill:\n" :kill-buffer t :prepend t)
+;	       )))
 #+END_SRC
 
 ** org-wiki
@@ -3012,16 +3034,16 @@ Hooks for synchronization.
   (setq cfw:display-calendar-holidays nil)
 #+END_SRC
 
-** Tasks & To-read
+** DISABLED Tasks & To-read
 Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
 
 #+BEGIN_SRC emacs-lisp
-  (defun m42/export-html-if-agenda()
-    "Auto exports an html file"
-    (when (equal buffer-file-name m42/links-file)
-      (org-twbs-export-to-html)))
-
-  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
+;  (defun m42/export-html-if-agenda()
+;    "Auto exports an html file"
+;    (when (equal buffer-file-name m42/links-file)
+;      (org-twbs-export-to-html)))
+;
+;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
 
 ** org-latex
