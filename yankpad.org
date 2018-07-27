@@ -73,7 +73,7 @@ $0</script>
 #+END_export
 ** two part definition
 \left\{\begin{array}{ll}
-$1  & \mbox{if } $2 \\
+$1 & \mbox{if } $2 \\
 $3 & \mbox{if } $4
 \end{array}\right.
 
