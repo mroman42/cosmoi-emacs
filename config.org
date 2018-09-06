@@ -3278,24 +3278,24 @@ a =pinta= window to edit it.
 #+attr_latex: :width 50px
 [[./pinta//painting.png]]
 #+end_center
-** org-pomodoro
+** Pomodoro
 #+BEGIN_SRC emacs-lisp
 (use-package org-pomodoro
   :ensure t)
 #+END_SRC
-** org-checkboxes
+** Checkboxes
 #+BEGIN_SRC emacs-lisp
 (setq org-checkbox-hierarchical-statistics t)
 #+END_SRC
-** org-timer
-From http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
+** Clock
+Inspired by http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-clock-in-hook 'save-buffer)
 (add-hook 'org-clock-out-hook 'save-buffer)
 (setq org-clock-mode-line-total 'current)
-;(find-file-noselect "~/org/wiki/timelog.org")
 #+END_SRC
+
 ** org-id
 :PROPERTIES:
 :ID:       b3cc359a-f2da-4fa9-917f-9d9bc59ffd1f
@@ -3306,7 +3306,8 @@ From http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
 (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 ;; (org-id-update-id-locations)
 #+END_SRC
-** org-drill
+
+** Drill
 #+BEGIN_SRC emacs-lisp
 (defun m42/org-drill-cram-tree ()
   (interactive)
@@ -3694,20 +3695,7 @@ http://endlessparentheses.com/ispell-and-org-mode.html
   (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
 (add-hook 'org-mode-hook #'endless/org-ispell)
 #+END_SRC
-** DISABLED Interleave
-Deprecated in favour of org-noter.
-
-#+BEGIN_SRC emacs-lisp
-;(use-package interleave
-;  :ensure t)
-
-;(eval-after-load "interleave-mode"
-;  '(progn
-;    (define-key interleave-mode-map (kbd "M-n") nil) ;; unbind M-n
-;    (define-key interleave-mode-map (kbd "M-p") nil))) ;; unbind M-p
-#+END_SRC
-
-** org-noter
+** Noter
 #+BEGIN_SRC emacs-lisp
 (use-package org-noter
   :ensure t)
