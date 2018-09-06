@@ -3036,44 +3036,33 @@ Path to Ditaa
 #+BEGIN_SRC emacs-lisp
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
-** DISABLED org-capture
+** Capture
 #+BEGIN_SRC emacs-lisp
   (require 'org-protocol)
 
-;  (setq org-capture-templates
-;	(quote (
-;		("x" "org-protocol" entry (file+headline m42/links-file "Inbox")
-;		 "** %c %?" :kill-buffer t :prepend t)
-;		("i" "idea" entry (file+olp m42/ideas-file "Inbox")
-;		 "*** %?\n%U\n" :kill-buffer t :prepend t)
-;		("b" "bug" entry (file+olp m42/bugs-file "Inbox")
-;		 "** %?\n%U\n" :kill-buffer t :prepend t)
-;		("t" "task" entry (file+olp m42/agenda-file "Inbox")
-;		 "** %?\n%U\n" :kill-buffer t :prepend t)
-;            ("v" "vocabulary" entry (file+olp "~/org/wiki/english.org" "Vocabulary")
-;		 "** %?\n" :kill-buffer t :prepend t)
-;            ("m" "math-drill cards")
-;            ("mc" "category theory" entry (file+olp m42/math-drill-file "Category theory")
-;             "** %? :drill:\n" :kill-buffer t :prepend t)
-;            ("ma" "algebra" entry (file+olp m42/math-drill-file "Algebra")
-;             "** %? :drill:\n" :kill-buffer t :prepend t)
-;            ("mn" "analysis" entry (file+olp m42/math-drill-file "Analysis")
-;             "** %? :drill:\n" :kill-buffer t :prepend t)
-;            ("mt" "topology" entry (file+olp m42/math-drill-file "Topology")
-;             "** %? :drill:\n" :kill-buffer t :prepend t)
-;            ("mo" "other" entry (file+olp m42/math-drill-file "Other")
-;             "** %? :drill:\n" :kill-buffer t :prepend t)
-;	       )))
+  (defvar m42/org-contacts-template "* %(org-contacts-template-name)
+:PROPERTIES:
+:BIRTHDAY: %^{yyyy-mm-dd}
+:EMAIL: %(org-contacts-template-email)
+:NOTE: %^{NOTE}
+:END:" "Template for org-contacts")
+
+  (setq org-capture-templates (quote (
+    ("j" "Journal" entry (file m42/journal-file)
+      "* %(shell-command-to-string \"date\")%?")
+    ("c" "Contact" entry (file+headline "~/Dropbox/orgzly/Contacts.org" "Inbox"),
+      m42/org-contacts-template :empty-lines 1)))
 #+END_SRC
 
-** org-wiki
+** Wiki
+Using the org-wiki package.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/org-wiki")
 (require 'org-wiki)
 (setq org-wiki-location "~/org/wiki")
 #+END_SRC
 
-** DISABLED org-gcal
+** DISABLED Gcalendar
 Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
 
 #+BEGIN_SRC emacs-lisp
@@ -3092,7 +3081,7 @@ Hooks for synchronization.
 ; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
 #+END_SRC
 
-** calfw
+** Calfw
 #+BEGIN_SRC emacs-lisp
   (use-package calfw
     :ensure t
@@ -3119,7 +3108,7 @@ Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_e
 ;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
 
-** org-latex
+** Latex in org
 Uses =C-ñ= to preview formulas:
 
 #+BEGIN_SRC emacs-lisp
@@ -3252,7 +3241,7 @@ Zooms latex image previews along with the text using =C-x C-+=.
 ;  (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 #+END_SRC
 
-** org-pinta
+** Pinta in org
 Creates an image using =imagemagick= and opens
 a =pinta= window to edit it.
 
