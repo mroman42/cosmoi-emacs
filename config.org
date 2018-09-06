@@ -2696,6 +2696,17 @@ Spaceline is colored in blue or orange depending on the current mode.
   (setq org-agenda-start-on-weekday nil)
 #+END_SRC
 
+*** To-do dependencies
+https://orgmode.org/manual/TODO-dependencies.html#TODO-dependencies
+
+#+BEGIN_SRC emacs-lisp
+(setq org-enforce-todo-dependencies t)
+(setq org-agenda-dim-blocked-tasks 'invisible)
+#+END_SRC
+*** Habits
+#+BEGIN_SRC emacs-lisp
+(setq org-habit-show-habits-only-for-today t)
+#+END_SRC
 ** org-refile
 From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/czg008y/][this reddit comment]].
 
@@ -2739,16 +2750,15 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-directory m42/org-folder)
   (setq org-archive-location (concat m42/archive-file "::* From %s"))
 #+END_SRC
-
 ** Keybindings
-*** org-agenda and org-capture
+*** Agenda and capture
 Basic keybindings for org-mode.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-export-coding-system 'utf-8)
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
-  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key (kbd "C-c c") 'org-capture)
   (global-set-key "\C-cb" 'org-iswitchb)
 #+END_SRC
 
