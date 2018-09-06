@@ -47,6 +47,7 @@ the process of rewriting directory paths.
   (setq m42/math-file       (expand-file-name "~/Dropbox/orgzly/Math.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
   (setq m42/agenda-file     (expand-file-name "~/Dropbox/orgzly/Tasks.org"))
+  (setq m42/journal-file     (expand-file-name "~/Dropbox/orgzly/Journal.org"))
   (setq m42/archive-file    (expand-file-name "~/Dropbox/orgzly/Archive.org"))
   (setq m42/org-folder      (expand-file-name "~/Dropbox/orgzly"))
 
@@ -246,6 +247,16 @@ sometimes =C-tab= still feels more intuitive to me.
 ;  :bind (("C-c o" . crux-open-with))
 ;  )
 #+END_SRC
+** CUA rectangle mode
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x <SPC>") 'cua-rectangle-mark-mode)
+#+END_SRC
+** DISABLED EXWM
+#+BEGIN_SRC emacs-lisp
+;(use-package exwm
+;  :ensure t)
+#+END_SRC
+
 * Programming
 ** Flycheck
 Flycheck checks the syntax of programming languages.
@@ -280,11 +291,10 @@ current repository.
   (projectile-global-mode)
 (setq projectile-completion-system 'ivy))
 
-(use-package counsel-projectile
-  :ensure t
-  :config
-  ;(counsel-projectile-on)
-)
+;(use-package counsel-projectile
+;  :ensure t
+;  :config (counsel-projectile-on)
+;)
 #+END_SRC
 
 ** Haskell
@@ -687,6 +697,11 @@ Little tweak on agda colors. Original blue was too dark.
         :foreground "light steel blue")))
 #+END_SRC
 
+** Idris
+#+BEGIN_SRC emacs-lisp
+(use-package idris-mode
+  :ensure t)
+#+END_SRC
 ** Sage
 #+BEGIN_SRC emacs-lisp
   (use-package sage-shell-mode
@@ -769,14 +784,20 @@ Loads the Proof General file. Proof General can be installed directly
 from AUR.
 
 #+BEGIN_SRC emacs-lisp
-(load "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site")
+(load "~/.emacs.d/lisp/PG/generic/proof-site")
 #+END_SRC
+
+#+RESULTS:
+: t
 
 *** Electric terminator
 #+BEGIN_SRC emacs-lisp
 (setq proof-electric-terminator-enable t)
 #+END_SRC
+
 ** Coq
+*** Company-coq
+
 *** Agda input
 #+BEGIN_SRC emacs-lisp
 ;;; agda-input.el --- The Agda input method
@@ -1876,6 +1897,15 @@ Suitable for use in the :set field of `defcustom'."
 (provide 'agda-input)
 ;;; agda-input.el ends here
 #+END_SRC
+** GAP
+#+BEGIN_SRC emacs-lisp
+(use-package gap-mode
+  :ensure t
+  :config
+    (setq gap-executable "~/.local/bin/gap")
+    (setq gap-start-options (list "-E")))
+
+#+END_SRC
 ** DISABLED HAML
 HAML support.
 
@@ -1993,6 +2023,13 @@ ported from Vim.
 ;(set-default-font "Iosevka")
 #+END_SRC
 
+*** DejaVu Sans
+Fallback unicode font for Agda. It works great with Fira mono.
+
+#+BEGIN_SRC emacs-lisp
+(set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
+#+END_SRC
+
 *** DISABLED Fira mono
 Uses Fira as default font.
 
@@ -2001,13 +2038,6 @@ Uses Fira as default font.
 ;(add-to-list 'default-frame-alist '(font . "Fira Mono-10" ))
 ;(set-face-attribute 'default t :font "Fira Mono-10" )
 ;(set-default-font "Fira Mono")
-#+END_SRC
-
-*** DejaVu Sans
-Fallback unicode font for Agda. It works great with Fira mono.
-
-#+BEGIN_SRC emacs-lisp
-(set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
 #+END_SRC
 
 *** DISABLED Fira code
@@ -2437,6 +2467,12 @@ Yes-no questions are unnecessarily long.
 (delete-selection-mode 1)
 #+END_SRC
 
+** All the icons
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons
+  :ensure t)
+#+END_SRC
+
 ** Custom file
 Loads the customize file, follows this [[http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/][article]]:
 
@@ -2482,7 +2518,8 @@ Indicates what face are we using currently under the cursor.
     (spaceline-toggle-minor-modes-off)
 )
 #+END_SRC
-** Golden ratio
+
+** DISABLED Golden ratio
 #+BEGIN_SRC emacs-lisp
   ;; (use-package golden-ratio
   ;;   :ensure t
@@ -2511,6 +2548,7 @@ feedback.
     (volatile-highlights-mode t)
 )
 #+END_SRC
+
 ** Rainbow delimiters
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-delimiters
