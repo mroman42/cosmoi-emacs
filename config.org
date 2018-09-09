@@ -265,6 +265,13 @@ sometimes =C-tab= still feels more intuitive to me.
 ;  :bind (("C-c o" . crux-open-with))
 ;  )
 #+END_SRC
+** beacon
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+  :ensure t
+  :config (beacon-mode 1))
+#+END_SRC
+
 ** CUA rectangle mode
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x <SPC>") 'cua-rectangle-mark-mode)
