@@ -3159,30 +3159,12 @@ Uses =C-ñ= to preview formulas:
      '(("frame" "lines") 
        ))
 #+END_SRC
-*** cd-latex
-#+BEGIN_SRC emacs-lisp
-  (use-package cdlatex
-    :ensure t)
-
-  (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
-#+END_SRC
 
 *** Latex math mode
-Requires Latex to use =latex-math-mode=. It is activated by default.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package tex
-    :ensure auctex)
-  (require 'latex)
-
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-  (add-hook 'org-mode-hook 'LaTeX-math-mode)
-#+END_SRC
-
 Abbreviations on =latex-math-mode=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq LaTeX-math-abbrev-prefix "ç")
+  (customize-set-variable 'LaTeX-math-abbrev-prefix "ç")
   (setq LaTeX-math-list
     (quote
       ((";" "mathbb{" "" nil)
@@ -3198,6 +3180,39 @@ Abbreviations on =latex-math-mode=.
        ("C-(" "left(" "" nil)
        ("C-)" "right)" "" nil)
        )))
+#+END_SRC
+
+#+RESULTS:
+| ;         | mathbb{        |   | nil |
+| =         | cong           |   | nil |
+| <right>   | longrightarrow |   | nil |
+| <left>    | longleftarrow  |   | nil |
+| C-<right> | Longrightarrow |   | nil |
+| C-<left>  | Longleftarrow  |   | nil |
+| ^         | widehat        |   | nil |
+| ~         | widetilde      |   | nil |
+| '         | partial        |   | nil |
+| 0         | varnothing     |   | nil |
+| C-(       | left(          |   | nil |
+| C-)       | right)         |   | nil |
+
+Requires Latex to use =latex-math-mode=. It is activated by default.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package tex
+    :ensure auctex)
+  (require 'latex)
+
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'org-mode-hook 'LaTeX-math-mode)
+#+END_SRC
+
+*** cd-latex
+#+BEGIN_SRC emacs-lisp
+  (use-package cdlatex
+    :ensure t)
+
+  (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
 #+END_SRC
 
 *** Conmutative diagrams
@@ -3744,7 +3759,6 @@ Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_e
 ;
 ;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
-
 * Snippets
 ** Yasnippet support
 #+BEGIN_SRC emacs-lisp
