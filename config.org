@@ -292,6 +292,14 @@ sometimes =C-tab= still feels more intuitive to me.
   :commands (goto-address-prog-mode
              goto-address-mode))
 #+END_SRC
+
+** Ace-windows
+#+BEGIN_SRC emacs-lisp
+(use-package ace-window
+  :ensure t
+  :config (global-set-key (kbd "M-o") 'ace-window))
+#+END_SRC
+
 * Programming
 ** Flycheck
 Flycheck checks the syntax of programming languages.
@@ -3819,7 +3827,8 @@ Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's 
 (use-package company-math
   :ensure t)
 
-(add-to-list 'company-backends #'company-math)
+(add-to-list 'company-backends #'company-math-symbols-latex)
+(add-to-list 'company-backends #'company-math-latex-commands)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
