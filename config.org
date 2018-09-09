@@ -240,6 +240,24 @@ sometimes =C-tab= still feels more intuitive to me.
   :config
     (pdf-tools-install))
 #+END_SRC
+** Winmove
+#+BEGIN_SRC emacs-lisp
+(use-package windmove
+  ;; :defer 4
+  :ensure t
+  :config
+  ;; use command key on Mac
+  (windmove-default-keybindings 'super)
+  ;; wrap around at edges
+  (setq windmove-wrap-around t))
+
+;; Make windmove work in org-mode:
+(add-hook 'org-shiftup-final-hook 'windmove-up)
+(add-hook 'org-shiftleft-final-hook 'windmove-left)
+(add-hook 'org-shiftdown-final-hook 'windmove-down)
+(add-hook 'org-shiftright-final-hook 'windmove-right)
+#+END_SRC
+
 ** openwith
 #+BEGIN_SRC emacs-lisp
 ;(use-package crux
@@ -251,12 +269,19 @@ sometimes =C-tab= still feels more intuitive to me.
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x <SPC>") 'cua-rectangle-mark-mode)
 #+END_SRC
-** DISABLED EXWM
+** Following links
 #+BEGIN_SRC emacs-lisp
-;(use-package exwm
-;  :ensure t)
+(use-package goto-addr
+  :hook ((compilation-mode . goto-address-mode)
+         (prog-mode . goto-address-prog-mode)
+         (eshell-mode . goto-address-mode)
+         (shell-mode . goto-address-mode))
+  :bind (:map goto-address-highlight-keymap
+              ("<RET>" . goto-address-at-point)
+              ("M-<RET>" . newline))
+  :commands (goto-address-prog-mode
+             goto-address-mode))
 #+END_SRC
-
 * Programming
 ** Flycheck
 Flycheck checks the syntax of programming languages.
@@ -2564,7 +2589,6 @@ feedback.
 #+BEGIN_SRC emacs-lisp
 (use-package centered-window :ensure t)
 #+END_SRC
-
 * Translation
 ** Google translate
 #+BEGIN_SRC emacs-lisp
@@ -2626,7 +2650,6 @@ My dict-replace package. I am no longer using it.
   ;(load-file "~/.emacs.d/dict-replace.el")
   ;(global-set-key (kbd "<f5>") 'dict-translate)
 #+END_SRC
-
 * Evil
 Use Emacs keybindings by default. Change to Vi keybindings using =C-z=.
 Spaceline is colored in blue or orange depending on the current mode.
@@ -2883,6 +2906,37 @@ Sets attributes for the standard org-mode faces.
 #+BEGIN_SRC emacs-lisp
 (setq org-tags-column -100)
 #+END_SRC
+*** Final blank line
+https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html
+
+"I tend to leave a blank line at the end of the content of each task
+entry. This causes Org to automatically place a blank line before a
+new heading or plain text list item, just the way I like it."
+
+#+BEGIN_SRC emacs-lisp
+(setq org-blank-before-new-entry (quote ((heading . t) (plain-list-item . auto))))
+#+END_SRC
+
+*** Log-done
+https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html
+
+"I like to know when tasks have changed status. Setting this option
+causes Org to insert an annotation in a task when it is marked as done
+including a timestamp of when exactly that happened."
+
+#+BEGIN_SRC emacs-lisp
+(setq org-log-done (quote time))
+#+END_SRC
+
+"Adding yet further auditing, this option causes Org to insert
+annotations when you change the deadline of a task, which will note
+the previous deadline date and when it was changed. Very useful for
+figuring out how many times you “kicked the can down the road.”"
+
+#+BEGIN_SRC emacs-lisp
+(setq org-log-redeadline (quote time))
+(setq org-log-reschedule (quote time))
+#+END_SRC
 
 ** Export
 *** Report without parts
@@ -3036,49 +3090,12 @@ Path to Ditaa
 #+BEGIN_SRC emacs-lisp
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
-** Capture
-#+BEGIN_SRC emacs-lisp
-  (require 'org-protocol)
-
-  (defvar m42/org-contacts-template "* %(org-contacts-template-name)
-:PROPERTIES:
-:BIRTHDAY: %^{yyyy-mm-dd}
-:EMAIL: %(org-contacts-template-email)
-:NOTE: %^{NOTE}
-:END:" "Template for org-contacts")
-
-  (setq org-capture-templates (quote (
-    ("j" "Journal" entry (file m42/journal-file)
-      "* %(shell-command-to-string \"date\")%?")
-    ("c" "Contact" entry (file+headline "~/Dropbox/orgzly/Contacts.org" "Inbox"),
-      m42/org-contacts-template :empty-lines 1)))
-#+END_SRC
-
 ** Wiki
 Using the org-wiki package.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/org-wiki")
 (require 'org-wiki)
 (setq org-wiki-location "~/org/wiki")
-#+END_SRC
-
-** DISABLED Gcalendar
-Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
-
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package org-gcal
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com"
-  ;; 	org-gcal-client-secret m42/gcal-client-secret
-  ;; 	org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/wiki/calendar.org"))))
-#+END_SRC
-
-Hooks for synchronization.
-
-#+BEGIN_SRC emacs-lisp
-; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
-; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
 #+END_SRC
 
 ** Calfw
@@ -3094,18 +3111,6 @@ Hooks for synchronization.
     )
 
   (setq cfw:display-calendar-holidays nil)
-#+END_SRC
-
-** DISABLED Tasks & To-read
-Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
-
-#+BEGIN_SRC emacs-lisp
-;  (defun m42/export-html-if-agenda()
-;    "Auto exports an html file"
-;    (when (equal buffer-file-name m42/links-file)
-;      (org-twbs-export-to-html)))
-;
-;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
 
 ** Latex in org
@@ -3186,7 +3191,18 @@ Uses =C-ñ= to preview formulas:
   (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
 #+END_SRC
 
-*** Latex math mode abbreviations
+*** Latex math mode
+Requires Latex to use =latex-math-mode=. It is activated by default.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package tex
+    :ensure auctex)
+  (require 'latex)
+
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'org-mode-hook 'LaTeX-math-mode)
+#+END_SRC
+
 Abbreviations on =latex-math-mode=.
 
 #+BEGIN_SRC emacs-lisp
@@ -3206,18 +3222,6 @@ Abbreviations on =latex-math-mode=.
        ("C-(" "left(" "" nil)
        ("C-)" "right)" "" nil)
        )))
-#+END_SRC
-
-*** Latex math mode
-Requires Latex to use =latex-math-mode=. It is activated by default.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package tex
-    :ensure auctex)
-  (require 'latex)
-
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-  (add-hook 'org-mode-hook 'LaTeX-math-mode)
 #+END_SRC
 
 *** Conmutative diagrams
@@ -3240,7 +3244,6 @@ Zooms latex image previews along with the text using =C-x C-+=.
 ;  )
 ;  (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 #+END_SRC
-
 ** Pinta in org
 Creates an image using =imagemagick= and opens
 a =pinta= window to edit it.
@@ -3679,7 +3682,6 @@ Suitable for adding to `org-ctrl-c-ctrl-c-hook'."
 
 ;;; org-drill-table.el ends here
 #+END_SRC
-
 ** Making ispell work with org-mode
 http://endlessparentheses.com/ispell-and-org-mode.html
 
@@ -3703,12 +3705,68 @@ http://endlessparentheses.com/ispell-and-org-mode.html
 (setq org-noter-property-doc-file "INTERLEAVE_PDF"
       org-noter-property-note-location "INTERLEAVE_PAGE_NOTE")
 #+END_SRC
-** DISABLED Contacts
+** Contacts
 #+BEGIN_SRC emacs-lisp
-;(use-package org-contacts
-;  :ensure t
-;  :after org
-;  :custom (org-contacts-files '("~/Dropbox/orgzly/Contacts.org")))
+(use-package org-contacts
+  :after org
+  :custom (org-contacts-files '("~/Dropbox/orgzly/Contacts.org")))
+#+END_SRC
+
+** Capture
+From [[https://www.reddit.com/r/emacs/comments/8toivy/tip_how_to_manage_your_contacts_with_orgcontacts/][this post]].
+
+#+BEGIN_SRC emacs-lisp
+  (require 'org-protocol)
+
+(defvar m42/org-contacts-template "* %^{name}
+:PROPERTIES:
+:BIRTHDAY: %^{yyyy-mm-dd}
+:EMAIL: %^{email}
+:NOTE: %^{NOTE}
+:END:" "Template for org-contacts.")
+
+  (setq org-capture-templates (quote (
+    ("j" "Journal" entry (file m42/journal-file)
+      "* %(shell-command-to-string \"date\")%?")
+    ("c" "Contact" entry (file+headline "~/Dropbox/orgzly/Contacts.org" "Inbox")
+      "* %^{Name}
+:PROPERTIES:
+:EMAIL: %^{Email}
+:BIRTHDAY: %^{yyyy-mm-dd}
+:NOTE: %^{Note}
+:END:"
+      :empty-lines 1))))
+#+END_SRC
+
+** DISABLED Gcalendar
+Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package org-gcal
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com"
+  ;; 	org-gcal-client-secret m42/gcal-client-secret
+  ;; 	org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/wiki/calendar.org"))))
+#+END_SRC
+
+Hooks for synchronization.
+
+#+BEGIN_SRC emacs-lisp
+; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
+; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
+#+END_SRC
+
+** DISABLED Tasks & To-read
+Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
+
+#+BEGIN_SRC emacs-lisp
+;  (defun m42/export-html-if-agenda()
+;    "Auto exports an html file"
+;    (when (equal buffer-file-name m42/links-file)
+;      (org-twbs-export-to-html)))
+;
+;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
 
 * Snippets
@@ -3831,4 +3889,24 @@ in my case is [[file:yankpad.org][this]] file.
 #+BEGIN_SRC emacs-lisp
 (use-package ledger-mode
   :ensure t)
+#+END_SRC
+
+* DISABLED EXWM
+#+BEGIN_SRC emacs-lisp
+;(use-package exwm
+;  :ensure t)
+;
+;(use-package exwm-edit
+;  :ensure t)
+;
+;(require 'exwm-config)
+;(exwm-config-default)
+#+END_SRC
+
+
+** Desktop-environment
+#+BEGIN_SRC emacs-lisp
+;(use-package desktop-environment
+;  :ensure t)
+;(desktop-environment-mode)
 #+END_SRC
