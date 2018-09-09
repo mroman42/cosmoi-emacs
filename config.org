@@ -220,7 +220,10 @@ sometimes =C-tab= still feels more intuitive to me.
 #+BEGIN_SRC emacs-lisp
 (use-package avy
   :ensure t
-  :bind ("C-:" . avy-goto-char)
+  :bind (
+    ("C-:" . avy-goto-char)
+    ("C-ç" . avy-goto-char)
+  )
 )
 #+END_SRC
 ** Anzu
@@ -3792,6 +3795,56 @@ in my case is [[file:yankpad.org][this]] file.
     :init (setq yankpad-file "~/.emacs.d/yankpad.org")
     :bind (("M-ñ" . yankpad-insert))
   )
+#+END_SRC
+* Completion
+Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's emacs.d]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :config (progn
+    (global-company-mode 1)
+    (setq 
+    company-tooltip-limit 20 ; bigger popup window
+    company-idle-delay 0.2   ; delay for popup
+    company-require-match nil
+    company-minimum-prefix-length 1
+    )
+
+    (bind-key "<tab>" #'company-complete company-active-map)
+    ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-math
+  :ensure t)
+
+(add-to-list 'company-backends #'company-math)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;(setq company-backends
+;  '(company-files company-keywords company-abbrev company-dabbrev company-math))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package company-auctex
+  ;;   :ensure t
+  ;;   :config (progn
+  ;;             (defun company-auctex-labels (command &optional arg &rest ignored)
+  ;; 	      "company-auctex-labels backend"
+  ;; 	      (interactive (list 'interactive))
+  ;; 	      (case command
+  ;;                 (interactive (company-begin-backend 'company-auctex-labels))
+  ;;                 (prefix (company-auctex-prefix "\\\\.*ref{\\([^}]*\\)\\="))
+  ;;                 (candidates (company-auctex-label-candidates arg))))
+
+  ;;             (add-to-list 'company-backends
+  ;;                          '(company-auctex-macros
+  ;;                            company-auctex-environments))
+
+  ;;             (add-to-list 'company-backends #'company-auctex-labels)
+  ;;             (add-to-list 'company-backends #'company-auctex-bibs)))
 #+END_SRC
 
 * Social
