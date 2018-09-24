@@ -309,6 +309,91 @@ sometimes =C-tab= still feels more intuitive to me.
   :config (global-set-key (kbd "M-o") 'ace-window))
 #+END_SRC
 
+** Hydra
+#+BEGIN_SRC emacs-lisp
+(use-package hydra
+  :ensure t)
+#+END_SRC
+
+*** Windows hydra
+From
+
+ * https://oremacs.com/2015/01/29/more-hydra-goodness/
+ * https://irreal.org/blog/?p=3724
+
+#+BEGIN_SRC emacs-lisp
+(defun hydra-universal-argument (arg)
+  (interactive "P")
+  (setq prefix-arg (if (consp arg)
+                       (list (* 4 (car arg)))
+                     (if (eq arg '-)
+                         (list -4)
+                       '(4)))))
+
+(defhydra hydra-window (:color red) "window"
+  ("h" windmove-left)
+  ("j" windmove-down)
+  ("k" windmove-up)
+  ("l" windmove-right)
+  ("x" (lambda ()
+    (interactive)
+    (split-window-right)
+    (windmove-right))
+    "vert")
+  ("y" (lambda ()
+    (interactive)
+    (split-window-below)
+    (windmove-down))
+    "horz")
+  ("o" delete-other-windows "one" :color blue)
+  ("a" ace-window "ace")
+  ("s" ace-swap-window "swap")
+  ("d" ace-delete-window "del")
+  ("i" ace-maximize-window "ace-one" :color blue)
+  ("b" ido-switch-buffer "buf")
+  ("m" headlong-bookmark-jump "bmk")
+  ("g" magit-status "magit" :color blue)
+  ("q" nil "cancel"))
+#+END_SRC
+
+** Disable cursor keys
+#+BEGIN_SRC emacs-lisp
+;(global-unset-key (kbd "<left>"))
+;(global-unset-key (kbd "<right>"))
+;(global-unset-key (kbd "<up>"))
+;(global-unset-key (kbd "<down>"))
+;(global-unset-key (kbd "<C-left>"))
+;(global-unset-key (kbd "<C-right>"))
+;(global-unset-key (kbd "<C-up>"))
+;(global-unset-key (kbd "<C-down>"))
+;(global-unset-key (kbd "<M-left>"))
+;(global-unset-key (kbd "<M-right>"))
+;(global-unset-key (kbd "<M-up>"))
+;(global-unset-key (kbd "<M-down>"))
+#+END_SRC
+
+
+** Unfill paragraph
+
+#+BEGIN_SRC emacs-lisp
+(defun unfill-paragraph ()
+  "Replace newline chars in current paragraph by single spaces.
+This command does the reverse of `fill-paragraph'."
+  (interactive)
+  (let ((fill-column 90002000))
+    (fill-paragraph nil)))
+
+(defun unfill-region (start end)
+  "Replace newline chars in region by single spaces.
+This command does the reverse of `fill-region'."
+  (interactive "r")
+  (let ((fill-column 90002000))
+    (fill-region start end))) 
+#+END_SRC
+
+#+RESULTS:
+: unfill-region
+
 * Programming
 ** Flycheck
 Flycheck checks the syntax of programming languages.
