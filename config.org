@@ -790,23 +790,6 @@ Emacs Speaks Statistics.
 (require 'ess-site)
 #+END_SRC
 
-** DISABLED Python
-Elpy support.
-
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package elpy
-  ;;   :ensure t)
-  ;; (elpy-enable)
-  ;; (elpy-use-ipython)
-  ;; (setq elpy-rpc-python-command "python2")
-#+END_SRC
-
-*** Jupyter notebook
-#+BEGIN_SRC emacs-lisp
-(use-package ein
-  :ensure t)
-#+END_SRC
-
 ** Agda
 Loads the =agda-mode= configuration. Agda provides the location
 of its configuration file with the command =agda-mode locate=.
@@ -833,7 +816,6 @@ Little tweak on agda colors. Original blue was too dark.
       (set-face-attribute 'agda2-highlight-primitive-face nil
         :foreground "light steel blue")))
 #+END_SRC
-
 ** Idris
 #+BEGIN_SRC emacs-lisp
 (use-package idris-mode
@@ -931,7 +913,6 @@ from AUR.
 #+BEGIN_SRC emacs-lisp
 (setq proof-electric-terminator-enable t)
 #+END_SRC
-
 ** Coq
 *** Company-coq
 
@@ -2037,23 +2018,54 @@ Suitable for use in the :set field of `defcustom'."
 ** GAP
 #+BEGIN_SRC emacs-lisp
 (use-package gap-mode
-  :ensure t
+  :mode "\\.gap\\'"
   :config
     (setq gap-executable "~/.local/bin/gap")
     (setq gap-start-options (list "-E")))
 
 #+END_SRC
-** DISABLED HAML
+** RedPRL
+#+BEGIN_SRC emacs-lisp
+(use-package redprl
+  :mode "\\.redprl\\'"
+  :ensure t)
+#+END_SRC
+
+** Lean
+#+BEGIN_SRC emacs-lisp
+(use-package lean-mode
+  :mode "\\.lean\\'"
+  :config (setq lean-rootdir "~/lean"))
+#+END_SRC
+
+** COMMENT Python
+Elpy support.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package elpy
+    :ensure t)
+  (elpy-enable)
+  (elpy-use-ipython)
+  (setq elpy-rpc-python-command "python2")
+#+END_SRC
+
+*** Jupyter notebook
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+  :ensure t)
+#+END_SRC
+
+** COMMENT HAML
 HAML support.
 
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package haml-mode
-  ;;   :ensure t)
+   (use-package haml-mode
+     :ensure t)
 
-  ;; (add-hook 'haml-mode-hook
-  ;;           (lambda ()
-  ;;             (setq indent-tabs-mode nil)
-  ;;             (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+   (add-hook 'haml-mode-hook
+             (lambda ()
+               (setq indent-tabs-mode nil)
+               (define-key haml-mode-map "\C-m" 'newline-and-indent)))
 #+END_SRC
 * Customization
 ** Theme
