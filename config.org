@@ -3479,6 +3479,46 @@ Inspired by http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
 (setq org-clock-mode-line-total 'current)
 #+END_SRC
 
+*** org-mru-clock
+https://github.com/unhammer/org-mru-clock
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-mru-clock
+  :ensure t
+  :bind* (("C-c C-x i" . org-mru-clock-in)
+          ("C-c C-x TAB" . org-mru-clock-in)
+          ("C-c C-x C-j" . org-mru-clock-select-recent-task))
+  :init
+  (setq org-mru-clock-how-many 100
+        org-mru-clock-completing-read #'ivy-completing-read))
+#+END_SRC
+
+*** Save clock history
+#+BEGIN_SRC emacs-lisp
+(setq org-clock-persist t)
+(org-clock-persistence-insinuate)
+#+END_SRC
+
+*** Clocking to file
+From https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00709.html
+
+#+BEGIN_SRC emacs-lisp
+(defun m42/org-clocking-info-to-file ()
+  (with-temp-file "~/tmp/clocking"
+    (if (org-clock-is-active)
+      (if (= (length (org-clock-get-clock-string)) 0)
+          (insert "Task: idle time")
+          (insert (org-clock-get-clock-string)))
+)))
+  
+(add-hook 'org-clock-in-hook #'m42/org-clocking-info-to-file)
+(add-hook 'org-clock-out-hook #'m42/org-clocking-info-to-file)
+(run-with-timer 0 2 'm42/org-clocking-info-to-file)
+#+END_SRC
+
+There is a shell script that simply runs: ~echo -e " $(cat tmp/clocking)"~.
+Its output is fed into Polybar.
+
 ** org-id
 :PROPERTIES:
 :ID:       b3cc359a-f2da-4fa9-917f-9d9bc59ffd1f
