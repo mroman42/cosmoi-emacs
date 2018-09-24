@@ -2682,6 +2682,19 @@ feedback.
 #+BEGIN_SRC emacs-lisp
 (use-package centered-window :ensure t)
 #+END_SRC
+
+** Window split
+#+BEGIN_SRC emacs-lisp
+(set-face-background 'vertical-border "gray")
+(set-face-foreground 'vertical-border (face-background 'vertical-border))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(let ((display-table (or standard-display-table (make-display-table))))
+  (set-display-table-slot display-table 'vertical-border (make-glyph-code ?┃))
+  (setq standard-display-table display-table))
+#+END_SRC
+
 * Translation
 ** Google translate
 #+BEGIN_SRC emacs-lisp
@@ -2743,6 +2756,16 @@ My dict-replace package. I am no longer using it.
   ;(load-file "~/.emacs.d/dict-replace.el")
   ;(global-set-key (kbd "<f5>") 'dict-translate)
 #+END_SRC
+
+* God-mode
+#+BEGIN_SRC emacs-lisp
+(use-package god-mode
+  :ensure t)
+(global-set-key (kbd "<escape>") 'god-mode-all)
+
+
+#+END_SRC
+
 * Evil
 Use Emacs keybindings by default. Change to Vi keybindings using =C-z=.
 Spaceline is colored in blue or orange depending on the current mode.
@@ -2757,6 +2780,55 @@ Spaceline is colored in blue or orange depending on the current mode.
     :config
       (setq evil-default-state 'emacs)
     )
+#+END_SRC
+
+* mu4e
+From the mu4e documentation: 
+
+ * https://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
+  (require 'smtpmail)
+  (require 'mu4e)
+
+  ;; use mu4e for e-mail in emacs
+  (setq mail-user-agent 'mu4e-user-agent)
+
+  ;; mail directory
+  (setq mu4e-maildir "~/mbsync")
+
+  (setq mu4e-drafts-folder "/gmail.drafts")
+  (setq mu4e-sent-folder   "/gmail.sent")
+  (setq mu4e-trash-folder  "/gmail.trash")
+
+  ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+  (setq mu4e-sent-messages-behavior 'delete)
+
+  (setq mu4e-maildir-shortcuts
+      '( ("/Inbox"        . ?i)
+         ("/gmail.sent"   . ?s)
+         ("/gmail.trash"  . ?t)
+         ("/gmail.all"    . ?a)))
+
+  (setq mu4e-get-mail-command "mbsync -a")
+
+  ;; something about ourselves
+  (setq
+     user-mail-address "mromang08@gmail.com"
+     user-full-name  "Mario Román")
+
+  (setq message-send-mail-function 'smtpmail-send-it
+     starttls-use-gnutls t
+     smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+     smtpmail-auth-credentials
+       '(("smtp.gmail.com" 587 "mromang08@gmail.com" nil))
+     smtpmail-default-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-service 587)
+
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)  
 #+END_SRC
 
 * Org-mode
