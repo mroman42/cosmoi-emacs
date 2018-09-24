@@ -15,6 +15,7 @@ and from many other configuration files and blogs such as
 
   - [[http://emacsredux.com/][Emacs Redux]]
   - [[http://irreal.org/blog/][Irreal]]
+  - [[https://oremacs.com][(or emacs irrelevant)]]
   - [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's configuration file]]
   - [[http://karl-voit.at/2017/06/03/emacs-org/][Karl Voit's configuration file]]
 
@@ -221,7 +222,7 @@ sometimes =C-tab= still feels more intuitive to me.
 (use-package avy
   :ensure t
   :bind (
-    ("C-:" . avy-goto-char)
+    ("C-." . avy-goto-char)
     ("C-ç" . avy-goto-char)
   )
 )
@@ -240,9 +241,10 @@ sometimes =C-tab= still feels more intuitive to me.
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :ensure t
-  :config
-    (pdf-tools-install))
+  :config (pdf-tools-install)
+  :init (add-hook 'pdf-tools-enabled-hook (lambda () (setq-local beacon-mode nil))))
 #+END_SRC
+
 ** Winmove
 #+BEGIN_SRC emacs-lisp
 (use-package windmove
@@ -261,13 +263,20 @@ sometimes =C-tab= still feels more intuitive to me.
 (add-hook 'org-shiftright-final-hook 'windmove-right)
 #+END_SRC
 
-** openwith
+** DISABLED openwith
 #+BEGIN_SRC emacs-lisp
 ;(use-package crux
 ;  :ensure t
 ;  :bind (("C-c o" . crux-open-with))
 ;  )
 #+END_SRC
+
+** Crux
+#+BEGIN_SRC emacs-lisp
+(use-package crux
+  :bind (("C-a" . crux-move-beginning-of-line)))
+#+END_SRC
+
 ** beacon
 #+BEGIN_SRC emacs-lisp
 (use-package beacon
