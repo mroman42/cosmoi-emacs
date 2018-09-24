@@ -4191,22 +4191,40 @@ https://cestlaz.github.io/posts/using-emacs-30-elfeed-2/
   :ensure t)
 #+END_SRC
 
-* DISABLED EXWM
+* COMMENT EXWM
 #+BEGIN_SRC emacs-lisp
-;(use-package exwm
-;  :ensure t)
-;
-;(use-package exwm-edit
-;  :ensure t)
-;
-;(require 'exwm-config)
-;(exwm-config-default)
-#+END_SRC
+  (use-package exwm
+   :ensure t)
 
+  (use-package exwm-edit
+   :ensure t)
+
+  (require 'exwm-config)
+  (exwm-config-default)
+#+END_SRC
 
 ** Desktop-environment
 #+BEGIN_SRC emacs-lisp
-;(use-package desktop-environment
-;  :ensure t)
-;(desktop-environment-mode)
+(use-package desktop-environment
+  :ensure t)
+(desktop-environment-mode)
+#+END_SRC
+
+** Executing programs
+#+BEGIN_SRC emacs-lisp
+;; Firefox
+(exwm-input-set-key (kbd "s-f") 
+  (lambda () 
+    (interactive)
+    (start-process-shell-command "firefox" nil "firefox")))
+;; Spotify
+(exwm-input-set-key (kbd "s-s") 
+  (lambda () 
+    (interactive)
+    (start-process-shell-command "spotify" nil "spotify")))
+;; Nemo
+(exwm-input-set-key (kbd "s-n")
+  (lambda () 
+    (interactive)
+    (start-process-shell-command "nemo" nil "nemo")))
 #+END_SRC
