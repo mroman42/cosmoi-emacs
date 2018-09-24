@@ -3610,13 +3610,13 @@ Its output is fed into Polybar.
 ;;    ** Cards
 ;;    *** Today                                                          :drill:
 ;;    :PROPERTIES:
-;;    :DRILL_CARD_TYPE: twosided
-;;    :END:
-;;    Translate the following word.
+;;    :Drill_card_type: Twosided
+;;    :End:
+;;    Translate The Following Word.
 ;;    **** English
 ;;    Today
 ;;    **** Spanish
-;;    Hoy
+;;    HOY
 ;;    **** Example
 ;;    Hoy es domingo
 ;;    *** Yesterday                                                      :drill:
@@ -4032,21 +4032,28 @@ Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's 
     (global-company-mode 1)
     (setq 
     company-tooltip-limit 20 ; bigger popup window
-    company-idle-delay 0.2   ; delay for popup
+    company-idle-delay 0.3   ; delay for popup
     company-require-match nil
-    company-minimum-prefix-length 1
+    company-minimum-prefix-length 3
     )
 
     (bind-key "<tab>" #'company-complete company-active-map)
     ))
 #+END_SRC
 
+Mathematics package.
+
 #+BEGIN_SRC emacs-lisp
 (use-package company-math
   :ensure t)
+#+END_SRC
 
+Backends list.
+
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'company-backends #'company-math-symbols-latex)
 (add-to-list 'company-backends #'company-math-latex-commands)
+(delete #'company-files company-backends)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -4078,7 +4085,10 @@ Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's 
 ** RSS
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
-    :ensure t)
+    :ensure t
+    :bind (:map elfeed-search-mode-map
+                ("j" . mz/hydra-elfeed/body))
+    )
 
   (use-package elfeed-org
     :ensure t
@@ -4092,6 +4102,26 @@ Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's 
 
   (set-face-attribute 'variable-pitch nil
      :font "Iosevka")
+#+END_SRC
+
+*** Hydras for elfeed
+https://cestlaz.github.io/posts/using-emacs-30-elfeed-2/
+
+#+BEGIN_SRC emacs-lisp
+(defhydra mz/hydra-elfeed ()
+   "filter"
+   ("a" (elfeed-search-set-filter "@6-months-ago") "All")
+   ("e" (elfeed-search-set-filter "@6-months-ago +emacs") "emacs")
+   ("m" (elfeed-search-set-filter "@6-months-ago +math") "math")
+   ("s" (elfeed-search-set-filter "@6-months-ago +stack") "stack overflow")
+   ("r" (elfeed-search-set-filter "@6-months-ago +rational") "rational")
+   ("h" (elfeed-search-set-filter "@6-months-ago +health") "health")
+   ("c" (elfeed-search-set-filter "@6-months-ago +computer") "computer")
+   ("w" (elfeed-search-set-filter "@6-months-ago +humour") "webcomics")
+   ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
+   ("Q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
+   ("q" nil "quit" :color blue)
+   )
 #+END_SRC
 
 ** Mastodon
