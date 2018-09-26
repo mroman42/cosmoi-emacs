@@ -1,7 +1,7 @@
 #+Title: config.org
 #+Author: Mario Román
 #+Email: mromang08@gmail.com
-#+TODO: DISABLED WIP | DONE
+#+TODO: WIP | DONE
 
 This is my Emacs init file, written in org-mode using literate
 programming and =org-babel= blocks. The =init.el= file tangles the
@@ -155,6 +155,15 @@ Starts shell using =C-c s=.
   :ensure t)
 #+END_SRC
 
+** Keyfreq
+#+BEGIN_SRC emacs-lisp
+(use-package keyfreq
+  :ensure t
+  :init 
+    (keyfreq-mode 1)
+    (keyfreq-autosave-mode 1))
+#+END_SRC
+
 * Navigation
 ** Smex
 [[https://www.emacswiki.org/emacs/Smex][Smex]] provides an enhancement to the =M-x= command. Uses =ido= for
@@ -240,9 +249,17 @@ sometimes =C-tab= still feels more intuitive to me.
 ** Pdf-tools
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
+  :pin manual
   :ensure t
-  :config (pdf-tools-install)
-  :init (add-hook 'pdf-tools-enabled-hook (lambda () (setq-local beacon-mode nil))))
+  :config 
+    (pdf-tools-install)
+    ; Display the pdf in a complete page.
+    (setq-default pdf-view-display-size 'fit-page)
+    ; Fine-grained zooming with + and -
+    (setq pdf-view-resize-factor 1.1)
+    
+  :init (add-hook 'pdf-tools-enabled-hook (lambda () (setq-local beacon-mode nil)))
+  )
 #+END_SRC
 
 ** Winmove
@@ -263,18 +280,18 @@ sometimes =C-tab= still feels more intuitive to me.
 (add-hook 'org-shiftright-final-hook 'windmove-right)
 #+END_SRC
 
-** DISABLED openwith
-#+BEGIN_SRC emacs-lisp
-;(use-package crux
-;  :ensure t
-;  :bind (("C-c o" . crux-open-with))
-;  )
-#+END_SRC
-
 ** Crux
 #+BEGIN_SRC emacs-lisp
 (use-package crux
   :bind (("C-a" . crux-move-beginning-of-line)))
+#+END_SRC
+
+*** COMMENT openwith
+#+BEGIN_SRC emacs-lisp
+(use-package crux
+  :ensure t
+  :bind (("C-c o" . crux-open-with))
+  )
 #+END_SRC
 
 ** beacon
@@ -2069,14 +2086,6 @@ HAML support.
 #+END_SRC
 * Customization
 ** Theme
-*** DISABLED Tomorrow night
-#+BEGIN_SRC emacs-lisp
-;(use-package base16-theme
-;  :ensure t
-;  :config
-;  (load-theme 'base16-default-dark t))
-#+END_SRC
-
 *** Zenburn+Wombat
 Uses the [[https://github.com/bbatsov/zenburn-emacs][Zenburn color theme]], which is a dark, low-contrast theme
 ported from Vim. It also loads the [[https://github.com/jasonblewis/color-theme-wombat][Wombat theme]], also a dark theme
@@ -2091,33 +2100,40 @@ ported from Vim.
 ; Wombat theme
 (load-theme 'wombat t)
 #+END_SRC
+*** COMMENT Tomorrow night
+#+BEGIN_SRC emacs-lisp
+(use-package base16-theme
+  :ensure t
+  :config
+  (load-theme 'base16-default-dark t))
+#+END_SRC
 
-*** DISABLED Spacemacs theme
+*** COMMENT Spacemacs theme
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package spacemacs-theme
-  ;;   :ensure t
-  ;;   :init
-  ;;   (load-theme 'spacemacs-dark t)
-  ;;   (setq spacemacs-theme-org-agenda-height nil)
-  ;;   (setq spacemacs-theme-org-height nil)
-  ;;   :config
-  ;;   (set-face-attribute 'org-level-1 nil :height 1.0)
-  ;;   (set-face-attribute 'org-level-2 nil :height 1.0)
-  ;;   (set-face-attribute 'org-level-3 nil :height 1.0)
-  ;;   (set-face-attribute 'org-scheduled-today nil :height 1.0)
-  ;;   (set-face-attribute 'org-agenda-date-today nil :height 1.1)
-  ;;   (set-face-attribute 'org-table nil :foreground "#008787")
-  ;; )
+ (use-package spacemacs-theme
+   :ensure t
+   :init
+   (load-theme 'spacemacs-dark t)
+   (setq spacemacs-theme-org-agenda-height nil)
+   (setq spacemacs-theme-org-height nil)
+   :config
+   (set-face-attribute 'org-level-1 nil :height 1.0)
+   (set-face-attribute 'org-level-2 nil :height 1.0)
+   (set-face-attribute 'org-level-3 nil :height 1.0)
+   (set-face-attribute 'org-scheduled-today nil :height 1.0)
+   (set-face-attribute 'org-agenda-date-today nil :height 1.1)
+   (set-face-attribute 'org-table nil :foreground "#008787")
+ )
 #+END_SRC
-*** DISABLED Nord
+*** COMMENT Nord
 #+BEGIN_SRC emacs-lisp
-;(use-package nord-theme :ensure t)
-;(load-theme 'nord t)
+(use-package nord-theme :ensure t)
+(load-theme 'nord t)
 #+END_SRC
-*** DISABLED Dracula
+*** COMMENT Dracula
 #+BEGIN_SRC emacs-lisp
-;;(use-package dracula-theme
-;;  :ensure t)
+(use-package dracula-theme
+  :ensure t)
 #+END_SRC
 
 ** Dashboard
@@ -2148,7 +2164,7 @@ Fallback unicode font for Agda. It works great with Fira mono.
 (set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
 #+END_SRC
 
-*** DISABLED Fira mono
+*** COMMENT Fira mono
 Uses Fira as default font.
 
 #+BEGIN_SRC emacs-lisp
@@ -2158,7 +2174,7 @@ Uses Fira as default font.
 ;(set-default-font "Fira Mono")
 #+END_SRC
 
-*** DISABLED Fira code
+*** COMMENT Fira code
 https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
 
 #+BEGIN_SRC emacs-lisp
@@ -2296,7 +2312,7 @@ https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
 ;(pretty-fonts-set-kwds
 ;  '((pretty-fonts-fira-font prog-mode-hook org-mode-hook)))
 #+END_SRC
-*** DISABLED Iosevka ligatures
+*** COMMENT Iosevka ligatures
 Iosevka-haskell must be installed.
 
 #+BEGIN_SRC emacs-lisp
@@ -2637,19 +2653,19 @@ Indicates what face are we using currently under the cursor.
 )
 #+END_SRC
 
-** DISABLED Golden ratio
+** COMMENT Golden ratio
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package golden-ratio
-  ;;   :ensure t
-  ;;   :init
-  ;;     (golden-ratio-mode 1)
-  ;;   :config
-  ;;     (add-to-list 'golden-ratio-exclude-modes "agda2-mode")
-  ;;     (add-to-list 'golden-ratio-exclude-modes "compilation-mode")
-  ;;     (add-to-list 'golden-ratio-exclude-modes "coq-mode")
-  ;;     (add-to-list 'golden-ratio-exclude-modes "coq-goals-mode")
-  ;;     (add-to-list 'golden-ratio-exclude-modes "coq-response-mode")
-  ;; )
+ (use-package golden-ratio
+   :ensure t
+   :init
+     (golden-ratio-mode 1)
+   :config
+     (add-to-list 'golden-ratio-exclude-modes "agda2-mode")
+     (add-to-list 'golden-ratio-exclude-modes "compilation-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-goals-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-response-mode")
+ )
 #+END_SRC
 ** Volatile highlights
 ([[http://pragmaticemacs.com/emacs/volatile-highlights/][From Pragmatic Emacs]]) The package volatile highlights temporarily
@@ -2749,7 +2765,7 @@ Pronounces an English word using the howjsay dictionary.
 )
 #+END_SRC
 
-** DISABLED dict-replace
+** COMMENT dict-replace
 My dict-replace package. I am no longer using it.
 
 #+BEGIN_SRC emacs-lisp
@@ -2762,8 +2778,17 @@ My dict-replace package. I am no longer using it.
 (use-package god-mode
   :ensure t)
 (global-set-key (kbd "<escape>") 'god-mode-all)
+#+END_SRC
 
+** Change cursor style to indicate mode
+#+BEGIN_SRC emacs-lisp
+(defun my-update-cursor ()
+  (setq cursor-type (if (or god-local-mode buffer-read-only)
+                        'hollow
+                      'box)))
 
+(add-hook 'god-mode-enabled-hook 'my-update-cursor)
+(add-hook 'god-mode-disabled-hook 'my-update-cursor)
 #+END_SRC
 
 * Evil
@@ -2787,6 +2812,7 @@ From the mu4e documentation:
 
  * https://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html
 
+** Main configuration
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
   (require 'smtpmail)
@@ -2804,6 +2830,9 @@ From the mu4e documentation:
 
   ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
   (setq mu4e-sent-messages-behavior 'delete)
+  (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-update-interval 900)
+  (setq mu4e-view-prefer-html t)
 
   (setq mu4e-maildir-shortcuts
       '( ("/Inbox"        . ?i)
@@ -2811,7 +2840,7 @@ From the mu4e documentation:
          ("/gmail.trash"  . ?t)
          ("/gmail.all"    . ?a)))
 
-  (setq mu4e-get-mail-command "mbsync -a")
+  (setq mu4e-get-mail-command "mbsync -aq")
 
   ;; something about ourselves
   (setq
@@ -2821,14 +2850,19 @@ From the mu4e documentation:
   (setq message-send-mail-function 'smtpmail-send-it
      starttls-use-gnutls t
      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-     smtpmail-auth-credentials
-       '(("smtp.gmail.com" 587 "mromang08@gmail.com" nil))
+     smtpmail-auth-credentials '(("smtp.gmail.com" 587 "mromang08@gmail.com" nil))
      smtpmail-default-smtp-server "smtp.gmail.com"
      smtpmail-smtp-server "smtp.gmail.com"
      smtpmail-smtp-service 587)
 
   ;; don't keep message buffers around
   (setq message-kill-buffer-on-exit t)  
+#+END_SRC
+
+** org-mode integration
+#+BEGIN_SRC emacs-lisp
+(require 'org-mu4e)
+(setq org-mu4e-link-query-in-headers-mode nil)
 #+END_SRC
 
 * Org-mode
@@ -3955,10 +3989,12 @@ From [[https://www.reddit.com/r/emacs/comments/8toivy/tip_how_to_manage_your_con
 :BIRTHDAY: %^{yyyy-mm-dd}
 :NOTE: %^{Note}
 :END:"
-      :empty-lines 1))))
+      :empty-lines 1)
+    ("t" "todo" entry (file+headline "~/Dropbox/orgzly/Tasks.org" "Mail")
+         "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n"))))
 #+END_SRC
 
-** DISABLED Gcalendar
+** COMMENT Gcalendar
 Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
 
 #+BEGIN_SRC emacs-lisp
@@ -3977,7 +4013,7 @@ Hooks for synchronization.
 ; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
 #+END_SRC
 
-** DISABLED Tasks & To-read
+** COMMENT Tasks & To-read
 Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
 
 #+BEGIN_SRC emacs-lisp
@@ -4150,7 +4186,7 @@ https://cestlaz.github.io/posts/using-emacs-30-elfeed-2/
              ("s" . sx-search)))
 #+END_SRC
 
-** DISABLED Wikipedia
+** COMMENT Wikipedia
 #+BEGIN_SRC emacs-lisp
   ;; (use-package mediawiki
   ;;   :ensure t)
