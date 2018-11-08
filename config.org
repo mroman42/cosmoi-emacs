@@ -4,9 +4,9 @@
 #+TODO: WIP | DONE
 
 This is my Emacs init file, written in org-mode using literate
-programming and =org-babel= blocks. The =init.el= file tangles the
-Elisp code blocks of this file into =config.el=. I have taken ideas
-for my configuration mainly from
+programming and =org-babel= blocks. The =init.el= file tangles the Elisp
+code blocks of this file into =config.el=. I have taken ideas for my
+configuration mainly from
 
   - [[http://cestlaz.github.io/][C'est la Z]]
   - [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
@@ -252,7 +252,7 @@ sometimes =C-tab= still feels more intuitive to me.
   :pin manual
   :ensure t
   :config 
-    (pdf-tools-install)
+    ; (pdf-tools-install)
     ; Display the pdf in a complete page.
     (setq-default pdf-view-display-size 'fit-page)
     ; Fine-grained zooming with + and -
@@ -2161,7 +2161,8 @@ ported from Vim.
 Fallback unicode font for Agda. It works great with Fira mono.
 
 #+BEGIN_SRC emacs-lisp
-(set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
+;(set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
+(set-fontset-font "fontset-default" nil "Pragmata Pro")
 #+END_SRC
 
 *** COMMENT Fira mono
@@ -2652,21 +2653,6 @@ Indicates what face are we using currently under the cursor.
     (spaceline-toggle-minor-modes-off)
 )
 #+END_SRC
-
-** COMMENT Golden ratio
-#+BEGIN_SRC emacs-lisp
- (use-package golden-ratio
-   :ensure t
-   :init
-     (golden-ratio-mode 1)
-   :config
-     (add-to-list 'golden-ratio-exclude-modes "agda2-mode")
-     (add-to-list 'golden-ratio-exclude-modes "compilation-mode")
-     (add-to-list 'golden-ratio-exclude-modes "coq-mode")
-     (add-to-list 'golden-ratio-exclude-modes "coq-goals-mode")
-     (add-to-list 'golden-ratio-exclude-modes "coq-response-mode")
- )
-#+END_SRC
 ** Volatile highlights
 ([[http://pragmaticemacs.com/emacs/volatile-highlights/][From Pragmatic Emacs]]) The package volatile highlights temporarily
 highlights changes to the buffer associated with certain commands that
@@ -2709,6 +2695,21 @@ feedback.
 (let ((display-table (or standard-display-table (make-display-table))))
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?┃))
   (setq standard-display-table display-table))
+#+END_SRC
+
+** COMMENT Golden ratio
+#+BEGIN_SRC emacs-lisp
+ (use-package golden-ratio
+   :ensure t
+   :init
+     (golden-ratio-mode 1)
+   :config
+     (add-to-list 'golden-ratio-exclude-modes "agda2-mode")
+     (add-to-list 'golden-ratio-exclude-modes "compilation-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-goals-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-response-mode")
+ )
 #+END_SRC
 
 * Translation
@@ -2784,7 +2785,7 @@ My dict-replace package. I am no longer using it.
 #+BEGIN_SRC emacs-lisp
 (defun my-update-cursor ()
   (setq cursor-type (if (or god-local-mode buffer-read-only)
-                        'hollow
+                        '(hbar . 20)
                       'box)))
 
 (add-hook 'god-mode-enabled-hook 'my-update-cursor)
@@ -2909,12 +2910,13 @@ From the mu4e documentation:
             (tags-todo "-habit-notask+TODO=\"WAIT\"-SCHEDULED>\"<today>\"")
             ))))
   (setq org-agenda-tag-filter-preset '("-notask"))
-  (setq org-agenda-files '("~/Dropbox/orgzly/Tasks.org"))
+  (setq org-agenda-files '("~/Dropbox/orgzly/Tasks.org" "~/Dropbox/orgzly/GCalendar.org"))
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-todo-ignore-scheduled 'past)
   (setq org-agenda-show-future-repeats nil)
   (setq org-agenda-start-day "-1d")
   (setq org-agenda-span 7)
+  (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-start-on-weekday nil)
 #+END_SRC
 
@@ -2972,7 +2974,24 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-directory m42/org-folder)
   (setq org-archive-location (concat m42/archive-file "::* From %s"))
 #+END_SRC
+
+** org-download
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+  :ensure t
+  :config 
+    (setq org-download-image-dir "~/Dropbox/orgzly/images")
+    (setq org-download-heading-lvl nil)
+  :bind ("M-<print>" . org-download-screenshot))
+#+END_SRC
+
 ** Keybindings
+
+*** Speed keys
+#+BEGIN_SRC emacs-lisp
+(setq org-use-speed-commands t)
+#+END_SRC
+
 *** Agenda and capture
 Basic keybindings for org-mode.
 
@@ -3027,6 +3046,10 @@ Sets attributes for the standard org-mode faces.
 
 *** Faces
 #+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'org-document-title nil
+    :height 1.0
+    )
+
   ;; Faces
   (set-face-attribute 'org-level-1 nil
      :inherit 'outline-1
@@ -3445,8 +3468,17 @@ Conmutative diagrams with the =tikz-cd= package.
   (add-to-list 'org-latex-packages-alist '("" "tikz" t))
   (eval-after-load "preview"
     '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
-  (setq org-latex-create-formula-image-program 'imagemagick)
+  (setq org-preview-latex-default-process 'imagemagick)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+org-preview-latex-process-alist
+#+END_SRC
+
+#+RESULTS:
+| dvipng      | :programs | (latex dvipng)  | :description | dvi > png | :message | you need to install the programs: latex and dvipng.      | :image-input-type | dvi | :image-output-type | png | :image-size-adjust | (1.0 . 1.0) | :latex-compiler    | (latex -interaction nonstopmode -output-directory %o %f) | :image-converter | (dvipng -fg %F -bg %B -D %D -T tight -o %O %f)              |                  |                                                           |
+| dvisvgm     | :programs | (latex dvisvgm) | :description | dvi > svg | :message | you need to install the programs: latex and dvisvgm.     | :use-xcolor       | t   | :image-input-type  | dvi | :image-output-type | svg         | :image-size-adjust | (1.7 . 1.5)                                              | :latex-compiler  | (latex -interaction nonstopmode -output-directory %o %f)    | :image-converter | (dvisvgm %f -e -n -b min -c %S -o %O)                     |
+| imagemagick | :programs | (latex convert) | :description | pdf > png | :message | you need to install the programs: latex and imagemagick. | :use-xcolor       | t   | :image-input-type  | pdf | :image-output-type | png         | :image-size-adjust | (1.0 . 1.0)                                              | :latex-compiler  | (pdflatex -interaction nonstopmode -output-directory %o %f) | :image-converter | (convert -density %D -trim -antialias %f -quality 100 %O) |
 
 *** Zooming & scale
 Zooms latex image previews along with the text using =C-x C-+=.
@@ -3980,8 +4012,10 @@ From [[https://www.reddit.com/r/emacs/comments/8toivy/tip_how_to_manage_your_con
 :END:" "Template for org-contacts.")
 
   (setq org-capture-templates (quote (
-    ("j" "Journal" entry (file m42/journal-file)
+    ("o" "Old Journal" entry (file m42/journal-file)
       "* %(shell-command-to-string \"date\")%?")
+    ("j" "Journal" entry (file+datetree "~/Dropbox/orgzly/Diary.org")
+         "* %?" :empty-lines 1)
     ("c" "Contact" entry (file+headline "~/Dropbox/orgzly/Contacts.org" "Inbox")
       "* %^{Name}
 :PROPERTIES:
@@ -3991,27 +4025,29 @@ From [[https://www.reddit.com/r/emacs/comments/8toivy/tip_how_to_manage_your_con
 :END:"
       :empty-lines 1)
     ("t" "todo" entry (file+headline "~/Dropbox/orgzly/Tasks.org" "Mail")
-         "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n"))))
+         "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n\n"))))
 #+END_SRC
 
-** COMMENT Gcalendar
+** Gcalendar
 Initial configuration, using the Google API. Follows [[https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE][this tutorial by C'est la Z]].
 
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package org-gcal
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com"
-  ;; 	org-gcal-client-secret m42/gcal-client-secret
-  ;; 	org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/wiki/calendar.org"))))
+  (use-package org-gcal
+    :ensure t
+    :config
+    (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com" 
+            org-gcal-client-secret m42/gcal-client-secret
+  	        org-gcal-file-alist '(("mromang08@gmail.com" . "~/Dropbox/orgzly/GCalendar.org"))))
 #+END_SRC
 
 Hooks for synchronization.
 
 #+BEGIN_SRC emacs-lisp
-; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
-; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
+  (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
+  (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
 #+END_SRC
+
+Evaluating ~(org-gcal-request-token)~ may solve Error ~http 400~.
 
 ** COMMENT Tasks & To-read
 Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
@@ -4024,6 +4060,7 @@ Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_e
 ;
 ;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
+
 * Snippets
 ** Yasnippet support
 #+BEGIN_SRC emacs-lisp
@@ -4065,7 +4102,7 @@ Taken from [[https://github.com/malb/emacs.d/blob/master/malb.org#latex][malb's 
   (use-package company
     :ensure t
     :config (progn
-    (global-company-mode 1)
+    ;(global-company-mode 1)
     (setq 
     company-tooltip-limit 20 ; bigger popup window
     company-idle-delay 0.3   ; delay for popup
