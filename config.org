@@ -246,13 +246,19 @@ sometimes =C-tab= still feels more intuitive to me.
   :config
     (setq anzu-cons-mode-line-p nil))
 #+END_SRC
+
+** Case-insensitive search
+#+BEGIN_SRC emacs-lisp
+(setq case-fold-search t)   ; make searches case insensitive
+#+END_SRC
+
 ** Pdf-tools
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :pin manual
   :ensure t
   :config 
-    ; (pdf-tools-install)
+    (pdf-tools-install)
     ; Display the pdf in a complete page.
     (setq-default pdf-view-display-size 'fit-page)
     ; Fine-grained zooming with + and -
@@ -2066,7 +2072,7 @@ Elpy support.
   (setq elpy-rpc-python-command "python2")
 #+END_SRC
 
-*** Jupyter notebook
+*** COMMENT Jupyter notebook
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t)
@@ -2774,7 +2780,7 @@ My dict-replace package. I am no longer using it.
   ;(global-set-key (kbd "<f5>") 'dict-translate)
 #+END_SRC
 
-* God-mode
+* COMMENT God-mode
 #+BEGIN_SRC emacs-lisp
 (use-package god-mode
   :ensure t)
@@ -2919,6 +2925,8 @@ From the mu4e documentation:
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-start-on-weekday nil)
 #+END_SRC
+
+#+RESULTS:
 
 *** To-do dependencies
 https://orgmode.org/manual/TODO-dependencies.html#TODO-dependencies
@@ -3161,7 +3169,7 @@ figuring out how many times you “kicked the can down the road.”"
 #+END_SRC
 
 ** Export
-*** Report without parts
+*** COMMENT Report without parts
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
            '("report-noparts"
@@ -4012,8 +4020,8 @@ From [[https://www.reddit.com/r/emacs/comments/8toivy/tip_how_to_manage_your_con
 :END:" "Template for org-contacts.")
 
   (setq org-capture-templates (quote (
-    ("o" "Old Journal" entry (file m42/journal-file)
-      "* %(shell-command-to-string \"date\")%?")
+  ;  ("o" "Old Journal" entry (file m42/journal-file)
+  ;    "* %(shell-command-to-string \"date\")%?")
     ("j" "Journal" entry (file+datetree "~/Dropbox/orgzly/Diary.org")
          "* %?" :empty-lines 1)
     ("c" "Contact" entry (file+headline "~/Dropbox/orgzly/Contacts.org" "Inbox")
@@ -4024,8 +4032,11 @@ From [[https://www.reddit.com/r/emacs/comments/8toivy/tip_how_to_manage_your_con
 :NOTE: %^{Note}
 :END:"
       :empty-lines 1)
-    ("t" "todo" entry (file+headline "~/Dropbox/orgzly/Tasks.org" "Mail")
-         "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n\n"))))
+    ("m" "mail" entry (file+headline "~/Dropbox/orgzly/Tasks.org" "Mail")
+         "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n\n")
+    ("t" "todo" entry (file "~/Dropbox/orgzly/Inbox.org")
+         "* TODO %?\n:PROPERTIES:\n:CREATED: %(org-insert-time-stamp(org-read-date nil t \"+0d\"))\n:END:\n\n\n")
+  )))
 #+END_SRC
 
 ** Gcalendar
