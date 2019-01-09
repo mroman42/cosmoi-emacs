@@ -4282,6 +4282,18 @@ Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_e
 ;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
 #+END_SRC
 
+* Writing
+
+** writegood-mode
+#+BEGIN_SRC emacs-lisp
+(use-package writegood-mode
+  :ensure t)
+(global-set-key "\C-cg" 'writegood-mode)
+#+END_SRC
+
+#+RESULTS:
+: writegood-mode
+
 * Snippets
 ** Yasnippet support
 #+BEGIN_SRC emacs-lisp
