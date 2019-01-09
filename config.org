@@ -417,7 +417,31 @@ This command does the reverse of `fill-region'."
 #+RESULTS:
 : unfill-region
 
+** Narrow to indirect buffer
+https://irreal.org/blog/?p=2602
+
+#+BEGIN_SRC emacs-lisp
+(defun narrow-to-region-indirect-buffer (start end)
+  (interactive "r")
+  (with-current-buffer (clone-indirect-buffer 
+                        (generate-new-buffer-name 
+                         (concat (buffer-name) "-indirect-" 
+                                 (number-to-string start) "-" 
+                                 (number-to-string end)))
+                        'display)
+    (narrow-to-region start end)
+    (deactivate-mark)
+    (goto-char (point-min))))
+
+(define-key global-map (kbd "C-x n b") 'narrow-to-region-indirect-buffer)
+
+(provide 'narrow-to-region-indirect-buffer)
+
+#+END_SRC
+
 * Programming
+
+** Ansi term
 ** Flycheck
 Flycheck checks the syntax of programming languages.
 
