@@ -101,7 +101,7 @@ session and starts a new session.
   :ensure t)
 #+END_SRC
 
-Really open large files.
+Disable warnings when opening large files.
 
 #+BEGIN_SRC emacs-lisp
 (setq large-file-warning-threshold nil)
@@ -465,6 +465,14 @@ current repository.
     :ensure t
     :bind ("C-c g" . magit-status)
     )
+#+END_SRC
+
+** Ocaml
+#+BEGIN_SRC emacs-lisp
+(use-package tuareg
+   :ensure t)
+
+(add-hook 'tuareg-mode-hook #'(lambda() (setq mode-name "🐫")))
 #+END_SRC
 
 ** Projectile
@@ -2683,6 +2691,7 @@ Indicates what face are we using currently under the cursor.
     (spaceline-toggle-minor-modes-off)
 )
 #+END_SRC
+
 ** Volatile highlights
 ([[http://pragmaticemacs.com/emacs/volatile-highlights/][From Pragmatic Emacs]]) The package volatile highlights temporarily
 highlights changes to the buffer associated with certain commands that
@@ -2822,7 +2831,7 @@ My dict-replace package. I am no longer using it.
 (add-hook 'god-mode-disabled-hook 'my-update-cursor)
 #+END_SRC
 
-* Evil
+* COMMENT Evil
 Use Emacs keybindings by default. Change to Vi keybindings using =C-z=.
 Spaceline is colored in blue or orange depending on the current mode.
 
@@ -2834,16 +2843,27 @@ Spaceline is colored in blue or orange depending on the current mode.
       (global-undo-tree-mode 0)
       (evil-emacs-state)
     :config
-      (setq evil-default-state 'emacs)
-    )
+      (setq evil-default-state 'emacs))
 #+END_SRC
 
-Escape is useful in Emacs-mode, not in evil mode. This works in Emacs
-mode but does not affect (apparently?) evil mode.
+Escape is useful in evil mode, not that much in emacs mode. This works
+in Emacs mode but does not affect (apparently?) evil mode.
 
 #+BEGIN_SRC emacs-lisp
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 #+END_SRC
+
+* COMMENT Xah fly keys
+#+BEGIN_SRC emacs-lisp
+(use-package xah-fly-keys
+  :ensure t
+  :config 
+    (xah-fly-keys-set-layout "qwerty")
+    (xah-fly-keys 1))
+#+END_SRC
+
+#+RESULTS:ñññuññ´´
+: t
 
 * mu4e
 From the mu4e documentation: 
@@ -3009,7 +3029,7 @@ https://emacs.stackexchange.com/a/32625/12208
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-custom-commands
 	'(("c" "Complete agenda, todo and waiting tasks"
-           ((tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"+PRIORITY=\"A\"" ((org-agenda-overriding-header "Priority")))
+           ((tags-todo "-habit-notask+TODO=\"TODO\"-WAITUNTIL>\"<today>\"+PRIORITY=\"A\"" ((org-agenda-overriding-header "Priority")))
             (agenda "" (
                (org-agenda-overriding-header "Agenda") 
                (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":habit:"))
@@ -3035,7 +3055,7 @@ https://emacs.stackexchange.com/a/32625/12208
 https://orgmode.org/manual/TODO-dependencies.html#TODO-dependencies
 
 #+BEGIN_SRC emacs-lisp
-(setq org-enforce-todo-dependencies t)
+;(setq org-enforce-todo-dependencies t)
 (setq org-agenda-dim-blocked-tasks 'invisible)
 #+END_SRC
 
@@ -3147,6 +3167,14 @@ https://emacs.stackexchange.com/a/820/12208
 
 #+RESULTS:
 : ((agenda .  %-12:c%?-12t% s) (todo .  %i %-12:c) (tags .  %i %-12:c) (search .  %i %-12:c))
+
+** org-edna
+#+BEGIN_SRC emacs-lisp
+(use-package org-edna
+  :ensure t
+  :config
+    (org-edna-load))
+#+END_SRC
 
 ** org-refile
 From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/czg008y/][this reddit comment]].
@@ -3529,6 +3557,15 @@ Path to Ditaa
 #+BEGIN_SRC emacs-lisp
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
 #+END_SRC
+
+*** org-tangle-single block
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-º") (lambda () (interactive) (org-babel-tangle '(4))))
+#+END_SRC
+
+#+RESULTS:
+| lambda | nil | (interactive) | (org-babel-tangle '(4)) |
+
 ** Wiki
 Using the org-wiki package.
 #+BEGIN_SRC emacs-lisp

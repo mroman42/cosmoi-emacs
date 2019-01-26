@@ -13,7 +13,6 @@ def execute_haskell(body)
 end
 
 print prompt
-
 body = ''
 
 while line = gets
