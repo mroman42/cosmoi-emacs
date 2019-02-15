@@ -2124,19 +2124,32 @@ HAML support.
 #+END_SRC
 * Customization
 ** Theme
-*** Zenburn+Wombat
+
+*** Spacemacs
+Getting the Spacemacs look. I am following a [[http://pragmaticemacs.com/emacs/get-that-spacemacs-look-without-spacemacs/][Pragmatic Emacs]] post.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package spacemacs-theme
+    :ensure t
+    :init
+      (load-theme 'spacemacs-dark t)
+      (setq spacemacs-theme-org-agenda-height nil)
+      (setq spacemacs-theme-org-height nil))
+#+END_SRC
+
+*** COMMENT Zenburn+Wombat
 Uses the [[https://github.com/bbatsov/zenburn-emacs][Zenburn color theme]], which is a dark, low-contrast theme
 ported from Vim. It also loads the [[https://github.com/jasonblewis/color-theme-wombat][Wombat theme]], also a dark theme
 ported from Vim.
 
 #+BEGIN_SRC emacs-lisp
-; Zenburn theme
-(use-package zenburn-theme
-   :ensure t)
-(load-theme 'zenburn t)
+  ; Zenburn theme
+  (use-package zenburn-theme
+     :ensure t)
+  (load-theme 'zenburn t)
 
-; Wombat theme
-(load-theme 'wombat t)
+  ; Wombat theme
+  (load-theme 'wombat t)
 #+END_SRC
 *** COMMENT Tomorrow night
 #+BEGIN_SRC emacs-lisp
@@ -3291,17 +3304,12 @@ Sets attributes for the standard org-mode faces.
 
 *** Faces
 #+BEGIN_SRC emacs-lisp
-  (set-face-attribute 'org-document-title nil
-    :height 1.0
-    )
+  (set-face-attribute 'org-document-title nil :height 1.0)
 
   ;; Faces
-  (set-face-attribute 'org-level-1 nil
-     :inherit 'outline-1
-     :weight 'normal
+  (set-face-attribute 'org-level-1 nil :weight 'normal :height 1.0)
 ;     :foreground "#d08770" ; Nord Aurora 12
 ;    :foreground "#5e81ac" ; Nord Frost 10
-     :height 1.0)
 
   (set-face-attribute 'org-level-2 nil
     :inherit 'outline-1
@@ -3354,6 +3362,8 @@ Sets attributes for the standard org-mode faces.
     :weight 'normal
     :underline nil)
 #+END_SRC
+
+#+RESULTS:
 
 *** Ultra-bold emphasis
 #+BEGIN_SRC emacs-lisp
