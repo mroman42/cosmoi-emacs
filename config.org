@@ -84,18 +84,29 @@ your Emacs version with =M-x version= and your org-mode version with
 
   ;; Better defaults for Emacs.
   (use-package better-defaults :ensure t)
-  
+
   ;; Disable warnings when opening large files.
   (setq large-file-warning-threshold nil)
 
   ;; Disables backup files.
   (setq make-backup-files nil)
 
+  ;; The cursor should not blink
+  (setq blink-cursor-mode nil)
+
   ;; Autorrevert packages automatically.
   (global-auto-revert-mode 1)
+
+  ;; Yes-no questions are unnecessarily long.  It is preferable to
+  ;; simply use y or n.
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  ;; Word-wrapping.
+  (setq-default word-wrap 1)
+  (delete-selection-mode 1)
 #+END_SRC
 
-** Basic utilities
+* Utilities
 #+BEGIN_SRC emacs-lisp
   ;; Edit with multiple cursors at the same time.
   (use-package multiple-cursors
@@ -119,11 +130,14 @@ your Emacs version with =M-x version= and your org-mode version with
     :init 
       (keyfreq-mode 1)
       (keyfreq-autosave-mode 1))
-#+END_SRC
 
-* Navigation
-** Smex
-#+BEGIN_SRC emacs-lisp
+  ;; Helps discoverability by showing you the available commands at any time.
+  (use-package which-key
+    :ensure t
+    :config 
+      (which-key-mode)
+      (setq which-key-idle-delay 0.3))
+
   ;; Smex provides an enhancement to the =M-x= command. Uses =ido= for
   ;; autocompletion and provides a convenient interface to the most
   ;; frequently used commands.
@@ -132,17 +146,54 @@ your Emacs version with =M-x version= and your org-mode version with
     :ensure t
     :config (smex-initialize)
     :bind (("M-x" . smex)))
-#+END_SRC
 
-** Switching windows with ctrl+tab
-#+BEGIN_SRC emacs-lisp
-  ;; It is possible to change windows in Emacs using 'C-x o', but
-  ;; sometimes 'C-tab' still feels more intuitive to me.
-  (global-set-key [C-tab] 'other-window)
-  (global-set-key [C-iso-lefttab]
-    (lambda ()
-      (interactive)
-      (other-window -1)))
+  ;; Smartparens tries to be smart about parens.
+  ;; https://github.com/Fuco1/smartparens
+  (use-package smartparens :ensure t)
+
+  ;; Electric parens.
+  (electric-pair-mode 1)
+
+  ;; Flycheck checks the syntax of programming languages.
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+
+  ;; Multiple modes at the same time with polymode.
+  (use-package polymode :ensure t)
+
+  ;; Magit is an interface to the version control system Git. The main
+  ;; function is 'magit-status', which shows the status of the files on
+  ;; the current repository. 
+  ;;  https://magit.vc/
+  ;;  https://git-scm.com/
+  (use-package magit
+    :ensure t
+    :bind ("C-c g" . magit-status))
+
+  ;; Projectile manages projects and allows us to jump between files of
+  ;; the same project.
+  (use-package projectile
+    :ensure t
+    :config
+      (projectile-global-mode)
+      (setq projectile-completion-system 'ivy))
+
+  ;; Unfill paragraph takes a paragraph separated by newlines into a
+  ;; single line.
+  (defun unfill-paragraph ()
+    "Replace newline chars in current paragraph by single spaces.
+  This command does the reverse of `fill-paragraph'."
+    (interactive)
+    (let ((fill-column 90002000))
+      (fill-paragraph nil)))
+
+  (defun unfill-region (start end)
+    "Replace newline chars in region by single spaces.
+  This command does the reverse of `fill-region'."
+    (interactive "r")
+    (let ((fill-column 90002000))
+      (fill-region start end))) 
 #+END_SRC
 
 ** Swiper and search
