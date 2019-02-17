@@ -122,6 +122,13 @@ your Emacs version with =M-x version= and your org-mode version with
       ("C-c m" . vr/mc-mark)
       ))
 
+  ;; Indicates what face are we using currently under the cursor.
+  (defun what-face (pos)
+    (interactive "d")
+    (let ((face (or (get-char-property (point) 'read-face-name)
+                    (get-char-property (point) 'face))))
+      (if face (message "Face: %s" face) (message "No face at %d" pos))))
+
   ;; A better help
   (use-package helpful)
 
@@ -208,7 +215,6 @@ your Emacs version with =M-x version= and your org-mode version with
       (setq ivy-use-virtual-buffers t)
       (global-set-key (kbd "C-M-s") 'swiper)
       (global-set-key (kbd "C-c r") 'ivy-resume)
-      ;(global-set-key (kbd "<f6>") 'ivy-resume)
       (global-set-key (kbd "M-x") 'counsel-M-x)
       (global-set-key (kbd "C-x C-f") 'counsel-find-file)
       (global-set-key (kbd "<f1> f") 'counsel-describe-function)
@@ -237,23 +243,6 @@ your Emacs version with =M-x version= and your org-mode version with
   ;; Search should be case-insensitive.
   (setq case-fold-search t)
 #+END_SRC
-
-
-** Smartparens
-#+BEGIN_SRC emacs-lisp
-  (use-package smartparens :ensure t)
-#+END_SRC
-** Avy
-#+BEGIN_SRC emacs-lisp
-  ;; Avy goto-char lets you jump to a given char on the screen just
-  ;; by pressing 'C-.'.
-  (use-package avy
-    :ensure t
-    :bind (
-      ("C-." . avy-goto-char)
-      ("C-ç" . avy-goto-char) ))
-#+END_SRC
-
 ** Pdf-tools
 #+BEGIN_SRC emacs-lisp
   ;; Read pdfs inside Emacs.
