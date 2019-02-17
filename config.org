@@ -45,13 +45,26 @@ your Emacs version with =M-x version= and your org-mode version with
   (setq m42/org-folder      (expand-file-name "~/Dropbox/orgzly"))
 
   ;; Jumps to the important files with a single keystroke.
+  (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/agenda-file)))
   (global-set-key (kbd "<f7>") (lambda() (interactive) (find-file m42/math-file)))
   (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file m42/init-file)))
-  (global-set-key (kbd "<f9>") (lambda() (interactive) (find-file m42/agenda-file)))
+  
+  ;; I prefer to use a separate custom file for Emacs. This means any configurations
+  ;; that are created using the Customize menu and the list of installed packages will
+  ;; be kept separate of this org configuration.
+  ;; http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror)
 
   ;; Inhibits the startup screen and loads an initial buffer.
   (setq inhibit-startup-screen t)
   (setq initial-buffer-choice m42/agenda-file)
+
+  ;; Disables toolbar and menubar
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode -1)
 
   ;; Includes the local bin on the 'exec-path'. This allows Emacs to find
   ;; executables in the local binaries folder.
