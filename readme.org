@@ -1,0 +1,27 @@
+#+Title: .emacs.d
+#+Author: Mario Román
+#+Email: mromang08@gmail.com
+#+TODO: WIP | DONE
+
+This is my Emacs init file, written in org-mode using literate
+programming and =org-babel= blocks. The =init.el= file tangles the Elisp
+code blocks of this file into =config.el=. I have taken ideas for my
+configuration mainly from
+
+  * [[http://cestlaz.github.io/][C'est la Z]]
+  * [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
+
+and from many other configuration files and blogs such as
+
+  * [[http://emacsredux.com/][Emacs Redux]]
+  * [[http://irreal.org/blog/][Irreal]]
+  * [[https://oremacs.com][(or emacs irrelevant)]]
+  * [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's configuration file]]
+  * [[http://karl-voit.at/2017/06/03/emacs-org/][Karl Voit's configuration file]]
+  * [[http://spacemacs.org/][Spacemacs]]
+
+It /works for me/ on Emacs 27.0.50 and org-version 9.1.14. You can check
+your Emacs version with =M-x version= and your org-mode version with
+=M-x org-version=.
+
+[[./screenshot.jpg]]
