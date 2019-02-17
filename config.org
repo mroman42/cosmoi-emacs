@@ -19,13 +19,11 @@ and from many other configuration files and blogs such as
   * [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's configuration file]]
   * [[http://karl-voit.at/2017/06/03/emacs-org/][Karl Voit's configuration file]]
 
-It /works for me/ on Emacs 26.0.50 and org-version 9.0.9. You can check
+It /works for me/ on Emacs 27.0.50 and org-version 9.1.14. You can check
 your Emacs version with =M-x version= and your org-mode version with
 =M-x org-version=.
 
 * Basic
-** Basic configuration
-
 #+BEGIN_SRC emacs-lisp
   ;; User information is used by Emacs in frame titles and email.
   ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html
