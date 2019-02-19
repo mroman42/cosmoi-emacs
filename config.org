@@ -2708,6 +2708,22 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (set-face-attribute 'variable-pitch nil :font "Iosevka")
 #+END_SRC
 
+* IRC
+#+BEGIN_SRC emacs-lisp
+(use-package erc
+  :defer t
+  :init (setq erc-server-coding-system '(utf-8 . utf-8))
+  :config (progn 
+    (use-package erc-autoway
+      :defer t
+      :init (progn
+        (setq erc-auto-discard-away t)
+        (setq erc-autoaway-idle-seconds 600)))
+    (use-package erc-hl-nicks
+      :defer t)
+    (erc-services-mode 1)))
+#+END_SRC
+
 * Customization
 ** Theme
 *** COMMENT Zenburn+Wombat
