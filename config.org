@@ -2835,8 +2835,8 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   ;; great with Fira Mono. It could be DejaVuSans, which has great
   ;; unicode support. It could also be Pragmata Pro, which is a bit more
   ;; limited.  
-  ;; (set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
-  (set-fontset-font "fontset-default" nil "Pragmata Pro")
+  (set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
+  ;;(set-fontset-font "fontset-default" nil "Pragmata Pro")
 #+END_SRC
 
 ** Window customization
