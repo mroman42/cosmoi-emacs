@@ -24,8 +24,6 @@ It /works for me/ on Emacs 27.0.50 and org-version 9.1.14. You can check
 your Emacs version with =M-x version= and your org-mode version with
 =M-x org-version=.
 
-[[./screenshot.jpg]]
-
 * Basic
 #+BEGIN_SRC emacs-lisp
   ;; User information is used by Emacs in frame titles and email.
@@ -2139,6 +2137,9 @@ Suitable for use in the :set field of `defcustom'."
   (setq org-agenda-block-separator 32)
 #+END_SRC
 
+#+RESULTS:
+: 32
+
 ** Habits on todo lists
 #+BEGIN_SRC emacs-lisp
 ;; Shows the habits also on todo lists. It allows us to make them
@@ -2673,15 +2674,12 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (use-package company
     :ensure t
     :config (progn
-    ;(global-company-mode 1)
-    (setq 
-         company-tooltip-limit 20 ; bigger popup window
-         company-idle-delay 0.3   ; delay for popup
-         company-require-match nil
-         company-minimum-prefix-length 3
-    )
-
-    (bind-key "<tab>" #'company-complete company-active-map)))
+      (global-company-mode 1)
+      (setq company-tooltip-limit 10)
+      (setq company-idle-delay 0.4)
+      (setq company-require-match nil)
+      (setq company-minimum-prefix-length 3)
+      (bind-key "<tab>" #'company-complete company-active-map)))
 
     ;; Completion for mathematics. We create a sane list of backends,
     ;; preventing some of them from firing while writing latex.

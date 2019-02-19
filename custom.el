@@ -15,7 +15,6 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-stylish-on-save t)
  '(ido-mode 'both nil (ido))
- '(org-agenda-files '("~/Dropbox/orgzly/Tasks.org" "~/org/wiki/tasks.org"))
  '(org-contacts-files '("~/Dropbox/orgzly/Contacts.org"))
  '(org-latex-default-packages-alist
    '(("AUTO" "inputenc" t)
