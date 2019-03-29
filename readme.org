@@ -1,4 +1,4 @@
-#+Title: .emacs.d
+#+Title: Cosmoi Emacs
 #+Author: Mario Román
 #+Email: mromang08@gmail.com
 #+TODO: WIP | DONE
