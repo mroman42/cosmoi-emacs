@@ -1,7 +1,9 @@
 # -*- mode: snippet -*-
 # name: aligned
-# key: %align
+# key: %aligned
 # --
 \[\begin{aligned}
-$1
+$1 
+&=
+&& \mbox{\texit{ (  ) }} \\\\&=
 \end{aligned}\]

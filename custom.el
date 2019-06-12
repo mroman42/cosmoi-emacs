@@ -10,27 +10,23 @@
  '(default-input-method "Agda")
  '(electric-pair-mode t)
  '(engine-mode t)
+ '(erc-autojoin-channels-alist
+   '(("freenode.net" "#haskell" "#emacs" "#archlinux" "#latex" "#org-mode")) t)
+ '(erc-autojoin-timing 'ident t)
+ '(erc-fill-function 'erc-fill-static t)
+ '(erc-fill-static-center 22 t)
+ '(erc-hide-list '("JOIN" "PART" "QUIT") t)
+ '(erc-lurker-hide-list '("JOIN" "PART" "QUIT") t)
+ '(erc-lurker-threshold-time 43200 t)
+ '(erc-prompt-for-nickserv-password nil t)
+ '(erc-server-reconnect-attempts 5 t)
+ '(erc-server-reconnect-timeout 3 t)
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-stylish-on-save t)
  '(ido-mode 'both nil (ido))
- '(org-contacts-files '("~/Dropbox/orgzly/Contacts.org"))
- '(org-latex-default-packages-alist
-   '(("AUTO" "inputenc" t)
-     ("T1" "fontenc" t)
-     ("" "fixltx2e" nil)
-     ("" "graphicx" t)
-     ("" "grffile" t)
-     ("" "longtable" nil)
-     ("" "wrapfig" nil)
-     ("" "rotating" nil)
-     ("normalem" "ulem" t)
-     ("" "amsmath" t)
-     ("" "textcomp" t)
-     ("" "amssymb" t)
-     ("" "capt-of" nil)
-     ("colorlinks=true" "hyperref" nil)))
+ '(org-contacts-files '("~/org/Contacts.org"))
  '(org-preview-latex-process-alist
    '((dvipng :programs
              ("latex" "dvipng")
@@ -57,9 +53,50 @@
                   :image-converter
                   ("convert -density %D -trim -antialias %f -quality 100 %O"))))
  '(package-selected-packages
-   '(neotree doom-themes xah-fly-keys org-edna tuareg org-expiry writegood-mode ivy-bibtex org-download keyfreq mu4e org-mru-clock god-mode lean-mode redprl ace-windows beacon ac-math math-symbols-list exwm-edit desktop-environment org-contacts ob-ipython gap-mode all-the-icons ledger-mode ledger helpful org-noter interleave elfeed-goodies elfeed-org elfeed calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu smartparens-config volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm restart-emacs org-pomodoro which-key try counsel counsel-projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word cdlatex org-gcal elpy intero company-auctex ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term fsharp-mode haskell-mode))
+   '(olivetti olivetti-mode neotree doom-themes xah-fly-keys org-edna tuareg org-expiry writegood-mode ivy-bibtex org-download keyfreq mu4e org-mru-clock god-mode lean-mode redprl ace-windows beacon ac-math math-symbols-list exwm-edit desktop-environment org-contacts ob-ipython gap-mode all-the-icons ledger-mode ledger helpful org-noter interleave elfeed-goodies elfeed-org elfeed calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu smartparens-config volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm restart-emacs org-pomodoro which-key try counsel counsel-projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word cdlatex org-gcal elpy intero company-auctex ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term fsharp-mode haskell-mode))
  '(safe-local-variable-values
-   '((org-download-image-dir . "~/Dropbox/orgzly/images")
+   '((org-latex-pdf-process "pdflatex --shell-escape -interaction nonstopmode %f" "bibtex %b" "pdflatex --shell-escape -interaction nonstopmode %f")
+     (org-download-image-dir . "~/actegory/org/images")
+     (eval let
+           ((unimath-topdir
+             (expand-file-name
+              (locate-dominating-file buffer-file-name "UniMath"))))
+           (setq fill-column 100)
+           (make-local-variable 'coq-use-project-file)
+           (setq coq-use-project-file nil)
+           (make-local-variable 'coq-prog-args)
+           (setq coq-prog-args
+                 `("-emacs" "-noinit" "-indices-matter" "-type-in-type" "-w" "-notation-overridden" "-Q" ,(concat unimath-topdir "UniMath")
+                   "UniMath"))
+           (make-local-variable 'coq-prog-name)
+           (setq coq-prog-name
+                 (concat unimath-topdir "sub/coq/bin/coqtop"))
+           (make-local-variable 'before-save-hook)
+           (add-hook 'before-save-hook 'delete-trailing-whitespace)
+           (modify-syntax-entry 39 "w")
+           (modify-syntax-entry 95 "w")
+           (if
+               (not
+                (memq 'agda-input features))
+               (load
+                (concat unimath-topdir "emacs/agda/agda-input")))
+           (if
+               (not
+                (member
+                 '("chimney" "╝")
+                 agda-input-user-translations))
+               (progn
+                 (setq agda-input-user-translations
+                       (cons
+                        '("chimney" "╝")
+                        agda-input-user-translations))
+                 (setq agda-input-user-translations
+                       (cons
+                        '("==>" "⟹")
+                        agda-input-user-translations))
+                 (agda-input-setup)))
+           (set-input-method "Agda"))
+     (org-download-image-dir . "~/Dropbox/orgzly/images")
      (org-log-reschedule)
      (org-tags-column . -119)
      (org-tags-column . -120)

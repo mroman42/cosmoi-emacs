@@ -4,5 +4,5 @@
 # --
 \[\begin{tikzcd}
 $1 \rar{$5} \dar[swap]{$6} & $2 \dar{$7} \\\\
-$3 \rar{$8} & $4
+$3 \rar{$8} & $4 
 \end{tikzcd}\]

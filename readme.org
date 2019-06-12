@@ -18,7 +18,7 @@ and from many other configuration files and blogs such as
   * [[https://oremacs.com][(or emacs irrelevant)]]
   * [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's configuration file]]
   * [[http://karl-voit.at/2017/06/03/emacs-org/][Karl Voit's configuration file]]
-  * [[http://spacemacs.org/][Spacemacs]]
+  * [[http://spacemacs.org/][Spacemacs]] (theme)
 
 It /works for me/ on Emacs 27.0.50 and org-version 9.1.14. You can check
 your Emacs version with =M-x version= and your org-mode version with

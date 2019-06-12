@@ -28,6 +28,7 @@ your Emacs version with =M-x version= and your org-mode version with
 #+BEGIN_SRC emacs-lisp
   ;; User information is used by Emacs in frame titles and email.
   ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html
+  ;; It is also used by Gnus.
   (setq user-full-name "Mario Román")
   (setq user-mail-address "mromang08@gmail.com")
 
@@ -38,12 +39,12 @@ your Emacs version with =M-x version= and your org-mode version with
   ;; A list of the most important files on my workflow. Those variables are
   ;; used all across the configuration file; and listing them here eases
   ;; the process of rewriting directory paths.
-  (setq m42/math-file       (expand-file-name "~/Dropbox/orgzly/Math.org"))
+  (setq m42/math-file       (expand-file-name "~/org/Math.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
-  (setq m42/agenda-file     (expand-file-name "~/Dropbox/orgzly/Tasks.org"))
-  (setq m42/journal-file    (expand-file-name "~/Dropbox/orgzly/Journal.org"))
-  (setq m42/archive-file    (expand-file-name "~/Dropbox/orgzly/Archive.org"))
-  (setq m42/org-folder      (expand-file-name "~/Dropbox/orgzly"))
+  (setq m42/agenda-file     (expand-file-name "~/org/Tasks.org"))
+  (setq m42/journal-file    (expand-file-name "~/org/Journal.org"))
+  (setq m42/archive-file    (expand-file-name "~/org/Archive.org"))
+  (setq m42/org-folder      (expand-file-name "~/org"))
 
   ;; Jumps to the important files with a single keystroke.
   (global-set-key (kbd "<f6>") (lambda() (interactive) (find-file m42/agenda-file)))
@@ -391,13 +392,13 @@ your Emacs version with =M-x version= and your org-mode version with
 
 *** Intero
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck-haskell :ensure t)
-(use-package intero :ensure t)
-(add-hook 'haskell-mode-hook 'intero-mode)
+  (use-package flycheck-haskell :ensure t)
+  (use-package intero :ensure t)
+  (add-hook 'haskell-mode-hook 'intero-mode)
 
-(with-eval-after-load 'intero
-  (with-eval-after-load 'flycheck 
-    (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))
+  ; (with-eval-after-load 'intero
+  ;   (with-eval-after-load 'flycheck 
+  ;     (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))
 #+END_SRC
 
 *** Hindent
@@ -719,25 +720,30 @@ work."
 #+END_SRC
 ** Agda
 #+BEGIN_SRC emacs-lisp
+  (use-package agda2-mode
+      :defer t
+      :init
+        ;; Removes special faces for Agda and changes them by the usual theme faces.
+        ;; This was taken from Spacemacs.
+        ;; https://github.com/syl20bnr/spacemacs/blob/master/layers/%2Blang/agda/packages.el
+        (progn
+          (mapc (lambda (x) (add-to-list 'face-remapping-alist x))
+           '((agda2-highlight-datatype-face              . font-lock-type-face)
+             (agda2-highlight-function-face              . font-lock-type-face)
+             (agda2-highlight-inductive-constructor-face . font-lock-function-name-face)
+             (agda2-highlight-keyword-face               . font-lock-keyword-face)
+             (agda2-highlight-module-face                . font-lock-constant-face)
+             (agda2-highlight-number-face                . nil)
+             (agda2-highlight-postulate-face             . font-lock-type-face)
+             (agda2-highlight-primitive-type-face        . font-lock-type-face)
+             (agda2-highlight-primitive-face             . font-lock-type-face)
+             (agda2-highlight-record-face . font-lock-type-face)))))
+
   ;; Loads the =agda-mode= configuration. Agda provides the location
   ;; of its configuration file with the command =agda-mode locate=.
   ;; Locates agda-mode on the file system.
   (load-file (let ((coding-system-for-read 'utf-8))
                   (shell-command-to-string "agda-mode locate")))
-
-  ;; Little tweak on agda colors. Original blue was too dark.
-  (add-hook 'agda2-mode-hook
-    (lambda ()
-      (set-face-attribute 'agda2-highlight-record-face nil
-        :foreground "light steel blue")))
-  (add-hook 'agda2-mode-hook
-    (lambda ()
-      (set-face-attribute 'agda2-highlight-postulate-face nil
-        :foreground "light steel blue")))
-  (add-hook 'agda2-mode-hook
-    (lambda ()
-      (set-face-attribute 'agda2-highlight-primitive-face nil
-        :foreground "light steel blue")))
 #+END_SRC
 
 ** Lisp
@@ -1986,6 +1992,24 @@ Suitable for use in the :set field of `defcustom'."
   (setq org-mu4e-link-query-in-headers-mode nil)
 #+END_SRC
 
+* Gnus
+#+BEGIN_SRC emacs-lisp
+  ; Gmail configuration for Gnus
+  (setq gnus-select-method
+     '(nnimap "gmail"
+        (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
+        (nnimap-server-port "imaps")
+        (nnimap-stream ssl)))
+
+  (setq smtpmail-smtp-server "smtp.gmail.com")
+  (setq smtpmail-smtp-service 587)
+  (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+
+  ; Gwene and Gmane news
+  (setq gnus-secondary-select-methods '((nntp "news.gwene.org")))
+  (add-to-list 'gnus-secondary-select-methods '(nntp "news.gmane.org"))
+#+END_SRC
+
 * Org-mode
 ** Modules, plus-contrib
 #+BEGIN_SRC emacs-lisp
@@ -2018,9 +2042,9 @@ Suitable for use in the :set field of `defcustom'."
 (use-package org-ref
   :ensure t)
 
-(setq org-ref-notes-directory "~/Dropbox/orgzly/"
-      org-ref-bibliography-notes "~/Dropbox/orgzly/Math.org"
-      org-ref-default-bibliography '("~/Dropbox/orgzly/Math.bib")
+(setq org-ref-notes-directory "~/org/"
+      org-ref-bibliography-notes "~/org/Math.org"
+      org-ref-default-bibliography '("~/org/Math.bib")
       org-ref-pdf-directory "~/pdf/")
 #+END_SRC
 
@@ -2031,6 +2055,7 @@ Suitable for use in the :set field of `defcustom'."
   (setq paperid (thing-at-point 'word 'no-properties))
   (message "%s" paperid)
   (save-excursion (save-restriction
+    (find-file "~/org/Math.org")
     (widen)
     (beginning-of-buffer)
     (if (search-forward (concat ":CUSTOM_ID: " paperid))
@@ -2043,14 +2068,17 @@ Suitable for use in the :set field of `defcustom'."
 (setq org-ref-cite-onclick-function 'm42/org-ref-cite-click)
 #+END_SRC
 
+#+RESULTS:
+: m42/org-ref-cite-click
+
 ** helm/ivy-bibtex
 #+BEGIN_SRC emacs-lisp
 (use-package ivy-bibtex
   :ensure t)
 
 (setq bibtex-completion-library-path "~/pdf/" ;; where your pdfs etc are stored
-      bibtex-completion-bibliography "~/Dropbox/orgzly/Math.bib" ;; writing completion
-      bibtex-completion-notes-path "~/Dropbox/orgzly/Math.org")
+      bibtex-completion-bibliography "~/org/Math.bib" ;; writing completion
+      bibtex-completion-notes-path "~/org/Math.org")
 
 (global-set-key (kbd "C-c ñ") 'ivy-bibtex)
 
@@ -2076,20 +2104,43 @@ Suitable for use in the :set field of `defcustom'."
 #+BEGIN_SRC emacs-lisp
   ;; Agenda commands.  Builds the personal agenda.
   (setq org-agenda-custom-commands
-	'(("c" "Complete agenda, todo and waiting tasks"
-           ((tags-todo "-habit-notask+TODO=\"TODO\"-WAITUNTIL>\"<today>\"+PRIORITY=\"A\"" ((org-agenda-overriding-header "Priority")))
+        '(("c" "Complete agenda, todo and waiting tasks" (
+
+            ;; High priority tasks
+            (tags-todo "-habit-notask+TODO=\"TODO\"-WAITUNTIL>\"<today>\"+PRIORITY=\"A\"" (
+               (org-agenda-overriding-header "Priority")
+               (org-agenda-files '("~/org/Tasks.org"))
+               ))
+
+            ;; Agenda and calendar
             (agenda "" (
                (org-agenda-overriding-header "Agenda") 
                (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":habit:"))
+               (org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org"))
                ))
-            (tags-todo "+habit-SCHEDULED>\"<today>\"" ((org-agenda-overriding-header "Habits")))
-            (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"-PRIORITY=\"A\"" ((org-agenda-overriding-header "Tasks")))
-            (tags-todo "-habit-notask+TODO=\"WAIT\"-SCHEDULED>\"<today>\"" ((org-agenda-overriding-header "Waiting")))
+
+            ;; Habits
+            ;; (tags-todo "+habit-SCHEDULED>\"<today>\"" (
+            ;;    (org-agenda-overriding-header "Habits")
+            ;;    (org-agenda-files '("~/org/Tasks.org"))
+            ;;    ))
+
+            ;; General to-do's
+            (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"-PRIORITY=\"A\"" (
+               (org-agenda-overriding-header "Tasks")
+               (org-agenda-files '("~/org/Tasks.org"))
+               ))
+
+            ;; Waiting tasks
+            ;; (tags-todo "-habit-notask+TODO=\"WAIT\"-SCHEDULED>\"<today>\"" (
+            ;;    (org-agenda-overriding-header "Waiting")
+            ;;    (org-agenda-files '("~/org/Tasks.org"))
+            ;;    ))
             ))))
 
   ;; Agenda filters.
   (setq org-agenda-tag-filter-preset '("-notask"))
-  (setq org-agenda-files '("~/Dropbox/orgzly/Tasks.org" "~/Dropbox/orgzly/GCalendar.org"))
+  (setq org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org"))
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-todo-ignore-scheduled 'past)
   (setq org-agenda-show-future-repeats nil)
@@ -2111,12 +2162,6 @@ Suitable for use in the :set field of `defcustom'."
   ;; Show only today's habits.
   (setq org-habit-show-habits-only-for-today t)
 
-  ;; Pregenerates an agenda buffer whenever Emacs is idle for more than 5
-  ;; seconds. The next time the agenda command is run, generation takes
-  ;; less than a second, since the org buffers have already been loaded.
-  ;; https://emacs.stackexchange.com/a/820/12208
-  (run-with-idle-timer 5 nil (lambda () (org-agenda-list) (delete-window)))
-
   ;; Prefix format for the Emacs agenda.
   (setq org-agenda-prefix-format 
     '((agenda . " %i %-12:c%?-12t% s")
@@ -2135,10 +2180,26 @@ Suitable for use in the :set field of `defcustom'."
   ;; The block separator in the agenda. It has to be declared as a number.
   ;; For instance, 32 is the whitespace.
   (setq org-agenda-block-separator 32)
-#+END_SRC
 
-#+RESULTS:
-: 32
+  ;; Pregenerates an agenda buffer whenever Emacs is idle for more than 5
+  ;; seconds. The next time the agenda command is run, generation takes
+  ;; less than a second, since the org buffers have already been loaded.
+  ;; https://emacs.stackexchange.com/a/820/12208
+  ;  
+  ;; Currently disabled because it blocks Emacs too often.
+  ; (run-with-idle-timer 5 nil (lambda () (org-agenda-list) (delete-window)))
+
+  ;; Automatically rebuilds the agenda when idle.
+  ;  Currently disabled because it blocks Emacs too often.
+  ;; (defun renewOrgBuffer ()
+  ;;   (interactive)
+  ;;   (dolist (buffer (buffer-list))
+  ;;     (with-current-buffer buffer
+  ;;       (when (derived-mode-p 'org-agenda-mode)
+  ;;     (org-agenda-maybe-redo))))
+  ;;   )
+  ;; (run-with-idle-timer 60 1000 #'renewOrgBuffer)
+#+END_SRC
 
 ** Habits on todo lists
 #+BEGIN_SRC emacs-lisp
@@ -2189,12 +2250,12 @@ From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_wo
 (setq org-refile-targets '(
    (nil :maxlevel . 2) 
    (org-agenda-files :maxlevel . 2) 
-   ("~/Dropbox/orgzly/Someday.org" :maxlevel . 2)
-   ("~/Dropbox/orgzly/Tasks.org" :maxlevel . 2)
-   ("~/Dropbox/orgzly/Reference.org" :maxlevel . 2)
-   ("~/Dropbox/orgzly/Notes.org" :maxlevel . 2)
-   ("~/Dropbox/orgzly/Inbox.org" :maxlevel . 1)
-   ("~/Dropbox/orgzly/Archive.org" :maxlevel . 1)
+   ("~/org/Someday.org" :maxlevel . 2)
+   ("~/org/Tasks.org" :maxlevel . 2)
+   ("~/org/Reference.org" :maxlevel . 2)
+   ("~/org/Notes.org" :maxlevel . 2)
+   ("~/org/Inbox.org" :maxlevel . 1)
+   ("~/org/Archive.org" :maxlevel . 1)
 ))
 (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
@@ -2231,7 +2292,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 (use-package org-download
   :ensure t
   :config 
-    (setq org-download-image-dir "~/Dropbox/orgzly/images")
+    (setq org-download-image-dir "~/org/images")
     (setq org-download-heading-lvl nil)
   :bind ("M-<print>" . org-download-screenshot))
 #+END_SRC
@@ -2328,11 +2389,11 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
   ;; Exports to beamer. It needs to first define the beamer class.
   (add-to-list 'org-latex-classes
-               '("beamer"
-                 "\\documentclass\[presentation\]\{beamer\}"
-                 ("\\section\{%s\}" . "\\section*\{%s\}")
-                 ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
-                 ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
+      '("beamer"
+        "\\documentclass\[presentation\]\{beamer\}"
+        ("\\section\{%s\}" . "\\section*\{%s\}")
+        ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
+        ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
   (require 'ox-beamer)
 
   ;; Exporting ignores headlines.
@@ -2352,6 +2413,17 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
   (with-eval-after-load "ox-latex"
     (add-to-list 'org-latex-classes
+      '("amsart" "\\documentclass{amsart}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+       )))
+
+
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
                '("scrreprt" "\\documentclass{scrreprt}"
                  ("\\part{%s}" . "\\part*{%s}")
                  ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -2360,10 +2432,21 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
 
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+               '("myifcolog" "\\documentclass{myifcolog}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\subsubsubsection{%s}" . "\\subsubsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
+
+
   ;; Exports minted code in latex.
   (setq org-latex-listings 'minted)
-  (setq org-latex-packages-alist '(("" "minted")))
-  (setq org-latex-minted-options '(("frame" "lines")))
+  ;(setq org-latex-packages-alist '(("" "minted")))
+  ;(setq org-latex-minted-options '(("frame" "lines")))
 
   ;; The configuration allows us to do Reveal.js presentations using org-mode.
   ;; http://cestlaz.github.io/posts/using-emacs-11-reveal
@@ -2427,7 +2510,15 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
   ;; https://emacs.stackexchange.com/a/8168/12208
   (setq org-src-window-setup 'current-window)
+
+  ;; Preserve indentation and blank spaces. This also works when
+  ;; exporting with minted.
+  ;; https://anbasile.github.io/programming/2016/12/02/org-babel-is-cool/
+  (setq org-src-preserve-indentation t)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 *** Sage
 #+BEGIN_SRC emacs-lisp
@@ -2492,12 +2583,14 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   ;; Some packages must be added at the latex preview alist.  In
   ;; particular, this adds preview of commutative diagrams with the
   ;; 'tikz-cd' package.
-  (add-to-list 'org-latex-packages-alist '("" "tikz" t))
   (eval-after-load "preview"
     '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
 
   ;; Sets the backend for latex. Imagemagick works best with tikzcd.
   (setq org-preview-latex-default-process 'imagemagick)
+
+  ;; No default packages should be loaded.
+  (setq org-latex-default-packages-alist '())
 #+END_SRC
 
 ** Clock
@@ -2567,6 +2660,8 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   ;; After the session, save all buffers.
   (setq org-drill-save-buffers-after-drill-sessions-p nil)
   (setq org-drill-hide-item-headings-p t)
+  ;; Work on the whole directory
+  (setq org-drill-scope 'directory)
 
   ;; This is an auxiliary function that lets you study a single subtree
   ;; of an org file. It simply calls 'org-drill-cram' with the 'tree'
@@ -2598,7 +2693,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 #+BEGIN_SRC emacs-lisp
 (use-package org-contacts
   :after org
-  :custom (org-contacts-files '("~/Dropbox/orgzly/Contacts.org")))
+  :custom (org-contacts-files '("~/org/Contacts.org")))
 #+END_SRC
 
 ** Capture
@@ -2616,9 +2711,9 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   
   ;; List of org-capture-templates.
   (setq org-capture-templates (quote (
-    ("j" "Journal" entry (file+datetree "~/Dropbox/orgzly/Diary.org")
+    ("j" "Journal" entry (file+datetree "~/org/Diary.org")
          "* %?" :empty-lines 1)
-    ("c" "Contact" entry (file+headline "~/Dropbox/orgzly/Contacts.org" "Inbox")
+    ("c" "Contact" entry (file+headline "~/org/Contacts.org" "Inbox")
       "* %^{Name}
   :PROPERTIES:
   :EMAIL: %^{Email}
@@ -2626,9 +2721,9 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   :NOTE: %^{Note}
   :END:"
         :empty-lines 1)
-      ("m" "mail" entry (file+headline "~/Dropbox/orgzly/Tasks.org" "Mail")
+      ("m" "mail" entry (file+headline "~/org/Tasks.org" "Mail")
            "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n\n")
-      ("t" "todo" entry (file "~/Dropbox/orgzly/Inbox.org")
+      ("t" "todo" entry (file "~/org/Inbox.org")
            "* TODO %?\n:PROPERTIES:\n:CREATED: %(org-insert-time-stamp(org-read-date nil t \"+0d\"))\n:END:\n\n\n")
     )))
 #+END_SRC
@@ -2642,7 +2737,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
     :config
     (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com" 
             org-gcal-client-secret m42/gcal-client-secret
-  	        org-gcal-file-alist '(("mromang08@gmail.com" . "~/Dropbox/orgzly/GCalendar.org"))))
+  	        org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/GCalendar.org"))))
 
   ;; Hooks for synchronization at startup
   (org-gcal-sync)
@@ -2666,6 +2761,113 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (use-package haskell-snippets :ensure t)
 #+END_SRC
 
+They must be loaded with
+
+ * =yas-recompile-all=
+ * =yas-reload-all=
+
+** aligned
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/aligned
+# -*- mode: snippet -*-
+# name: aligned
+# key: %aligned
+# --
+\[\begin{aligned}
+$1 
+&=
+&& \mbox{\texit{ (  ) }} \\\\&=
+\end{aligned}\]
+#+END_SRC
+
+** square
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/square
+# -*- mode: snippet -*-
+# name: square
+# key: %square
+# --
+\[\begin{tikzcd}
+$1 \rar{$5} \dar[swap]{$6} & $2 \dar{$7} \\\\
+$3 \rar{$8} & $4 
+\end{tikzcd}\]
+#+END_SRC
+
+** statement
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/statement
+# -*- mode: snippet -*-
+# name: statement
+# key: %state
+# --
+#+begin_statement
+$1
+#+end_statement
+#+END_SRC
+
+** note
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/note
+# -*- mode: snippet -*-
+# name: note
+# key: %note
+# --
+#+begin_note
+$1
+#+end_note
+#+END_SRC
+
+** definition
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/definition
+# -*- mode: snippet -*-
+# name: definition
+# key: %definition
+# --
+#+begin_definition
+$1
+#+end_definition
+#+END_SRC
+
+** lemma
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/lemma
+# -*- mode: snippet -*-
+# name: lemma
+# key: %lemma
+# --
+#+begin_lemma
+$1
+#+end_lemma
+#+END_SRC
+
+** theorem
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/theorem
+# -*- mode: snippet -*-
+# name: theorem
+# key: %theorem
+# --
+#+begin_theorem
+$1
+#+end_theorem
+#+END_SRC
+
+** proof
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/proof
+# -*- mode: snippet -*-
+# name: proof
+# key: %proof
+# --
+#+begin_proof
+$1
+#+end_proof
+#+END_SRC
+
+** prop
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/prop
+# -*- mode: snippet -*-
+# name: proposition
+# key: %prop
+# --
+#+begin_proposition
+$1
+#+end_proposition
+#+END_SRC
+
 * Autocompletion
 #+BEGIN_SRC emacs-lisp
   ;; Company provides autocompletion on Emacs.
@@ -2676,7 +2878,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
     :config (progn
       (global-company-mode 1)
       (setq company-tooltip-limit 10)
-      (setq company-idle-delay 0.4)
+      (setq company-idle-delay 0.5)
       (setq company-require-match nil)
       (setq company-minimum-prefix-length 3)
       (bind-key "<tab>" #'company-complete company-active-map)))
@@ -2699,7 +2901,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
   (use-package elfeed-org
     :ensure t
-    :init (setq rhm-elfeed-org-files (list "~/Dropbox/orgzly/Elfeed.org"))
+    :init (setq rhm-elfeed-org-files (list "~/org/Elfeed.org"))
     :config (elfeed-org))
 
   (use-package elfeed-goodies :ensure t)
@@ -2712,36 +2914,50 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 #+BEGIN_SRC emacs-lisp
 (use-package erc
   :defer t
-  :init (setq erc-server-coding-system '(utf-8 . utf-8))
-  :config (progn 
-    (use-package erc-autoway
-      :defer t
-      :init (progn
-        (setq erc-auto-discard-away t)
-        (setq erc-autoaway-idle-seconds 600)))
-    (use-package erc-hl-nicks
-      :defer t)
-    (erc-services-mode 1)))
+  :init
+    (setq erc-server-coding-system '(utf-8 . utf-8))
+
+    ;; Username and password.
+    (setq erc-nick "mroman42")
+    (setq erc-password "psrliifs42")
+  :custom
+    ;; The list of channels to which it connects by default.
+    (erc-autojoin-channels-alist '(("freenode.net" "#haskell" "#emacs" "#archlinux" "#latex" "#org-mode")))
+
+    ; Some of these configurations are taken from the following post
+    ; https://www.reddit.com/r/emacs/comments/8ml6na/tip_how_to_make_erc_fun_to_use/
+    (erc-autojoin-timing 'ident)
+    (erc-fill-function 'erc-fill-static)
+    (erc-fill-static-center 22)
+    (erc-hide-list '("JOIN" "PART" "QUIT"))
+    (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+    (erc-lurker-threshold-time 43200)
+    (erc-prompt-for-nickserv-password nil)
+    (erc-server-reconnect-attempts 5)
+    (erc-server-reconnect-timeout 3)
+  :config   
+    (add-to-list 'erc-modules 'notifications)
+    (add-to-list 'erc-modules 'spelling)
+    (erc-update-modules)       
+    (erc-services-mode 1))
+
+  (use-package erc-autoway
+    :defer t
+    :init (progn
+      (setq erc-auto-discard-away t)
+      (setq erc-autoaway-idle-seconds 600)))
+
+  ;; Associates a different color to each nick.
+  (use-package erc-hl-nicks
+    :after erc)
+
+  ;; So you don't have to click a link to see an image.
+  (use-package erc-image
+    :after erc)
 #+END_SRC
 
 * Customization
-** Theme
-*** COMMENT Zenburn+Wombat
-#+BEGIN_SRC emacs-lisp
-  ;; Uses the Zenburn color theme, which is a dark, low-contrast theme
-  ;; ported from Vim. It also loads the Wombat theme, also a dark theme
-  ;; ported from Vim. The result is a combination of the two that I have
-  ;; been unable to replicate in any other way.
-
-  ;; https://github.com/bbatsov/zenburn-emacs
-  ;; https://github.com/jasonblewis/color-theme-wombat
-
-  (use-package zenburn-theme :ensure t)
-  (load-theme 'zenburn t)
-  (load-theme 'wombat t)
-#+END_SRC
-
-*** Spacemacs theme
+** Spacemacs theme
 #+BEGIN_SRC emacs-lisp
   ;; Getting the Spacemacs look.
   ;; http://pragmaticemacs.com/emacs/get-that-spacemacs-look-without-spacemacs/
@@ -2887,7 +3103,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
     :ensure t
     :config
       (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-      (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
+      ; disabled for org (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
       (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode))
 
   ;; The window split should be colored in gray. I do not want it to be
@@ -2900,6 +3116,14 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
     (set-display-table-slot display-table 'vertical-border (make-glyph-code ?┃))
     (setq standard-display-table display-table))
 #+END_SRC
+
+** Olivetti mode
+#+BEGIN_SRC emacs-lisp
+  (use-package olivetti
+     :ensure t)
+#+END_SRC
+
+#+RESULTS:
 
 * COMMENT Old packages
 These are the packages I stopped using. I stil keep the configuration
@@ -4226,4 +4450,19 @@ Zooms latex image previews along with the text using =C-x C-+=.
   (add-to-list 'load-path "~/.emacs.d/org-wiki")
   (require 'org-wiki)
   (setq org-wiki-location "~/org/wiki")
+#+END_SRC
+
+** COMMENT Zenburn+Wombat
+#+BEGIN_SRC emacs-lisp
+  ;; Uses the Zenburn color theme, which is a dark, low-contrast theme
+  ;; ported from Vim. It also loads the Wombat theme, also a dark theme
+  ;; ported from Vim. The result is a combination of the two that I have
+  ;; been unable to replicate in any other way.
+
+  ;; https://github.com/bbatsov/zenburn-emacs
+  ;; https://github.com/jasonblewis/color-theme-wombat
+
+  (use-package zenburn-theme :ensure t)
+  (load-theme 'zenburn t)
+  (load-theme 'wombat t)
 #+END_SRC
