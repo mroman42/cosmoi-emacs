@@ -344,6 +344,10 @@ your Emacs version with =M-x version= and your org-mode version with
     :config 
       (setq neo-theme 'arrow)
       (global-set-key [f9] 'neotree-toggle))
+
+  ;; Ripgrep is an improved grep command.
+  (use-package deadgrep
+    :ensure t)
 #+END_SRC
 
 * Programming
@@ -358,6 +362,8 @@ your Emacs version with =M-x version= and your org-mode version with
 
   ;; Markdown
   (use-package markdown-mode :ensure t)
+  (set-face-attribute 'fixed-pitch nil 
+     :family "unspecified")
 
   ;; R via Emacs speaks statistics.
   (use-package ess :ensure t)
@@ -2109,14 +2115,14 @@ Suitable for use in the :set field of `defcustom'."
             ;; High priority tasks
             (tags-todo "-habit-notask+TODO=\"TODO\"-WAITUNTIL>\"<today>\"+PRIORITY=\"A\"" (
                (org-agenda-overriding-header "Priority")
-               (org-agenda-files '("~/org/Tasks.org"))
+               ;(org-agenda-files '("~/org/Tasks.org"))
                ))
 
             ;; Agenda and calendar
             (agenda "" (
                (org-agenda-overriding-header "Agenda") 
                (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":habit:"))
-               (org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org"))
+               ;(org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org"))
                ))
 
             ;; Habits
@@ -2126,10 +2132,17 @@ Suitable for use in the :set field of `defcustom'."
             ;;    ))
 
             ;; General to-do's
-            (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"-PRIORITY=\"A\"" (
+            (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"-PRIORITY=\"A\"-PRIORITY=\"C\"" (
                (org-agenda-overriding-header "Tasks")
-               (org-agenda-files '("~/org/Tasks.org"))
+               ;(org-agenda-files '("~/org/Tasks.org"))
                ))
+
+           ;; Non-priority tasks
+            (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"+PRIORITY=\"C\"" (
+               (org-agenda-overriding-header "Non-priority")
+               ;(org-agenda-files '("~/org/Tasks.org"))
+               ))
+
 
             ;; Waiting tasks
             ;; (tags-todo "-habit-notask+TODO=\"WAIT\"-SCHEDULED>\"<today>\"" (
@@ -2140,7 +2153,7 @@ Suitable for use in the :set field of `defcustom'."
 
   ;; Agenda filters.
   (setq org-agenda-tag-filter-preset '("-notask"))
-  (setq org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org"))
+  (setq org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org" "~/org/agenda"))
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-todo-ignore-scheduled 'past)
   (setq org-agenda-show-future-repeats nil)
@@ -2181,6 +2194,10 @@ Suitable for use in the :set field of `defcustom'."
   ;; For instance, 32 is the whitespace.
   (setq org-agenda-block-separator 32)
 
+  ;; I prefer the mini-calendar prompt to start on Monday.
+  ;; https://emacs.stackexchange.com/questions/42571/org-agenda-date-prompt-mini-calendar-start-week-on-monday
+  (setq calendar-week-start-day 1)
+
   ;; Pregenerates an agenda buffer whenever Emacs is idle for more than 5
   ;; seconds. The next time the agenda command is run, generation takes
   ;; less than a second, since the org buffers have already been loaded.
@@ -2200,6 +2217,9 @@ Suitable for use in the :set field of `defcustom'."
   ;;   )
   ;; (run-with-idle-timer 60 1000 #'renewOrgBuffer)
 #+END_SRC
+
+#+RESULTS:
+: 1
 
 ** Habits on todo lists
 #+BEGIN_SRC emacs-lisp
@@ -2378,8 +2398,8 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   ;; annotations when you change the deadline of a task, which will note
   ;; the previous deadline date and when it was changed. Very useful for
   ;; figuring out how many times you “kicked the can down the road.”"
-  (setq org-log-redeadline (quote time))
-  (setq org-log-reschedule (quote time))
+  ; (setq org-log-redeadline (quote time))
+  ; (setq org-log-reschedule (quote time))
 #+END_SRC
 
 ** Export
@@ -2661,7 +2681,7 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-drill-save-buffers-after-drill-sessions-p nil)
   (setq org-drill-hide-item-headings-p t)
   ;; Work on the whole directory
-  (setq org-drill-scope 'directory)
+  (setq org-drill-scope 'file)
 
   ;; This is an auxiliary function that lets you study a single subtree
   ;; of an org file. It simply calls 'org-drill-cram' with the 'tree'
@@ -2743,6 +2763,13 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (org-gcal-sync)
 
   ;; FAQ: Evaluating (org-gcal-request-token) may solve Error "http 400".
+#+END_SRC
+
+** org-index
+#+BEGIN_SRC emacs-lisp
+  (use-package org-index
+    :ensure t
+    :config (global-set-key "\C-ci" 'org-index))
 #+END_SRC
 
 * Snippets

@@ -27,6 +27,7 @@
  '(haskell-stylish-on-save t)
  '(ido-mode 'both nil (ido))
  '(org-contacts-files '("~/org/Contacts.org"))
+ '(org-index-id "c83b0f04-85f3-4b4d-84f4-3020e06776b5")
  '(org-preview-latex-process-alist
    '((dvipng :programs
              ("latex" "dvipng")
@@ -53,9 +54,12 @@
                   :image-converter
                   ("convert -density %D -trim -antialias %f -quality 100 %O"))))
  '(package-selected-packages
-   '(olivetti olivetti-mode neotree doom-themes xah-fly-keys org-edna tuareg org-expiry writegood-mode ivy-bibtex org-download keyfreq mu4e org-mru-clock god-mode lean-mode redprl ace-windows beacon ac-math math-symbols-list exwm-edit desktop-environment org-contacts ob-ipython gap-mode all-the-icons ledger-mode ledger helpful org-noter interleave elfeed-goodies elfeed-org elfeed calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu smartparens-config volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm restart-emacs org-pomodoro which-key try counsel counsel-projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word cdlatex org-gcal elpy intero company-auctex ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term fsharp-mode haskell-mode))
+   '(deadgrep org-index olivetti olivetti-mode neotree doom-themes xah-fly-keys org-edna tuareg org-expiry writegood-mode ivy-bibtex org-download keyfreq mu4e org-mru-clock god-mode lean-mode redprl ace-windows beacon ac-math math-symbols-list exwm-edit desktop-environment org-contacts ob-ipython gap-mode all-the-icons ledger-mode ledger helpful org-noter interleave elfeed-goodies elfeed-org elfeed calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu smartparens-config volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm restart-emacs org-pomodoro which-key try counsel counsel-projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word cdlatex org-gcal elpy intero company-auctex ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term fsharp-mode haskell-mode))
  '(safe-local-variable-values
-   '((org-latex-pdf-process "pdflatex --shell-escape -interaction nonstopmode %f" "bibtex %b" "pdflatex --shell-escape -interaction nonstopmode %f")
+   '((eval set-face-attribute 'font-lock-comment-face nil :background nil)
+     (eval setq org-tags-exclude-from-inheritance
+           '("post" "note"))
+     (org-latex-pdf-process "pdflatex --shell-escape -interaction nonstopmode %f" "bibtex %b" "pdflatex --shell-escape -interaction nonstopmode %f")
      (org-download-image-dir . "~/actegory/org/images")
      (eval let
            ((unimath-topdir
@@ -187,8 +191,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(fixed-pitch ((t (:family "unspecified"))))
  '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "dark gray"))))
  '(fringe ((t (:background "#292b2e"))))
  '(haskell-constructor-face ((t (:inherit font-lock-type-face))))
  '(haskell-literate-comment-face ((t (:inherit font-lock-doc-face))))
- '(haskell-quasi-quote-face ((t (:inherit font-lock-doc-face)))))
+ '(haskell-quasi-quote-face ((t (:inherit font-lock-doc-face))))
+ '(header-line ((t (:background "default")))))
