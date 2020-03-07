@@ -5,12 +5,11 @@
 	     '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
 	     '("org" . "https://orgmode.org/elpa/"))
-;(add-to-list 'package-archives
-;	     '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives
+	     '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives
 	     '("melpa-stable" . "https://melpa-stable.milkbox.net/packages/"))
-(add-to-list 'package-archives
-	     '("gnu-china"   . "http://elpa.emacs-china.org/gnu/"))
+            
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,

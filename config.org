@@ -26,6 +26,8 @@ your Emacs version with =M-x version= and your org-mode version with
 
 * Basic
 #+BEGIN_SRC emacs-lisp
+  (message "[init] Basic configuration")
+
   ;; User information is used by Emacs in frame titles and email.
   ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html
   ;; It is also used by Gnus.
@@ -41,7 +43,7 @@ your Emacs version with =M-x version= and your org-mode version with
   ;; the process of rewriting directory paths.
   (setq m42/math-file       (expand-file-name "~/org/Math.org"))
   (setq m42/init-file       (expand-file-name "~/.emacs.d/config.org"))
-  (setq m42/agenda-file     (expand-file-name "~/org/Tasks.org"))
+  (setq m42/agenda-file     (expand-file-name "~/org/agenda/Tasks.org"))
   (setq m42/journal-file    (expand-file-name "~/org/Journal.org"))
   (setq m42/archive-file    (expand-file-name "~/org/Archive.org"))
   (setq m42/org-folder      (expand-file-name "~/org"))
@@ -180,6 +182,11 @@ your Emacs version with =M-x version= and your org-mode version with
     :ensure t
     :bind ("C-c g" . magit-status))
 
+  ;; Magit-todo's.
+  (use-package magit-todos
+    :ensure t
+    :config (magit-todos-mode))
+
   ;; Projectile manages projects and allows us to jump between files of
   ;; the same project.
   (use-package projectile
@@ -297,8 +304,8 @@ your Emacs version with =M-x version= and your org-mode version with
   (add-hook 'org-shiftright-final-hook 'windmove-right)
 
   ;; Better defaults via crux.
-  (use-package crux
-    :bind (("C-a" . crux-move-beginning-of-line)))
+  ;(use-package crux
+  ;  :bind (("C-a" . crux-move-beginning-of-line)))
 
   ;; Rectangle editing.
   (global-set-key (kbd "C-x <SPC>") 'cua-rectangle-mark-mode)
@@ -348,6 +355,13 @@ your Emacs version with =M-x version= and your org-mode version with
   ;; Ripgrep is an improved grep command.
   (use-package deadgrep
     :ensure t)
+
+  ;; Ranger-style dired.
+  (use-package ranger
+    :ensure t)
+
+  ;; Global line mode
+  (global-visual-line-mode t)
 #+END_SRC
 
 * Programming
@@ -385,7 +399,7 @@ your Emacs version with =M-x version= and your org-mode version with
       (setq gap-start-options (list "-E")))
 #+END_SRC
 
-** Haskell
+** COMMENT Haskell
 #+BEGIN_SRC emacs-lisp
   ;; Allows interactive Haskell evaluation in Emacs.
   (use-package haskell-mode :ensure t)
@@ -396,7 +410,7 @@ your Emacs version with =M-x version= and your org-mode version with
   (setq-default flycheck-disabled-checkers '(haskell-ghc))
 #+END_SRC
 
-*** Intero
+*** COMMENT Intero
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck-haskell :ensure t)
   (use-package intero :ensure t)
@@ -407,7 +421,7 @@ your Emacs version with =M-x version= and your org-mode version with
   ;     (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))
 #+END_SRC
 
-*** Hindent
+*** COMMENT Hindent
 **** hindent.el
 #+BEGIN_SRC emacs-lisp
 ;;; hindent.el --- Indent haskell code using the "hindent" program
@@ -724,6 +738,33 @@ work."
 #+BEGIN_SRC emacs-lisp
 (add-hook 'haskell-mode-hook #'hindent-mode)
 #+END_SRC
+
+** Haskell-TNG
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-tng-mode
+  :ensure nil
+  :load-path "~/.emacs.d/haskell-tng.el/"
+  :mode ((rx ".hs" eos) . haskell-tng-mode)
+
+  :config
+  (require 'haskell-tng-hsinspect)
+  (require 'haskell-tng-extra)
+  (require 'haskell-tng-extra-abbrev)
+  (require 'haskell-tng-extra-company)
+  (require 'haskell-tng-extra-projectile)
+  (require 'haskell-tng-extra-smartparens)
+  (require 'haskell-tng-extra-yasnippet)
+
+  :bind
+  (:map
+   haskell-tng-mode-map
+   ("RET" . haskell-tng-newline)
+   ("C-c c" . haskell-tng-compile)
+   ("C-c e" . next-error)))
+#+END_SRC
+
+#+RESULTS:
+
 ** Agda
 #+BEGIN_SRC emacs-lisp
   (use-package agda2-mode
@@ -782,7 +823,640 @@ work."
   (add-hook 'LaTeX-mode-hook
           '(lambda ()
             (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)))
+
+  ;; outline mode, making latex behave like org.
+  (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
 #+END_SRC
+
+*** outline magic
+#+BEGIN_SRC emacs-lisp
+;;; outline-magic.el --- outline mode extensions for Emacs
+
+;; Copyright (C) 2002, 2013 Carsten Dominik, Thorsten Jolitz
+
+;; Author: Carsten Dominik <dominik@science.uva.nl>
+;; Maintainer: Thorsten Jolitz <tjolitz AT gmail DOT com>
+;; Version: 0.9.1
+;; Keywords: outlines
+
+;; This file is not part of GNU Emacs.
+
+;; GNU Emacs is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary:
+
+;; This file implements extensions for outline(-minor)-mode.
+;;
+;; - VISIBILITY CYCLING: A *single* command to replace the many
+;;   outline commands for showing and hiding parts of a document.
+;;
+;; - STRUCTURE EDITING: Promotion, demotion and transposition of subtrees.
+;;
+;; Installation
+;; ============
+;;
+;; Byte-compile outline-magic.el, put it on the load path and copy the
+;; following into .emacs (adapting keybindings to your own preferences)
+;;
+;; (add-hook 'outline-mode-hook
+;;           (lambda ()
+;;             (require 'outline-cycle)))
+;;
+;; (add-hook 'outline-minor-mode-hook
+;;           (lambda ()
+;;             (require 'outline-magic)
+;;             (define-key outline-minor-mode-map [(f10)] 'outline-cycle)))
+;;
+;; Usage
+;; =====
+;;
+;; Visibility cycling
+;; ------------------
+;;
+;; The command `outline-cycle' changes the visibility of text and headings
+;; in the buffer.  Instead of using many different commands to show and
+;; hide buffer parts, `outline-cycle' cycles through the most important
+;; states of an outline buffer.  In the major `outline-mode', it will be
+;; bound to the TAB key.  In `outline-minor-mode', the user can choose a
+;; different keybinding.  The action of the command depends on the current
+;; cursor location:
+;;
+;; 1. When point is at the beginning of the buffer, `outline-cycle'
+;;    cycles the entire buffer through 3 different states:
+;;      - OVERVIEW: Only top-level headlines are shown.
+;;      - CONTENTS: All headlines are shown, but no body text.
+;;      - SHOW ALL: Everything is shown.
+;;
+;; 2. When point in a headline, `outline-cycle' cycles the subtree started
+;;    by this line through the following states:
+;;      - FOLDED:   Only the headline is shown.
+;;      - CHILDREN: The headline and its direct children are shown.  From
+;;                  this state, you can move to one of the children and
+;;                  zoom in further.
+;;      - SUBTREE:  The entire subtree under the heading is shown.
+;;
+;; 3. At other positions, `outline-cycle' jumps back to the current heading.
+;;    It can also be configured to emulate TAB at those positions, see
+;;    the option `outline-cycle-emulate-tab'.
+;;
+;; Structure editing
+;; -----------------
+;;
+;; Four commands are provided for structure editing.  The commands work on
+;; the current subtree (the current headline plus all inferior ones). In
+;; addition to menu access, the commands are assigned to the four arrow
+;; keys pressed with a modifier (META by default) in the following way:
+;;
+;;                                 move up
+;;                                    ^
+;;                        promote  <- | ->  demote
+;;                                    v
+;;                                move down
+;;
+;; Thus, M-left will promote a subtree, M-up will move it up
+;; vertically throught the structure.  Configure the variable
+;; `outline-structedit-modifiers' to use different modifier keys.
+;;
+;; Moving subtrees
+;; - - - - - - - -
+;; The commands `outline-move-subtree-up' and `outline-move-subtree-down'
+;; move the entire current subtree (folded or not) past the next same-level
+;; heading in the given direction.  The cursor moves with the subtree, so
+;; these commands can be used to "drag" a subtree to the wanted position.
+;; For example, `outline-move-subtree-down' applied with the cursor at the
+;; beginning of the "* Level 1b" line will change the tree like this:
+;;
+;;   * Level 1a                         * Level 1a
+;;   * Level 1b         ===\            * Level 1c
+;;   ** Level 2b        ===/            * Level 1b
+;;   * Level 1c                         ** Level 2b
+;;
+;; Promotion/Demotion
+;; - - - - - - - - - -
+;; The commands `outline-promote' and `outline-demote' change the current
+;; subtree to a different outline level - i.e. the level of all headings in
+;; the tree is decreased or increased.  For example, `outline-demote'
+;; applied with the cursor at the beginning of the "* Level 1b" line will
+;; change the tree like this:
+;;
+;;   * Level 1a                         * Level 1a
+;;   * Level 1b         ===\            ** Level 1b
+;;   ** Level 2b        ===/            *** Level 2
+;;   * Level 1c                         * Level 1c
+;;
+;; The reverse operation is `outline-promote'.  Note that the scope of
+;; "current subtree" may be changed after a promotion.  To change all
+;; headlines in a region, use transient-mark-mode and apply the command to
+;; the region.
+;;
+;; NOTE: Promotion/Demotion in complex outline setups
+;; - - - - - - - - - - - - - - - - - - - - - - - - - -
+;; Promotion/demotion works easily in a simple outline setup where the
+;; indicator of headings is just a polymer of a single character (e.g. "*"
+;; in the default outline mode).  It can also work in more complicated
+;; setups.  For example, in LaTeX-mode, sections can be promoted to
+;; chapters and vice versa.  However, the outline setup for the mode must
+;; meet two requirements:
+;;
+;; 1. `outline-regexp' must match the full text which has to be changed
+;;    during promotion/demotion.  E.g. for LaTeX, it must match "\chapter"
+;;    and not just "\chap".  Major modes like latex-mode, AUCTeX's
+;;    latex-mode and texinfo-mode do this correctly.
+;;
+;; 2. The variable `outline-promotion-headings' must contain a sorted list
+;;    of headings as matched by `outline-regexp'.  Each of the headings in
+;;    `outline-promotion-headings' must be matched by `outline-regexp'.
+;;    `outline-regexp' may match additional things - those matches will be
+;;    ignored by the promotion commands.  If a mode has multiple sets of
+;;    sectioning commands (for example the texinfo-mode with
+;;    chapter...subsubsection and unnumbered...unnumberedsubsubsec), the
+;;    different sets can all be listed in the same list, but must be
+;;    separated by nil elements to avoid "promotion" accross sets.
+;;    Examples:
+;;
+;;    (add-hook 'latex-mode-hook      ; or 'LaTeX-mode-hook for AUCTeX
+;;     (lambda ()
+;;       (setq outline-promotion-headings
+;;             '("\\chapter" "\\section" "\\subsection"
+;;               "\\subsubsection" "\\paragraph" "\\subparagraph"))))
+;;
+;;    (add-hook 'texinfo-mode-hook
+;;     (lambda ()
+;;      (setq outline-promotion-headings
+;;       '("@chapter" "@section" "@subsection" "@subsubsection" nil
+;;         "@unnumbered" "@unnumberedsec" "@unnumberedsubsec"
+;;                                       "@unnumberedsubsubsec" nil
+;;         "@appendix" "@appendixsec" "@appendixsubsec"
+;;                                         "@appendixsubsubsec" nil
+;;         "@chapheading" "@heading" "@subheading" "@subsubheading"))))
+;;
+;;    If people find this useful enough, maybe the maintainers of the
+;;    modes can be persuaded to set `outline-promotion-headings'
+;;    already as part of the mode setup.
+;;
+;;  Compatibility:
+;;  --------------
+;;  outline-magic was developed to work with the new outline.el
+;;  implementation which uses text properties instead of selective display.
+;;  If you are using XEmacs which still has the old implementation, most
+;;  commands will work fine.  However, structure editing commands will
+;;  require all relevant headlines to be visible.
+;;
+;;; Code:
+
+(require 'outline)
+
+;;; Visibility cycling
+
+(defcustom outline-cycle-emulate-tab nil
+  "Where should `outline-cycle' emulate TAB.
+nil    Never
+white  Only in completely white lines
+t      Everywhere except in headlines"
+  :group 'outlines
+  :type '(choice (const :tag "Never" nil)
+		 (const :tag "Only in completely white lines" white)
+		 (const :tag "Everywhere except in headlines" t)
+		 ))
+
+(defvar outline-promotion-headings nil
+  "A sorted list of headings used for promotion/demotion commands.
+Set this to a list of headings as they are matched by `outline-regexp',
+top-level heading first.  If a mode or document needs several sets of
+outline headings (for example numbered and unnumbered sections), list
+them set by set, separated by a nil element.  See the example for
+`texinfo-mode' in the file commentary.")
+(make-variable-buffer-local 'outline-promotion-headings)
+
+;;;###autoload
+(defun outline-cycle (&optional arg)
+  "Visibility cycling for outline(-minor)-mode.
+
+- When point is at the beginning of the buffer, or when called with a
+  C-u prefix argument, rotate the entire buffer through 3 states:
+  1. OVERVIEW: Show only top-level headlines.
+  2. CONTENTS: Show all headlines of all levels, but no body text.
+  3. SHOW ALL: Show everything.
+
+- When point is at the beginning of a headline, rotate the subtree started
+  by this line through 3 different states:
+  1. FOLDED:   Only the main headline is shown.
+  2. CHILDREN: The main headline and the direct children are shown.  From
+               this state, you can move to one of the children and
+               zoom in further.
+  3. SUBTREE:  Show the entire subtree, including body text.
+
+- When point is not at the beginning of a headline, execute
+  `indent-relative', like TAB normally does."
+  (interactive "P")
+  (setq deactivate-mark t)
+  (cond
+
+   ((equal arg '(4))
+    ; Run `outline-cycle' as if at the top of the buffer.
+    (save-excursion
+      (goto-char (point-min))
+			(let ((current-prefix-argument nil))
+      (outline-cycle nil))))
+
+   (t
+    (cond
+     ((bobp) ;; Beginning of buffer: Global cycling
+
+      (cond
+       ((eq last-command 'outline-cycle-overview)
+	;; We just created the overview - now do table of contents
+	;; This can be slow in very large buffers, so indicate action
+	(message "CONTENTS...")
+	(save-excursion
+	  ;; Visit all headings and show their offspring
+	  (goto-char (point-max))
+	  (catch 'exit
+	    (while (and (progn (condition-case nil
+				   (outline-previous-visible-heading 1)
+				 (error (goto-char (point-min))))
+			       t)
+			(looking-at outline-regexp))
+	      (show-branches)
+	      (if (bobp) (throw 'exit nil))))
+	  (message "CONTENTS...done"))
+	(setq this-command 'outline-cycle-toc))
+       ((eq last-command 'outline-cycle-toc)
+	;; We just showed the table of contents - now show everything
+	(show-all)
+	(message "SHOW ALL")
+	(setq this-command 'outline-cycle-showall))
+       (t
+	;; Default action: go to overview
+	(let ((toplevel (cond
+			 (current-prefix-arg (prefix-numeric-value current-prefix-arg))
+			 ((save-excursion (beginning-of-line)
+					  (looking-at outline-regexp))
+			  (max 1 (funcall outline-level)))
+			 (t 1))))
+	  (hide-sublevels toplevel))
+	(message "OVERVIEW")
+	(setq this-command 'outline-cycle-overview))))
+
+     ((save-excursion (beginning-of-line 1) (looking-at outline-regexp))
+      ;; At a heading: rotate between three different views
+      (outline-back-to-heading)
+      (let ((goal-column 0) beg eoh eol eos)
+	;; First, some boundaries
+	(save-excursion
+	  (outline-back-to-heading)           (setq beg (point))
+	  (save-excursion (outline-next-line) (setq eol (point)))
+	  (outline-end-of-heading)            (setq eoh (point))
+	  (outline-end-of-subtree)            (setq eos (point)))
+	;; Find out what to do next and set `this-command'
+	(cond
+	 ((= eos eoh)
+	  ;; Nothing is hidden behind this heading
+	  (message "EMPTY ENTRY"))
+	 ((>= eol eos)
+	  ;; Entire subtree is hidden in one line: open it
+	  (show-entry)
+	  (show-children)
+	  (message "CHILDREN")
+	  (setq this-command 'outline-cycle-children))
+	 ((eq last-command 'outline-cycle-children)
+	  ;; We just showed the children, now show everything.
+	  (show-subtree)
+	  (message "SUBTREE"))
+	 (t
+	  ;; Default action: hide the subtree.
+	  (hide-subtree)
+	  (message "FOLDED")))))
+
+     ;; TAB emulation
+     ((outline-cycle-emulate-tab)
+      (indent-relative))
+
+     (t
+      ;; Not at a headline: Do indent-relative
+      (outline-back-to-heading))))))
+
+(defun outline-cycle-emulate-tab ()
+  "Check if TAB should be emulated at the current position."
+  ;; This is called after the check for point in a headline,
+  ;; so we can assume we are not in a headline
+  (if (and (eq outline-cycle-emulate-tab 'white)
+	   (save-excursion
+	     (beginning-of-line 1) (looking-at "[ \t]+$")))
+      t
+    outline-cycle-emulate-tab))
+
+;;;###autoload
+(defun outline-next-line ()
+  "Forward line, but mover over invisible line ends.
+Essentially a much simplified version of `next-line'."
+  (interactive)
+  (beginning-of-line 2)
+  (while (and (not (eobp))
+	      (get-char-property (1- (point)) 'invisible))
+    (beginning-of-line 2)))
+
+;;; Vertical tree motion
+
+;;;###autoload
+(defun outline-move-subtree-up (&optional arg)
+  "Move the currrent subtree up past ARG headlines of the same level."
+  (interactive "p")
+  (let ((headers (or arg 1)))
+    (outline-move-subtree-down (- headers))))
+
+;;;###autoload
+(defun outline-move-subtree-down (&optional arg)
+  "Move the currrent subtree down past ARG headlines of the same level."
+  (interactive "p")
+  (let* ((headers (or arg 1))
+        (re (concat "^" outline-regexp))
+	(movfunc (if (> headers 0) 'outline-get-next-sibling
+		   'outline-get-last-sibling))
+	(ins-point (make-marker))
+	(cnt (abs headers))
+	beg end txt)
+    ;; Select the tree
+    (outline-back-to-heading)
+    (setq beg (point))
+    (outline-end-of-subtree)
+    (if (= (char-after) ?\n) (forward-char 1))
+    (setq end (point))
+    ;; Find insertion point, with error handling
+    (goto-char beg)
+    (while (> cnt 0)
+      (or (funcall movfunc)
+	  (progn (goto-char beg)
+		 (error "Cannot move past superior level")))
+      (setq cnt (1- cnt)))
+    (if (> headers 0)
+	;; Moving forward - still need to move over subtree
+	(progn (outline-end-of-subtree)
+	       (if (= (char-after) ?\n) (forward-char 1))))
+    (move-marker ins-point (point))
+    (setq txt (buffer-substring beg end))
+    (delete-region beg end)
+    (insert txt)
+    (goto-char ins-point)
+    (move-marker ins-point nil)))
+
+;;; Promotion and Demotion
+
+;;;###autoload
+(defun outline-promote (&optional arg)
+  "Decrease the level of an outline-structure by ARG levels.
+When the region is active in transient-mark-mode, all headlines in the
+region are changed.  Otherwise the current subtree is targeted. Note that
+after each application of the command the scope of \"current subtree\"
+may have changed."
+  (interactive "p")
+  (let ((delta (or arg 1)))
+    (outline-change-level (- delta))))
+
+;;;###autoload
+(defun outline-demote (&optional arg)
+  "Increase the level of an outline-structure by ARG levels.
+When the region is active in transient-mark-mode, all headlines in the
+region are changed.  Otherwise the current subtree is targeted. Note that
+after each application of the command the scope of \"current subtree\"
+may have changed."
+  (interactive "p")
+  (let ((delta (or arg 1)))
+    (outline-change-level delta)))
+
+(defun outline-change-level (delta)
+  "Workhorse for `outline-demote' and `outline-promote'."
+  (let* ((headlist (outline-headings-list))
+	 (atom (outline-headings-atom headlist))
+	 (re (concat "^" outline-regexp))
+	 (transmode (and transient-mark-mode mark-active))
+	 beg end)
+
+    ;; Find the boundaries for this operation
+    (save-excursion
+      (if transmode
+	  (setq beg (min (point) (mark))
+		end (max (point) (mark)))
+	(outline-back-to-heading)
+	(setq beg (point))
+	(outline-end-of-heading)
+	(outline-end-of-subtree)
+	(setq end (point)))
+      (setq beg (move-marker (make-marker) beg)
+	    end (move-marker (make-marker) end))
+
+      (let (head newhead level newlevel static)
+
+	;; First a dry run to test if there is any trouble ahead.
+	(goto-char beg)
+	(while (re-search-forward re end t)
+	  (outline-change-heading headlist delta atom 'test))
+
+	;; Now really do replace the headings
+	(goto-char beg)
+	(while (re-search-forward re end t)
+	  (outline-change-heading headlist delta atom))))))
+
+(defun outline-headings-list ()
+  "Return a list of relevant headings, either a user/mode defined
+list, or an alist derived from scanning the buffer."
+  (let (headlist)
+    (cond
+     (outline-promotion-headings
+      ;; configured by the user or the mode
+      (setq headlist outline-promotion-headings))
+
+     ((and (eq major-mode 'outline-mode) (string= outline-regexp "[*\^L]+"))
+      ;; default outline mode with original regexp
+      ;; this need special treatment because of the \f in the regexp
+      (setq headlist '(("*" . 1) ("**" . 2))))  ; will be extrapolated
+
+     (t ;; Check if the buffer contains a complete set of headings
+      (let ((re (concat "^" outline-regexp)) head level)
+	(save-excursion
+	  (goto-char (point-min))
+	  (while (re-search-forward re nil t)
+	    (save-excursion
+	      (beginning-of-line 1)
+	      (setq head (outline-cleanup-match (match-string 0))
+		    level (funcall outline-level))
+	      (add-to-list  'headlist (cons head level))))))
+      ;; Check for uniqueness of levels in the list
+      (let* ((hl headlist) entry level seen nonunique)
+	(while (setq entry (car hl))
+	  (setq hl (cdr hl)
+		level (cdr entry))
+	  (if (and (not (outline-static-level-p level))
+		   (member level seen))
+	      ;; We have two entries for the same level.
+	      (add-to-list 'nonunique level))
+	  (add-to-list 'seen level))
+	(if nonunique
+	    (error "Cannot promote/demote: non-unique headings at level %s\nYou may want to configure `outline-promotion-headings'."
+		   (mapconcat 'int-to-string nonunique ","))))))
+    ;; OK, return the list
+    headlist))
+
+(defun outline-change-heading (headlist delta atom &optional test)
+  "Change heading just matched by `outline-regexp' by DELTA levels.
+HEADLIST can be either an alist ((\"outline-match\" . level)...) or a
+straight list like `outline-promotion-headings'. ATOM is a character
+if all headlines are composed of a single character.
+If TEST is non-nil, just prepare the change and error if there are problems.
+TEST nil means, really replace old heading with new one."
+  (let* ((head (outline-cleanup-match (match-string 0)))
+	 (level (save-excursion
+		  (beginning-of-line 1)
+		  (funcall outline-level)))
+	 (newhead  ; compute the new head
+	  (cond
+	   ((= delta 0) t)
+	   ((outline-static-level-p level) t)
+	   ((null headlist) nil)
+	   ((consp (car headlist))
+	    ;; The headlist is an association list
+	    (or (car (rassoc (+ delta level) headlist))
+		(and atom
+		     (> (+ delta level) 0)
+		     (make-string (+ delta level) atom))))
+	   (t
+	    ;; The headlist is a straight list - grab the correct element.
+	    (let* ((l (length headlist))
+		   (n1 (- l (length (member head headlist)))) ; index old
+		   (n2 (+ delta n1)))                         ; index new
+	      ;; Careful checking
+	      (cond
+	       ((= n1 l) nil)                ; head not found
+	       ((< n2 0) nil)                ; newlevel too low
+	       ((>= n2 l) nil)               ; newlevel too high
+	       ((let* ((tail (nthcdr (min n1 n2) headlist))
+		       (nilpos (- (length tail) (length (memq nil tail)))))
+		  (< nilpos delta))          ; nil element between old and new
+		nil)
+	       (t (nth n2 headlist))))))))      ; OK, we have a match!
+    (if (not newhead)
+	(error "Cannot shift level %d heading \"%s\" to level %d"
+	       level head (+ level delta)))
+    (if (and (not test) (stringp newhead))
+	(save-excursion
+	  (beginning-of-line 1)
+	  (or (looking-at (concat "[ \t]*\\(" (regexp-quote head) "\\)"))
+	      (error "Please contact maintainer"))
+	  (replace-match (outline-cleanup-match newhead) t t nil 1)))))
+
+(defun outline-headings-atom (headlist)
+  "Use the list created by `outline-headings-list' and check if all
+headings are polymers of a single character, e.g. \"*\".
+If yes, return this character."
+  (if (consp (car headlist))
+      ;; this is an alist - it makes sense to check for atomic structure
+      (let ((re (concat "\\`"
+			(regexp-quote (substring (car (car headlist)) 0 1))
+			"+\\'")))
+	(if (not (delq nil (mapcar (lambda (x) (not (string-match re (car x))))
+				   headlist)))
+	    (string-to-char (car (car headlist)))))))
+
+(defun outline-cleanup-match (s)
+  "Remove text properties and start/end whitespace from a string."
+  (set-text-properties 1 (length s) nil s)
+  (save-match-data
+    (if (string-match "^[ \t]+" s) (setq s (replace-match "" t t s)))
+    (if (string-match "[ \t]+$" s) (setq s (replace-match "" t t s))))
+  s)
+
+(defun outline-static-level-p (level)
+  "Test if a level should not be changed by level promotion/demotion."
+  (>= level 1000))
+
+;;; Key bindings
+
+(defcustom outline-structedit-modifiers '(meta)
+  "List of modifiers for outline structure editing with the arrow keys."
+  :group 'outlines
+  :type '(repeat symbol))
+
+(define-key outline-mode-map [(tab)] 'outline-cycle)
+(let ((keys '((left . outline-promote)
+	      (right . outline-demote)
+	      (up . outline-move-subtree-up)
+	      (down . outline-move-subtree-down)))
+      key)
+  (while (setq key (pop keys))
+    (apply 'define-key outline-mode-map
+	   (list
+	    (vector (append outline-structedit-modifiers (list (car key))))
+	    (cdr key)))))
+
+;;; Menu entries
+
+(define-key outline-mode-menu-bar-map [headings outline-move-subtree-down]
+  '("Move subtree down" . outline-move-subtree-down))
+(define-key outline-mode-menu-bar-map [headings outline-move-subtree-up]
+  '("Move subtree up" . outline-move-subtree-up))
+(define-key outline-mode-menu-bar-map [headings outline-demote]
+  '("Demote by 1 level" . outline-demote))
+(define-key outline-mode-menu-bar-map [headings outline-promote]
+  '("Promote by 1 level" . outline-promote))
+(define-key outline-mode-menu-bar-map [show outline-cycle]
+  '("Rotate visibility" . outline-cycle))
+(define-key outline-mode-menu-bar-map [hide outline-cycle]
+  '("Rotate visibility" . outline-cycle))
+
+;;; Finish up
+
+; (provide 'outline-magic)
+
+;;; outline-magic.el ends here
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+ (add-hook 'outline-minor-mode-hook
+           (lambda ()
+             (define-key outline-minor-mode-map [(tab)] 'outline-cycle)
+             (define-key outline-minor-mode-map (kbd "C-c C-n") 'outline-next-visible-heading)
+             (define-key outline-minor-mode-map (kbd "C-c C-p") 'outline-previous-visible-heading)
+             (setq outline-cycle-emulate-tab t)
+             ))
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC emacs-lisp
+;; extra outline headers 
+(setq TeX-outline-extra
+      '(("%chapter" 1)
+        ("%section" 2)
+        ("%subsection" 3)
+        ("%subsubsection" 4)
+        ("%paragraph" 5)))
+
+;; add font locking to the headers
+(font-lock-add-keywords
+ 'latex-mode
+ '(("^%\\(chapter\\|\\(sub\\|subsub\\)?section\\|paragraph\\)"
+    0 'font-lock-keyword-face t)
+   ("^%chapter{\\(.*\\)}"       1 'font-latex-sectioning-1-face t)
+   ("^%section{\\(.*\\)}"       1 'font-latex-sectioning-2-face t)
+   ("^%subsection{\\(.*\\)}"    1 'font-latex-sectioning-3-face t)
+   ("^%subsubsection{\\(.*\\)}" 1 'font-latex-sectioning-4-face t)
+   ("^%paragraph{\\(.*\\)}"     1 'font-latex-sectioning-5-face t)))
+#+END_SRC
+
+#+RESULTS:
 
 *** Pdf generation process
 #+BEGIN_SRC emacs-lisp
@@ -2083,7 +2757,7 @@ Suitable for use in the :set field of `defcustom'."
   :ensure t)
 
 (setq bibtex-completion-library-path "~/pdf/" ;; where your pdfs etc are stored
-      bibtex-completion-bibliography "~/org/Math.bib" ;; writing completion
+      bibtex-completion-bibliography "~/latex/bibliography.bib" ;; writing completion
       bibtex-completion-notes-path "~/org/Math.org")
 
 (global-set-key (kbd "C-c ñ") 'ivy-bibtex)
@@ -2115,45 +2789,45 @@ Suitable for use in the :set field of `defcustom'."
             ;; High priority tasks
             (tags-todo "-habit-notask+TODO=\"TODO\"-WAITUNTIL>\"<today>\"+PRIORITY=\"A\"" (
                (org-agenda-overriding-header "Priority")
-               ;(org-agenda-files '("~/org/Tasks.org"))
+               ;(org-agenda-files '("~/org/agenda/Tasks.org"))
                ))
 
             ;; Agenda and calendar
             (agenda "" (
                (org-agenda-overriding-header "Agenda") 
                (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":habit:"))
-               ;(org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org"))
+               ;(org-agenda-files '("~/org/agenda/Tasks.org" "~/org/GCalendar.org"))
                ))
 
             ;; Habits
             ;; (tags-todo "+habit-SCHEDULED>\"<today>\"" (
             ;;    (org-agenda-overriding-header "Habits")
-            ;;    (org-agenda-files '("~/org/Tasks.org"))
+            ;;    (org-agenda-files '("~/org/agenda/Tasks.org"))
             ;;    ))
 
             ;; General to-do's
             (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"-PRIORITY=\"A\"-PRIORITY=\"C\"" (
                (org-agenda-overriding-header "Tasks")
-               ;(org-agenda-files '("~/org/Tasks.org"))
+               ;(org-agenda-files '("~/org/agenda/Tasks.org"))
                ))
 
            ;; Non-priority tasks
             (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"+PRIORITY=\"C\"" (
                (org-agenda-overriding-header "Non-priority")
-               ;(org-agenda-files '("~/org/Tasks.org"))
+               ;(org-agenda-files '("~/org/agenda/Tasks.org"))
                ))
 
 
             ;; Waiting tasks
             ;; (tags-todo "-habit-notask+TODO=\"WAIT\"-SCHEDULED>\"<today>\"" (
             ;;    (org-agenda-overriding-header "Waiting")
-            ;;    (org-agenda-files '("~/org/Tasks.org"))
+            ;;    (org-agenda-files '("~/org/agenda/Tasks.org"))
             ;;    ))
             ))))
 
   ;; Agenda filters.
   (setq org-agenda-tag-filter-preset '("-notask"))
-  (setq org-agenda-files '("~/org/Tasks.org" "~/org/GCalendar.org" "~/org/agenda"))
+  (setq org-agenda-files '("~/org/GCalendar.org" "~/org/agenda" "~/org/math/notes"))
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-todo-ignore-scheduled 'past)
   (setq org-agenda-show-future-repeats nil)
@@ -2267,19 +2941,27 @@ has no effect."
 From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/czg008y/][this reddit comment]].
 
 #+BEGIN_SRC emacs-lisp
+(setq org-math-wiki-files (directory-files "~/org/math/wiki/" 'full "org"))
+
 (setq org-refile-targets '(
    (nil :maxlevel . 2) 
    (org-agenda-files :maxlevel . 2) 
+   (org-math-wiki-files :maxlevel . 1)
    ("~/org/Someday.org" :maxlevel . 2)
-   ("~/org/Tasks.org" :maxlevel . 2)
+   ("~/org/agenda/Tasks.org" :maxlevel . 2)
    ("~/org/Reference.org" :maxlevel . 2)
    ("~/org/Notes.org" :maxlevel . 2)
-   ("~/org/Inbox.org" :maxlevel . 1)
+   ("~/org/agenda/Inbox.org" :maxlevel . 1)
    ("~/org/Archive.org" :maxlevel . 1)
-))
+   ("~/org/math" :maxlevel . 1))
+)
 (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+(setq org-refile-allow-creating-parent-nodes 'confirm)
 #+END_SRC
+
+#+RESULTS:
+: confirm
 
 From [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][this post]], how to refile to the top level.
 
@@ -2287,6 +2969,8 @@ From [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
 (setq org-refile-use-outline-path 'file)
 (setq org-outline-path-complete-in-steps nil)
 #+END_SRC
+
+#+RESULTS:
 
 Save after refiling or archiving ([[https://emacs.stackexchange.com/questions/26923/org-mode-getting-errors-when-auto-saving-after-refiling][from SO]]).
 
@@ -2298,6 +2982,8 @@ Save after refiling or archiving ([[https://emacs.stackexchange.com/questions/26
         (lambda (&rest _)
         (org-save-all-org-buffers)))
 #+END_SRC
+
+#+RESULTS:
 
 *** archive
 Stores org files in =~/org=. Defines location of index, agenda and todo files.
@@ -2433,6 +3119,15 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
 
   (with-eval-after-load "ox-latex"
     (add-to-list 'org-latex-classes
+      '("tac" "\\documentclass{tac}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
       '("amsart" "\\documentclass{amsart}"
        ("\\section{%s}" . "\\section*{%s}")
        ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -2441,6 +3136,16 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
        )))
 
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+      '("ociamthesis" "\\documentclass{ociamthesis}"
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+       )))
 
   (with-eval-after-load "ox-latex"
     (add-to-list 'org-latex-classes
@@ -2480,6 +3185,8 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   ;; Twitter bootstrap exporting.
   (use-package ox-twbs :ensure ox-twbs)
 #+END_SRC
+
+#+RESULTS:
 
 ** Babel
 #+BEGIN_SRC emacs-lisp
@@ -2733,6 +3440,8 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-capture-templates (quote (
     ("j" "Journal" entry (file+datetree "~/org/Diary.org")
          "* %?" :empty-lines 1)
+    ("r" "Research" entry (file+datetree "~/org/math/Research.org")
+         "* %?" :empty-lines 1)
     ("c" "Contact" entry (file+headline "~/org/Contacts.org" "Inbox")
       "* %^{Name}
   :PROPERTIES:
@@ -2741,12 +3450,14 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   :NOTE: %^{Note}
   :END:"
         :empty-lines 1)
-      ("m" "mail" entry (file+headline "~/org/Tasks.org" "Mail")
+      ("m" "mail" entry (file+headline "~/org/agenda/Tasks.org" "Mail")
            "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n\n")
-      ("t" "todo" entry (file "~/org/Inbox.org")
+      ("t" "todo" entry (file "~/org/agenda/Inbox.org")
            "* TODO %?\n:PROPERTIES:\n:CREATED: %(org-insert-time-stamp(org-read-date nil t \"+0d\"))\n:END:\n\n\n")
     )))
 #+END_SRC
+
+#+RESULTS:
 
 ** Gcalendar
 #+BEGIN_SRC emacs-lisp
@@ -2770,6 +3481,36 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (use-package org-index
     :ensure t
     :config (global-set-key "\C-ci" 'org-index))
+#+END_SRC
+
+* Anki
+#+BEGIN_SRC emacs-lisp
+  (use-package anki-editor
+    :ensure t
+    :custom
+      (anki-editor-create-decks t "A header creates a deck")
+      (anki-editor-use-math-jax t "Use Anki's built in MathJax support instead of LaTeX.")
+      (anki-editor-break-consecutive-braces-in-latex t) 
+      )
+
+(defun anki-editor--translate-latex-delimiters (latex-code)
+  (catch 'done
+    (let ((delimiter-map (list (list (cons (format "^%s" (regexp-quote "$$")) "\\[")
+                                     (cons (format "%s$" (regexp-quote "$$")) "\\]"))
+                               (list (cons (format "^%s" (regexp-quote "$")) "\\(")
+                                     (cons (format "%s$" (regexp-quote "$")) "\\)"))
+                               (list (cons (format "^%s" (regexp-quote "\\(")) "\\(")
+                                     (cons (format "%s$" (regexp-quote "\\)")) "\\)"))
+                               (list (cons (format "^%s" (regexp-quote "\\[")) "\\[")
+                                     (cons (format "%s$" (regexp-quote "\\]")) "\\]"))))
+          (matched nil))
+      (save-match-data
+        (dolist (pair delimiter-map)
+          (dolist (delimiter pair)
+            (when (setq matched (string-match (car delimiter) latex-code))
+              (setq latex-code (replace-match (cdr delimiter) t t latex-code))))
+          (when matched (throw 'done latex-code)))))
+    latex-code))
 #+END_SRC
 
 * Snippets
@@ -2937,6 +3678,8 @@ $1
   (set-face-attribute 'variable-pitch nil :font "Iosevka")
 #+END_SRC
 
+#+RESULTS:
+
 * IRC
 #+BEGIN_SRC emacs-lisp
 (use-package erc
@@ -2984,26 +3727,52 @@ $1
 #+END_SRC
 
 * Customization
-** Spacemacs theme
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Customization")
+#+END_SRC
+** Font
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Font")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; Uses Iosevka as the default font.
+  (add-to-list 'default-frame-alist '(font . "Iosevka42-11" ))
+  (set-face-attribute 'default t :font "Iosevka42-11" )
+
+  ;; Fallback unicode font.  It is really useful for Agda and it works
+  ;; great with Fira Mono. It could be DejaVuSans, which has great
+  ;; unicode support. It could also be Pragmata Pro, which is a bit more
+  ;; limited.  
+  (set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
+  ;;(set-fontset-font "fontset-default" nil "Pragmata Pro")
+#+END_SRC
+** Spacemacs dark theme
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Spacemacs theme")
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   ;; Getting the Spacemacs look.
   ;; http://pragmaticemacs.com/emacs/get-that-spacemacs-look-without-spacemacs/
   (use-package spacemacs-theme
-    :ensure t
-    :no-require t
-    :init
-      (setq spacemacs-theme-org-agenda-height nil)
-      (setq spacemacs-theme-org-height nil)
-      (setq spacemacs-theme-comment-italic t)
-      )
+   :ensure t
+   :no-require t
+   :init
+     (setq spacemacs-theme-org-agenda-height nil)
+     (setq spacemacs-theme-org-height nil)
+     (setq spacemacs-theme-comment-italic t)
+     )
 
   ;; The function that loads the entire theme. It first loads spacemacs, then
   ;; applies the face preferences.
   (defun m42/reload-theme ()
+    (interactive)
+    (setq default "#cfcecd")
     (load-theme 'spacemacs-dark 1)
     
     ;; Colors
-    ; (setq color/space-comment "#1e757f")
+    (setq color/space-comment "#1e757f")
     (setq color/space-comment "#3E8991")
     (setq color/space-block "#827591")
 
@@ -3068,21 +3837,113 @@ $1
     (m42/reload-theme))
 #+END_SRC
 
-** Font
-#+BEGIN_SRC emacs-lisp
-  ;; Uses Iosevka as the default font.
-  (add-to-list 'default-frame-alist '(font . "Iosevka42-11" ))
-  (set-face-attribute 'default t :font "Iosevka42-11" )
+#+RESULTS:
+| (lambda (frame) (when (eq (length (frame-list)) 2) (progn (select-frame frame) (m42/reload-theme)))) | x-dnd-init-frame |
 
-  ;; Fallback unicode font.  It is really useful for Agda and it works
-  ;; great with Fira Mono. It could be DejaVuSans, which has great
-  ;; unicode support. It could also be Pragmata Pro, which is a bit more
-  ;; limited.  
-  (set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
-  ;;(set-fontset-font "fontset-default" nil "Pragmata Pro")
+** COMMENT Spacemacs light theme
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Spacemacs theme")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; Getting the Spacemacs look.
+  ;; http://pragmaticemacs.com/emacs/get-that-spacemacs-look-without-spacemacs/
+  (use-package spacemacs-theme
+   :ensure t
+   :no-require t
+   :init
+     (setq spacemacs-theme-org-agenda-height nil)
+     (setq spacemacs-theme-org-height nil)
+     (setq spacemacs-theme-comment-italic t)
+     )
+
+  ;; The function that loads the entire theme. It first loads spacemacs, then
+  ;; applies the face preferences.
+  (defun m42/reload-theme ()
+    (interactive)
+    (setq default "#cfcecd")
+    (load-theme 'spacemacs-dark 1)
+    
+    ;; Colors
+    (setq color/space-comment "#1e757f")
+    (setq color/space-comment "#3E8991")
+    (setq color/space-block "#827591")
+
+    ;; More contrast for the default font.
+    (set-face-attribute 'default nil :foreground "#cfcecd")
+
+    ;; Comments and docs should share font
+    (set-face-attribute 'font-lock-doc-face nil :foreground color/space-comment)
+    (set-face-attribute 'font-lock-comment-face nil :foreground color/space-comment)
+    
+    ;; Standard org-mode faces.
+    (set-face-attribute 'org-document-title nil :underline nil :height 1.0 :foreground "#4f97d7")
+    (set-face-attribute 'org-document-info nil :underline nil :height 1.0 :foreground "#4f97d7")
+    (set-face-attribute 'org-document-info-keyword nil :underline nil :height 1.0 :foreground color/space-block)
+    (set-face-attribute 'org-special-keyword nil :foreground color/space-block) 
+    (set-face-attribute 'org-meta-line nil :foreground color/space-block) 
+    (set-face-attribute 'org-link nil :inherit 'link :weight 'normal :underline nil)
+    (set-face-attribute 'org-todo nil :foreground "#ba6328")
+    (set-face-attribute 'org-done nil :foreground "#5e9b20")
+    (set-face-attribute 'org-date nil :foreground color/space-comment)
+    (set-face-attribute 'org-priority nil :foreground "#ba6328" :weight 'normal)
+    (set-face-attribute 'org-tag nil :foreground color/space-block)
+    (set-face-attribute 'org-verbatim nil :foreground "#979797")
+    (set-face-attribute 'org-table nil :background "#292b2e")
+    (set-face-attribute 'org-block-begin-line nil :background "#292b2e")
+    (set-face-attribute 'org-block-end-line nil :background "#292b2e")
+
+    ;; Org agenda faces
+    (set-face-attribute 'org-habit-ready-future-face nil :background "#5e9b20")
+    (set-face-attribute 'org-habit-ready-face nil :background "#5e9b20")
+    (set-face-attribute 'org-habit-overdue-future-face nil :background "#ba6328")
+    (set-face-attribute 'org-habit-overdue-face nil :background "#ba6328")
+    (set-face-attribute 'org-agenda-date-today nil :foreground "#7590db")
+    (set-face-attribute 'org-agenda-date-today nil :inherit 'org-agenda-date :weight 'ultrabold :slant 'normal :underline nil)
+    (set-face-attribute 'org-agenda-date-weekend nil :weight 'normal)
+    (set-face-attribute 'org-scheduled nil :foreground "#2d9574")
+    (set-face-attribute 'org-agenda-calendar-event nil :foreground "#2d9574")
+  
+    ;; Org mode levels.
+    (set-face-attribute 'org-level-1 nil :weight 'normal :foreground "#4f97d7"); :foreground "#d08770"
+    (set-face-attribute 'org-level-2 nil :weight 'normal :foreground "#5e81ac")
+    (set-face-attribute 'org-level-3 nil :weight 'normal :foreground "#81a1c1"); :foreground "#a3be8c"
+    (set-face-attribute 'org-level-4 nil :weight 'normal :foreground "#88c0d0")
+    (set-face-attribute 'org-level-5 nil :weight 'normal :foreground "#8fbcbb")
+    (set-face-attribute 'org-level-6 nil :weight 'normal :foreground "#b48ead")
+    (set-face-attribute 'org-level-7 nil :weight 'normal :foreground "#a3be8c")
+    (set-face-attribute 'org-level-8 nil :weight 'normal :foreground "#b3be8c")
+
+    ;; Neotree arrow
+    (set-face-attribute 'neo-expand-btn-face nil :foreground "#5e81ac")
+  )
+
+  ;; I have a problem with this theme: =unspecified-background= is an error I
+  ;; get if I try to use it with emacs --daemon. That is why it is necessary to
+  ;; wait until the frame is created to reload the complete theme.
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions (lambda (frame)
+          (when (eq (length (frame-list)) 2)
+              (progn
+                (select-frame frame)
+                (m42/reload-theme)))))
+    (m42/reload-theme))
+#+END_SRC
+
+#+RESULTS:
+| (lambda (frame) (when (eq (length (frame-list)) 2) (progn (select-frame frame) (m42/reload-theme)))) | (lambda (frame) (if (eq (length (frame-list)) 2) (progn (progn (select-frame frame) (m42/reload-theme))))) | x-dnd-init-frame |
+
+** COMMENT Minimal theme
+#+BEGIN_SRC emacs-lisp
+(load-file "~/.emacs.d/minimal-light-theme.el")
+(load-theme 'minimal-light 1)
 #+END_SRC
 
 ** Window customization
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Window customization")
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   ;; Startup dashboard.
   (use-package dashboard

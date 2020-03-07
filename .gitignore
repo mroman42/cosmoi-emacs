@@ -27,3 +27,10 @@ elpa/*
 /snippets/org-mode/.yas-compiled-snippets.elc
 *url*
 /.org-id-locations
+*.vrb
+.mc-lists.el
+_minted-config/
+*.bbl
+*.blg
+*.old
+

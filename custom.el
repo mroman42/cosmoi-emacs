@@ -4,9 +4,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-math-abbrev-prefix "ç")
+ '(anki-editor-break-consecutive-braces-in-latex t)
+ '(anki-editor-create-decks t)
+ '(anki-editor-use-math-jax t)
  '(beacon-mode t)
  '(custom-safe-themes
-   '("9240e71034689655a6c05c04063af2c90d0a831aa4e7ca24c8b6e29b5a2da946" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "527df6ab42b54d2e5f4eec8b091bd79b2fa9a1da38f5addd297d1c91aa19b616" "7527f3308a83721f9b6d50a36698baaedc79ded9f6d5bd4e9a28a22ab13b3cb1" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "599f1561d84229e02807c952919cd9b0fbaa97ace123851df84806b067666332" default))
+   '("3e335d794ed3030fefd0dbd7ff2d3555e29481fe4bbb0106ea11c660d6001767" "bf390ecb203806cbe351b966a88fc3036f3ff68cd2547db6ee3676e87327b311" "6d589ac0e52375d311afaa745205abb6ccb3b21f6ba037104d71111e7e76a3fc" "fe666e5ac37c2dfcf80074e88b9252c71a22b6f5d2f566df9a7aa4f9bea55ef8" "f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "7e78a1030293619094ea6ae80a7579a562068087080e01c2b8b503b27900165c" "60e09d2e58343186a59d9ed52a9b13d822a174b33f20bdc1d4abb86e6b17f45b" "36746ad57649893434c443567cb3831828df33232a7790d232df6f5908263692" "10461a3c8ca61c52dfbbdedd974319b7f7fd720b091996481c8fb1dded6c6116" "aaffceb9b0f539b6ad6becb8e96a04f2140c8faa1de8039a343a4f1e009174fb" "99c86852decaeb0c6f51ce8bd46e4906a4f28ab4c5b201bdc3fdf85b24f88518" "93a0885d5f46d2aeac12bf6be1754faa7d5e28b27926b8aa812840fe7d0b7983" "9240e71034689655a6c05c04063af2c90d0a831aa4e7ca24c8b6e29b5a2da946" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "527df6ab42b54d2e5f4eec8b091bd79b2fa9a1da38f5addd297d1c91aa19b616" "7527f3308a83721f9b6d50a36698baaedc79ded9f6d5bd4e9a28a22ab13b3cb1" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "599f1561d84229e02807c952919cd9b0fbaa97ace123851df84806b067666332" default))
  '(default-input-method "Agda")
  '(electric-pair-mode t)
  '(engine-mode t)
@@ -26,6 +29,7 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-stylish-on-save t)
  '(ido-mode 'both nil (ido))
+ '(magit-subtree-arguments nil)
  '(org-contacts-files '("~/org/Contacts.org"))
  '(org-index-id "c83b0f04-85f3-4b4d-84f4-3020e06776b5")
  '(org-preview-latex-process-alist
@@ -54,7 +58,7 @@
                   :image-converter
                   ("convert -density %D -trim -antialias %f -quality 100 %O"))))
  '(package-selected-packages
-   '(deadgrep org-index olivetti olivetti-mode neotree doom-themes xah-fly-keys org-edna tuareg org-expiry writegood-mode ivy-bibtex org-download keyfreq mu4e org-mru-clock god-mode lean-mode redprl ace-windows beacon ac-math math-symbols-list exwm-edit desktop-environment org-contacts ob-ipython gap-mode all-the-icons ledger-mode ledger helpful org-noter interleave elfeed-goodies elfeed-org elfeed calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu smartparens-config volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm restart-emacs org-pomodoro which-key try counsel counsel-projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word cdlatex org-gcal elpy intero company-auctex ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term fsharp-mode haskell-mode))
+   '(outline-magic haskell-tng-mode magit-todos anki-editor anki-connect ranger deadgrep org-index olivetti olivetti-mode neotree doom-themes xah-fly-keys org-edna tuareg org-expiry writegood-mode ivy-bibtex org-download keyfreq mu4e org-mru-clock god-mode lean-mode redprl ace-windows beacon ac-math math-symbols-list exwm-edit desktop-environment org-contacts ob-ipython gap-mode all-the-icons ledger-mode ledger helpful org-noter interleave elfeed-goodies elfeed-org elfeed calfw-org pdf-tools base16-theme dracula-theme centered-window centered-window-mode nord-theme dashboard anzu smartparens-config volatile-highlights golden-ratio rainbow-delimiters better-defaults spacemacs-theme spaceline evil mediawiki visual-regexp multiple-cursors flycheck-haskell-multi hs-lint flycheck-haskell flymake-haskell-multi flymake-hlint ox-gfm restart-emacs org-pomodoro which-key try counsel counsel-projectile mastodon sx helm-google calfw smex graphviz-dot-mode google-translate-default-ui ob-translate define-word cdlatex org-gcal elpy intero company-auctex ess ob-sagemath sage-mode ob-C ox-latex org-page sage-shell-mode org-drill-table idris-mode org-page engine-mode haskell-snippets yasnippet htmlize ox-reveal flycheck use-package auctex company-math rainbow-mode markdown-mode ox-twbs python-mode camcorder zenburn-theme crux haml-mode elmacro magit hlint-refactor multi-term fsharp-mode haskell-mode))
  '(safe-local-variable-values
    '((eval set-face-attribute 'font-lock-comment-face nil :background nil)
      (eval setq org-tags-exclude-from-inheritance
