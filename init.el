@@ -1,3 +1,9 @@
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 ;; MELPA configuration
 ;; Taken from http://melpa.org/#/getting-started
 (require 'package)
@@ -9,13 +15,6 @@
 	     '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives
 	     '("melpa-stable" . "https://melpa-stable.milkbox.net/packages/"))
-            
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-;(package-initialize)
 
 ;; Bootstrap 'use-package'
 (unless (package-installed-p 'use-package)
@@ -24,4 +23,4 @@
   )
 
 ;; Org-babel init file
-(org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
+(org-babel-load-file (expand-file-name "~/.emacs.d/main.org"))

@@ -1,0 +1,5281 @@
+#+Title: Cosmoi Emacs
+#+Author: Mario Román
+#+Email: mromang08@gmail.com
+#+TODO: WIP | DONE
+
+This is my Emacs init file, written in org-mode using literate
+programming and =org-babel= blocks. The =init.el= file tangles the Elisp
+code blocks of this file into =config.el=. I have taken ideas for my
+configuration mainly from
+
+  * [[http://cestlaz.github.io/][C'est la Z]]
+  * [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
+
+and from many other configuration files and blogs such as
+
+  * [[http://emacsredux.com/][Emacs Redux]]
+  * [[http://irreal.org/blog/][Irreal]]
+  * [[https://oremacs.com][(or emacs irrelevant)]]
+  * [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's configuration file]]
+  * [[http://karl-voit.at/2017/06/03/emacs-org/][Karl Voit's configuration file]]
+  * [[http://spacemacs.org/][Spacemacs]]
+
+It /works for me/ on Emacs 26.3 and org-version 9.3.6. You can check
+your Emacs version with =M-x version= and your org-mode version with
+=M-x org-version=.
+
+* Basic
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Basic configuration")
+
+  ;; User information is used by Emacs in frame titles and email.
+  ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html
+  ;; It is also used by Gnus.
+  (setq user-full-name "Mario Román")
+  (setq user-mail-address "mromang08@gmail.com")
+
+  ;; Sensitive information is stored into a different file which I do not
+  ;; upload to GitHub. It sets some variables.
+  (load "~/.emacs.d/emacs.secrets" t)
+
+  ;; A list of the most important files on my workflow. Those variables are
+  ;; used all across the configuration file; and listing them here eases
+  ;; the process of rewriting directory paths.
+  (setq m42/math-file       (expand-file-name "~/org/Math.org"))
+  (setq cosmoi/init-file    (expand-file-name "~/.emacs.d/main.org"))
+  (setq m42/agenda-file     (expand-file-name "~/org/agenda/Tasks.org"))
+  (setq m42/journal-file    (expand-file-name "~/org/Journal.org"))
+  (setq m42/archive-file    (expand-file-name "~/org/Archive.org"))
+  (setq m42/org-folder      (expand-file-name "~/org"))
+
+  ;; Jumps to the important files with a single keystroke.
+  (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file cosmoi/init-file)))
+  
+  ;; I prefer to use a separate custom file for Emacs. This means any configurations
+  ;; that are created using the Customize menu and the list of installed packages will
+  ;; be kept separate of this org configuration.
+  ;; http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror)
+
+  ;; Inhibits the startup screen and loads an initial buffer.
+  (setq inhibit-startup-screen t)
+  (setq initial-buffer-choice m42/agenda-file)
+
+  ;; Disables toolbar and menubar
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode -1)
+
+  ;; Includes the local bin on the 'exec-path'. This allows Emacs to find
+  ;; executables in the local binaries folder.
+  (setq exec-path (cons "/home/mario/.local/bin" exec-path))
+
+  ;; The configuration files can be reloaded at any time using
+  ;; =M-insert=.  This eases the process of writing, debugging and
+  ;; testing the configuration file. Current set variables will not be
+  ;; removed; and Emacs will need a complete restart to clean them.
+  (global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
+
+  ;; Restart-emacs is a package to restart Emacs from within Emacs. It
+  ;; offers the command =restart-emacs=, which kills the current Emacs
+  ;; session and starts a new session.
+  ;; https://github.com/iqbalansari/restart-emacs
+  (use-package restart-emacs :ensure t)
+
+  ;; Better defaults for Emacs.
+  (use-package better-defaults :ensure t)
+
+  ;; Disable warnings when opening large files.
+  (setq large-file-warning-threshold nil)
+
+  ;; Disables backup files.
+  (setq make-backup-files nil)
+
+  ;; The cursor should not blink
+  (setq blink-cursor-mode nil)
+
+  ;; Autorrevert packages automatically.
+  (global-auto-revert-mode 1)
+
+  ;; Yes-no questions are unnecessarily long.  It is preferable to
+  ;; simply use y or n.
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  ;; Word-wrapping.
+  (setq-default word-wrap 1)
+  (delete-selection-mode 1)
+#+END_SRC
+
+* Utilities
+#+BEGIN_SRC emacs-lisp
+  ;; Edit with multiple cursors at the same time.
+  (use-package multiple-cursors
+    :ensure t
+    :bind (("C-S-c C-S-c" . mc/edit-lines)
+	   ("C->" . mc/mark-next-like-this)))
+
+  ;; A better regexp search.
+  (use-package visual-regexp
+    :bind (
+      ("C-c C-r" . vr/replace)
+      ("C-c q" . vr/query-replace)
+      ("C-c m" . vr/mc-mark)
+      ))
+
+  ;; Indicates what face are we using currently under the cursor.
+  (defun what-face (pos)
+    (interactive "d")
+    (let ((face (or (get-char-property (point) 'read-face-name)
+		    (get-char-property (point) 'face))))
+      (if face (message "Face: %s" face) (message "No face at %d" pos))))
+
+  ;; A better help
+  (use-package helpful
+    :ensure t)
+
+  ;; Study key frequency
+  ;; (use-package keyfreq
+  ;;   :init 
+  ;;     (keyfreq-mode 1)
+  ;;     (keyfreq-autosave-mode 1))
+
+  ;; Helps discoverability by showing you the available commands at any time.
+  (use-package which-key
+    :ensure t
+    :config 
+      (which-key-mode)
+      (setq which-key-idle-delay 0.4))
+
+  ;; Smex provides an enhancement to the =M-x= command. Uses =ido= for
+  ;; autocompletion and provides a convenient interface to the most
+  ;; frequently used commands.
+  ;; https://www.emacswiki.org/emacs/Smex
+  (use-package smex
+    :ensure t
+    :config (smex-initialize)
+    :bind (("M-x" . smex)))
+
+  ;; Smartparens tries to be smart about parens.
+  ;; https://github.com/Fuco1/smartparens
+  (use-package smartparens :ensure t)
+
+  ;; Electric parens.
+  (electric-pair-mode 1)
+
+  ;; Flycheck checks the syntax of programming languages.
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+
+  ;; Multiple modes at the same time with polymode.
+  (use-package polymode :ensure t)
+
+  ;; Magit is an interface to the version control system Git. The main
+  ;; function is 'magit-status', which shows the status of the files on
+  ;; the current repository. 
+  ;;  https://magit.vc/
+  ;;  https://git-scm.com/
+  (use-package magit
+    :ensure t
+    :bind ("C-c g" . magit-status))
+
+  ;; Magit-todo's.
+  (use-package magit-todos
+    :ensure t
+    :config (magit-todos-mode))
+
+  ;; Projectile manages projects and allows us to jump between files of
+  ;; the same project.
+  (use-package projectile
+    :ensure t
+    :config
+      (projectile-global-mode)
+      (setq projectile-completion-system 'ivy))
+
+  ;; Unfill paragraph takes a paragraph separated by newlines into a
+  ;; single line.
+  (defun unfill-paragraph ()
+    "Replace newline chars in current paragraph by single spaces.
+  This command does the reverse of `fill-paragraph'."
+    (interactive)
+    (let ((fill-column 90002000))
+      (fill-paragraph nil)))
+
+  (defun unfill-region (start end)
+    "Replace newline chars in region by single spaces.
+  This command does the reverse of `fill-region'."
+    (interactive "r")
+    (let ((fill-column 90002000))
+      (fill-region start end))) 
+#+END_SRC
+
+#+RESULTS:
+: unfill-region
+
+** Swiper and search
+#+BEGIN_SRC emacs-lisp
+  ;; Swiper provides a fast search method.
+  (use-package counsel :ensure t)
+  (use-package swiper
+    :ensure t
+    :config
+    (progn
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (global-set-key (kbd "C-M-s") 'swiper)
+      (global-set-key (kbd "C-c r") 'ivy-resume)
+      (global-set-key (kbd "M-x") 'counsel-M-x)
+      (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+      (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+      (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+      (global-set-key (kbd "<f1> l") 'counsel-load-library)
+      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+      (global-set-key (kbd "C-c g") 'counsel-git)
+      (global-set-key (kbd "C-c j") 'counsel-git-grep)
+      (global-set-key (kbd "C-c k") 'counsel-ag)
+      (global-set-key (kbd "C-x l") 'counsel-locate)
+      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+      (define-key read-expression-map (kbd "C-r")
+      'counsel-expression-history)))
+
+  ;; Anzu displays the current match and the total matches information
+  ;; in the mode-line.
+  (use-package anzu
+    :ensure t
+    :init
+      (anzu-mode +1)
+      (global-anzu-mode +1)
+    :config
+      (setq anzu-cons-mode-line-p nil))
+
+  ;; Search should be case-insensitive.
+  (setq case-fold-search t)
+#+END_SRC
+** COMMENT Pdf-tools
+#+BEGIN_SRC emacs-lisp
+  ;; Read pdfs inside Emacs.
+  (use-package pdf-tools
+    :pin manual
+    :ensure t
+    :config 
+      (pdf-tools-install)
+      ; Display the pdf in a complete page.
+      (setq-default pdf-view-display-size 'fit-page)
+      ; Fine-grained zooming with + and -
+      (setq pdf-view-resize-factor 1.1)
+      
+    :init 
+      (add-hook 'pdf-tools-enabled-hook 
+        (lambda () (setq-local beacon-mode nil))))
+#+END_SRC
+
+* Navigation
+#+BEGIN_SRC emacs-lisp
+  ;; It is possible to change windows in Emacs using 'C-x o', but
+  ;; sometimes 'C-tab' still feels more intuitive to me.
+  (global-set-key [C-tab] 'other-window)
+  (global-set-key [C-iso-lefttab]
+    (lambda ()
+      (interactive)
+      (other-window -1)))
+
+  ;; Avy goto-char lets you jump to a given char on the screen just
+  ;; by pressing 'C-.'.
+  (use-package avy
+    :ensure t
+    :bind (
+      ("C-." . avy-goto-char)
+      ("C-ç" . avy-goto-char) ))
+
+  (use-package windmove
+    ;; :defer 4
+    :ensure t
+    :config
+    ;; use command key on Mac
+    (windmove-default-keybindings 'super)
+    ;; wrap around at edges
+    (setq windmove-wrap-around t))
+
+  ;; Make windmove work in org-mode:
+  (add-hook 'org-shiftup-final-hook 'windmove-up)
+  (add-hook 'org-shiftleft-final-hook 'windmove-left)
+  (add-hook 'org-shiftdown-final-hook 'windmove-down)
+  (add-hook 'org-shiftright-final-hook 'windmove-right)
+
+  ;; Better defaults via crux.
+  ;(use-package crux
+  ;  :bind (("C-a" . crux-move-beginning-of-line)))
+
+  ;; Rectangle editing.
+  (global-set-key (kbd "C-x <SPC>") 'cua-rectangle-mark-mode)
+  
+  ;; Window movement.
+  (use-package ace-window
+    :ensure t
+    :config (global-set-key (kbd "M-o") 'ace-window))
+
+  ;; We can follow links with goto-addr
+  (use-package goto-addr
+    :hook ((compilation-mode . goto-address-mode)
+           (prog-mode . goto-address-prog-mode)
+           (eshell-mode . goto-address-mode)
+           (shell-mode . goto-address-mode))
+    :bind (:map goto-address-highlight-keymap
+                ("<RET>" . goto-address-at-point)
+                ("M-<RET>" . newline))
+    :commands (goto-address-prog-mode
+               goto-address-mode))
+
+  ;; We can narrow org buffers; sometimes we want an independent indirect buffer,
+  ;; and this function creates it directly.
+  ;; https://irreal.org/blog/?p=2602
+  (defun narrow-to-region-indirect-buffer (start end)
+    (interactive "r")
+    (with-current-buffer (clone-indirect-buffer 
+                          (generate-new-buffer-name 
+                           (concat (buffer-name) "-indirect-" 
+                                   (number-to-string start) "-" 
+                                   (number-to-string end)))
+                          'display)
+      (narrow-to-region start end)
+      (deactivate-mark)
+      (goto-char (point-min))))
+
+  (define-key global-map (kbd "C-x n b") 'narrow-to-region-indirect-buffer)
+  (provide 'narrow-to-region-indirect-buffer)
+
+  ;; Neotree provides a tree for directory navigation.
+  (use-package neotree 
+    :ensure t
+    :config 
+      (setq neo-theme 'arrow)
+      (global-set-key [f9] 'neotree-toggle))
+
+  ;; Ripgrep is an improved grep command.
+  (use-package deadgrep
+    :ensure t)
+
+  ;; Ranger-style dired.
+  (use-package ranger
+    :ensure t)
+
+  ;; Global line mode
+  (global-visual-line-mode t)
+#+END_SRC
+
+* Org-mode
+** Modules, plus-contrib
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure org-plus-contrib
+    :config (define-key org-mode-map (kbd "C-<tab>") nil))
+
+  ;(require 'org-drill)
+  ;(require 'org-habit)
+  (require 'org-checklist)
+
+  ;; List of modules
+  ;(add-to-list 'org-modules "org-drill")
+  ;; (add-to-list 'org-modules "org-bbdb")
+  ;; (add-to-list 'org-modules "org-bibtex")
+  ;; (add-to-list 'org-modules "org-docview")
+  ;; (add-to-list 'org-modules "org-gnus")
+  ;; (add-to-list 'org-modules "org-habit")
+  ;; (add-to-list 'org-modules "org-info")
+  ;; (add-to-list 'org-modules "org-irc")
+  ;; (add-to-list 'org-modules "org-mhe")
+  ;; (add-to-list 'org-modules "org-protocol")
+  ;; (add-to-list 'org-modules "org-rmail")
+  ;; (add-to-list 'org-modules "org-w3m")
+  ;; (add-to-list 'org-modules "org-checklist")
+#+END_SRC
+
+** org-ref
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref
+  :ensure t)
+
+(setq org-ref-notes-directory "~/org/"
+      org-ref-bibliography-notes "~/org/Math.org"
+      org-ref-default-bibliography '("~/org/Math.bib")
+      org-ref-pdf-directory "~/pdf/")
+#+END_SRC
+
+*** Alternative click
+#+BEGIN_SRC emacs-lisp
+(defun m42/org-ref-cite-click (_key)
+  (interactive)
+  (setq paperid (thing-at-point 'word 'no-properties))
+  (message "%s" paperid)
+  (save-excursion (save-restriction
+    (find-file "~/org/Math.org")
+    (widen)
+    (beginning-of-buffer)
+    (if (search-forward (concat ":CUSTOM_ID: " paperid))
+      (if (org-entry-get (point) "CUSTOM_ID")
+        (org-noter)
+        (message "No Interleave PDF found."))
+      (message "No entry with CUSTOM_ID found.")
+      ))))
+
+(setq org-ref-cite-onclick-function 'm42/org-ref-cite-click)
+#+END_SRC
+
+#+RESULTS:
+: m42/org-ref-cite-click
+
+** helm/ivy-bibtex
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-bibtex
+  :ensure t)
+
+(setq bibtex-completion-library-path "~/pdf/" ;; where your pdfs etc are stored
+      bibtex-completion-bibliography "~/latex/bibliography.bib" ;; writing completion
+      bibtex-completion-notes-path "~/org/Math.org")
+
+(global-set-key (kbd "C-c ñ") 'ivy-bibtex)
+
+(setq ivy-bibtex-default-action 'ivy-bibtex-insert-citation)
+#+END_SRC
+
+#+RESULTS:
+: ivy-bibtex-insert-citation
+
+** org-link-frame
+#+BEGIN_SRC emacs-lisp
+(setq org-link-frame-setup '(
+  (vm . vm-visit-folder-other-frame)
+  (vm-imap . vm-visit-imap-folder-other-frame)
+  (gnus . org-gnus-no-new-news)
+  (file . find-file-other-window)
+  (wl . wl-other-frame)
+  (cite . org-noter)
+  ))
+#+END_SRC
+
+** Agenda
+#+BEGIN_SRC emacs-lisp
+  ;; Agenda commands.  Builds the personal agenda.
+  (setq org-agenda-custom-commands
+        '(("c" "Complete agenda, todo and waiting tasks" (
+
+            ;; High priority tasks
+            (tags-todo "-habit-notask+TODO=\"TODO\"-WAITUNTIL>\"<today>\"+PRIORITY=\"A\"" (
+               (org-agenda-overriding-header "Priority")
+               ;(org-agenda-files '("~/org/agenda/Tasks.org"))
+               ))
+
+            ;; Agenda and calendar
+            (agenda "" (
+               (org-agenda-overriding-header "Agenda") 
+               (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":habit:"))
+               ;(org-agenda-files '("~/org/agenda/Tasks.org" "~/org/GCalendar.org"))
+               ))
+
+            ;; Habits
+            ;; (tags-todo "+habit-SCHEDULED>\"<today>\"" (
+            ;;    (org-agenda-overriding-header "Habits")
+            ;;    (org-agenda-files '("~/org/agenda/Tasks.org"))
+            ;;    ))
+
+            ;; General to-do's
+            (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"-PRIORITY=\"A\"-PRIORITY=\"C\"" (
+               (org-agenda-overriding-header "Tasks")
+               ;(org-agenda-files '("~/org/agenda/Tasks.org"))
+               ))
+
+           ;; Non-priority tasks
+            (tags-todo "-habit-notask+TODO=\"TODO\"-SCHEDULED>\"<today>\"-WAITUNTIL>\"<today>\"+PRIORITY=\"C\"" (
+               (org-agenda-overriding-header "Non-priority")
+               ;(org-agenda-files '("~/org/agenda/Tasks.org"))
+               ))
+
+
+            ;; Waiting tasks
+            ;; (tags-todo "-habit-notask+TODO=\"WAIT\"-SCHEDULED>\"<today>\"" (
+            ;;    (org-agenda-overriding-header "Waiting")
+            ;;    (org-agenda-files '("~/org/agenda/Tasks.org"))
+            ;;    ))
+            ))))
+
+  ;; Agenda filters.
+  (setq org-agenda-tag-filter-preset '("-notask"))
+  (setq org-agenda-files '("~/org/GCalendar.org" "~/org/agenda" "~/org/math/notes"))
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-todo-ignore-scheduled 'past)
+  (setq org-agenda-show-future-repeats nil)
+  (setq org-agenda-start-day "-1d")
+  (setq org-agenda-span 7)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-start-on-weekday nil)
+
+  ;; Blocked tasks become invisible.
+  ;; https://orgmode.org/manual/TODO-dependencies.html#TODO-dependencies
+  (setq org-agenda-dim-blocked-tasks 'invisible)
+
+  ;; Extensible dependencies for the org-mode agenda.
+  (use-package org-edna
+    :ensure t
+    :config
+      (org-edna-load))
+
+  ;; Show only today's habits.
+  (setq org-habit-show-habits-only-for-today t)
+
+  ;; Prefix format for the Emacs agenda.
+  (setq org-agenda-prefix-format 
+    '((agenda . " %i %-12:c%?-12t% s")
+     (todo . " %i %-12:c")
+     (tags . " %i %-12:c")
+     (search . " %i %-12:c")))
+
+  ;; This makes the q command bury the agenda buffer when you've finished
+  ;; with it, rather than close it. The result of this is that the agenda
+  ;; will reappear immediately when you next ask for it, but it won't have
+  ;; been updated since you last saw it. If you want it updated you can
+  ;; always press g in the agenda to rebuild it properly.
+  ;; https://emacs.stackexchange.com/a/861/12208
+  (setq org-agenda-sticky t)
+
+  ;; The block separator in the agenda. It has to be declared as a number.
+  ;; For instance, 32 is the whitespace.
+  (setq org-agenda-block-separator 32)
+
+  ;; I prefer the mini-calendar prompt to start on Monday.
+  ;; https://emacs.stackexchange.com/questions/42571/org-agenda-date-prompt-mini-calendar-start-week-on-monday
+  (setq calendar-week-start-day 1)
+
+  ;; Pregenerates an agenda buffer whenever Emacs is idle for more than 5
+  ;; seconds. The next time the agenda command is run, generation takes
+  ;; less than a second, since the org buffers have already been loaded.
+  ;; https://emacs.stackexchange.com/a/820/12208
+  ;  
+  ;; Currently disabled because it blocks Emacs too often.
+  ; (run-with-idle-timer 5 nil (lambda () (org-agenda-list) (delete-window)))
+
+  ;; Automatically rebuilds the agenda when idle.
+  ;  Currently disabled because it blocks Emacs too often.
+  ;; (defun renewOrgBuffer ()
+  ;;   (interactive)
+  ;;   (dolist (buffer (buffer-list))
+  ;;     (with-current-buffer buffer
+  ;;       (when (derived-mode-p 'org-agenda-mode)
+  ;;     (org-agenda-maybe-redo))))
+  ;;   )
+  ;; (run-with-idle-timer 60 1000 #'renewOrgBuffer)
+#+END_SRC
+
+#+RESULTS:
+: 1
+
+** org-refile
+From [[https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/czg008y/][this reddit comment]].
+
+#+BEGIN_SRC emacs-lisp
+(setq org-math-wiki-files (directory-files "~/org/math/wiki/" 'full "org"))
+
+(setq org-refile-targets '(
+   (nil :maxlevel . 2) 
+   (org-agenda-files :maxlevel . 2) 
+   (org-math-wiki-files :maxlevel . 1)
+   ("~/org/Someday.org" :maxlevel . 2)
+   ("~/org/agenda/Tasks.org" :maxlevel . 2)
+   ("~/org/Reference.org" :maxlevel . 2)
+   ("~/org/Notes.org" :maxlevel . 2)
+   ("~/org/agenda/Inbox.org" :maxlevel . 1)
+   ("~/org/Archive.org" :maxlevel . 1)
+   ("~/org/math" :maxlevel . 1))
+)
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+(setq org-refile-allow-creating-parent-nodes 'confirm)
+#+END_SRC
+
+#+RESULTS:
+: confirm
+
+From [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][this post]], how to refile to the top level.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-use-outline-path 'file)
+(setq org-outline-path-complete-in-steps nil)
+#+END_SRC
+
+#+RESULTS:
+
+Save after refiling or archiving ([[https://emacs.stackexchange.com/questions/26923/org-mode-getting-errors-when-auto-saving-after-refiling][from SO]]).
+
+#+BEGIN_SRC emacs-lisp
+(advice-add 'org-refile :after
+        (lambda (&rest _)
+        (org-save-all-org-buffers)))
+(advice-add 'org-archive-subtree :after
+        (lambda (&rest _)
+        (org-save-all-org-buffers)))
+#+END_SRC
+
+#+RESULTS:
+
+*** archive
+Stores org files in =~/org=. Defines location of index, agenda and todo files.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-directory m42/org-folder)
+  (setq org-archive-location (concat m42/archive-file "::* From %s"))
+#+END_SRC
+
+** org-download
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+  :ensure t
+  :config 
+    (setq org-download-image-dir "~/org/images")
+    (setq org-download-heading-lvl nil)
+  :bind ("M-<print>" . org-download-screenshot))
+#+END_SRC
+
+** Keybindings
+#+BEGIN_SRC emacs-lisp
+  ;; Quickly jumps between headers.
+  ;; https://emacs.stackexchange.com/a/32625/12208
+  (setq org-goto-interface 'outline-path-completion)
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-goto-max-level 2)
+
+  ;; Speed commands work on headers. Pressing =n= there, for instance,
+  ;; jumps to the next header.
+  (setq org-use-speed-commands t)
+
+  ;; These are basic keybindings for the agenda and org-capture.
+  (setq org-export-coding-system 'utf-8)
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key "\C-cb" 'org-iswitchb)
+
+  ;; Navigation between headings made easier.
+  (add-hook 'org-mode-hook 
+     (lambda ()
+       (local-set-key "\M-n" 'outline-next-visible-heading)
+       (local-set-key "\M-p" 'outline-previous-visible-heading)))
+
+  ;; When set to t, asks for confirmation each time it executes an elisp
+  ;; block.
+  (setq org-confirm-elisp-link-function nil)
+#+END_SRC
+
+** Customization
+#+BEGIN_SRC emacs-lisp
+  ;; Pretty entities automatically draws '\alpha' as α when set as t.
+  (setq org-pretty-entities nil)
+
+  ;; Hierarchical statistics for checkboxes. checkboxes in subheaders
+  ;; are considered for statistics when this is set as t.
+  (setq org-checkbox-hierarchical-statistics t)
+
+  ;; Sets a single bullet in org mode whose symbol is the asterisk. That
+  ;; feels more sensible than having a list of different symbols.
+  (use-package org-bullets :ensure t)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  (setq org-bullets-bullet-list '("*"))
+
+  ;; Automatically pseudoindents headers in org-mode when set to t.
+  (setq org-startup-indented t)
+
+  ;; Sets the emphasis for each one of the markers. In particular,
+  ;; having 'ultra-bold' is useful when using Iosevka, that has a bold
+  ;; version that is difficult to distinguish from the normal one.
+  (setq org-emphasis-alist 
+    '(("*" (:weight ultra-bold)) 
+      ("/" italic) 
+      ("_" underline) 
+      ("=" org-verbatim verbatim) 
+      ("~" org-code verbatim) 
+      ("+" (:strike-through t))))
+
+  ;; Hides emphasis markers while writing when set to t.
+  (setq org-hide-emphasis-markers t)
+
+  ;; Sets the column that tags must use.
+  (setq org-tags-column -100)
+
+  ;; "I tend to leave a blank line at the end of the content of each task
+  ;; entry. This causes Org to automatically place a blank line before a
+  ;; new heading or plain text list item, just the way I like it."
+  ;; https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html
+  (setq org-blank-before-new-entry (quote ((heading . t) (plain-list-item . auto))))
+
+  ;; "I like to know when tasks have changed status. Setting this option
+  ;; causes Org to insert an annotation in a task when it is marked as
+  ;; done including a timestamp of when exactly that happened."
+  ;; https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html
+  (setq org-log-done (quote time))
+
+  ;; "Adding yet further auditing, this option causes Org to insert
+  ;; annotations when you change the deadline of a task, which will note
+  ;; the previous deadline date and when it was changed. Very useful for
+  ;; figuring out how many times you “kicked the can down the road.”"
+  ; (setq org-log-redeadline (quote time))
+  ; (setq org-log-reschedule (quote time))
+#+END_SRC
+
+** Export
+#+BEGIN_SRC emacs-lisp
+  ;; Exporting to latex.
+  (require 'ox-latex)
+
+  ;; Exports to beamer. It needs to first define the beamer class.
+  (add-to-list 'org-latex-classes
+      '("beamer"
+	"\\documentclass\[presentation\]\{beamer\}"
+	("\\section\{%s\}" . "\\section*\{%s\}")
+	("\\subsection\{%s\}" . "\\subsection*\{%s\}")
+	("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
+  (require 'ox-beamer)
+
+  ;; Exporting ignores headlines.
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines))
+
+  ;; Classes for latex exporting
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+      '("scrbook" "\\documentclass{scrbook}"
+       ("\\part{%s}" . "\\part*{%s}")
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
+
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+      '("tac" "\\documentclass{tac}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+      '("amsart" "\\documentclass{amsart}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+       )))
+
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+      '("ociamthesis" "\\documentclass{ociamthesis}"
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+       )))
+
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+	       '("scrreprt" "\\documentclass{scrreprt}"
+		 ("\\part{%s}" . "\\part*{%s}")
+		 ("\\chapter{%s}" . "\\chapter*{%s}")
+		 ("\\section{%s}" . "\\section*{%s}")
+		 ("\\subsection{%s}" . "\\subsection*{%s}")
+		 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+		 ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
+
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+	       '("myifcolog" "\\documentclass{myifcolog}"
+		 ("\\section{%s}" . "\\section*{%s}")
+		 ("\\subsection{%s}" . "\\subsection*{%s}")
+		 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+		 ("\\subsubsubsection{%s}" . "\\subsubsubsection*{%s}")
+		 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+		 ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
+
+
+  ;; Exports minted code in latex.
+  (setq org-latex-listings 'minted)
+  ;(setq org-latex-packages-alist '(("" "minted")))
+  ;(setq org-latex-minted-options '(("frame" "lines")))
+
+  ;; The configuration allows us to do Reveal.js presentations using org-mode.
+  ;; http://cestlaz.github.io/posts/using-emacs-11-reveal
+  ;; (use-package ox-reveal 
+  ;;   :init 
+  ;;     (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+  ;;     (setq org-reveal-mathjax t))
+
+  ;; (use-package htmlize)
+
+  ;; ;; Twitter bootstrap exporting.
+  ;; (use-package ox-twbs :ensure ox-twbs)
+#+END_SRC
+
+#+RESULTS:
+
+** Babel
+#+BEGIN_SRC emacs-lisp
+  ;; Loads 'org-babel' language packages.
+  (use-package ob-sagemath :ensure t)
+  (use-package ob-ipython :ensure t)
+  (require 'ob-C)
+  (require 'ob-python)
+
+  ;; Function declaring the loaded languages.
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+    '( (ruby . t)
+       (python . t)
+       (haskell . t)
+       (C . t)
+       (emacs-lisp . t)
+       (ditaa . t)
+       (sagemath . t)
+       ;(translate . t)
+       (latex . t)
+       (shell . t)
+       (ipython . t)
+     ))
+
+  ;; Untangles single blocks of code with a keystroke.
+  (global-set-key (kbd "C-º") (lambda () (interactive) (org-babel-tangle '(4))))
+
+  ;; Uses 'runhaskell' when it outputs the results. Taken from a great
+  ;; article (in Japanese!) by Yoshinari Nomura.
+  ;; http://quickhack.net/nom/blog/2012-08-31-org-babel-and-haskell.html]
+  (defadvice org-babel-haskell-initiate-session
+      (around org-babel-haskell-initiate-session-advice)
+      (let* ((buff (get-buffer "*haskell*"))
+             (proc (if buff (get-buffer-process buff)))
+             (type (cdr (assoc :result-type 'params)))
+             (haskell-program-name
+              (if (equal type 'output) "runhaskell-ob" "ghci")))
+        (if proc (kill-process proc))
+        (sit-for 0)
+        (if buff (kill-buffer buff))
+          ad-do-it))  
+
+  (ad-activate 'org-babel-haskell-initiate-session)
+
+  ;; Path to Ditaa
+  (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0_9.jar")
+
+  ;; https://emacs.stackexchange.com/a/8168/12208
+  (setq org-src-window-setup 'current-window)
+
+  ;; Preserve indentation and blank spaces. This also works when
+  ;; exporting with minted.
+  ;; https://anbasile.github.io/programming/2016/12/02/org-babel-is-cool/
+  (setq org-src-preserve-indentation t)
+#+END_SRC
+
+#+RESULTS:
+: t
+
+*** Sage
+#+BEGIN_SRC emacs-lisp
+  ;; Ob-sagemath supports only evaluating with a session.
+  (setq org-babel-default-header-args:sage '((:session . t)
+                                             (:results . "output")))
+
+  ;; C-c c for asynchronous evaluating (only for SageMath code blocks).
+  ;  (with-eval-after-load "org"
+  ;     (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
+
+  ;; Do not confirm before evaluation
+  (setq org-confirm-babel-evaluate nil)
+
+  ;; Do not evaluate code blocks when exporting.
+  ; (setq org-export-babel-evaluate nil)
+
+  ;; Show images when opening a file.
+  (setq org-startup-with-inline-images t)
+
+  ;; Show images after evaluating code blocks.
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+#+END_SRC
+
+** Latex in org
+#+BEGIN_SRC emacs-lisp
+  ;; Keybinding for previewing formulas in latex.
+  (global-set-key (kbd "C-ñ") 'org-toggle-latex-fragment)
+
+  ;; Zooming.
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2))
+
+  ;; Abbreviations on 'latex-math-mode'. They require Latex to use
+  ;; =latex-math-mode=. It is activated by default.
+  (customize-set-variable 'LaTeX-math-abbrev-prefix "ç")
+  (setq LaTeX-math-list
+    (quote
+      ((";" "mathbb{" "" nil)
+       ("=" "cong" "" nil)
+       ("<right>" "longrightarrow" "" nil)
+       ("<left>" "longleftarrow" "" nil)
+       ("C-<right>" "Longrightarrow" "" nil)
+       ("C-<left>" "Longleftarrow" "" nil)
+       ("^" "widehat" "" nil)
+       ("~" "widetilde" "" nil)
+       ("'" "\partial" "" nil)
+       ("0" "varnothing" "" nil)
+       ("C-(" "left(" "" nil)
+       ("C-)" "right)" "" nil)
+       )))
+
+  ;; Auctex configuration
+  (use-package tex :ensure auctex)
+  (require 'latex)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'org-mode-hook 'LaTeX-math-mode)
+
+  ;; cd-latex provides sensible keybindings for writing math.
+  (use-package cdlatex :ensure t)
+  (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+
+  ;; Some packages must be added at the latex preview alist.  In
+  ;; particular, this adds preview of commutative diagrams with the
+  ;; 'tikz-cd' package.
+  (eval-after-load "preview"
+    '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+
+  ;; Sets the backend for latex. Imagemagick works best with tikzcd.
+  (setq org-preview-latex-default-process 'imagemagick)
+
+  ;; No default packages should be loaded.
+  (setq org-latex-default-packages-alist '())
+#+END_SRC
+
+
+** Notes and spaced repetition
+#+BEGIN_SRC emacs-lisp
+  ;; Org-noter provides support for note-taking on PDFs.
+  (use-package org-noter :ensure t)
+
+  ;; These options set where it will store the pdf and the location of
+  ;; the notes.  They are the same ones that the Interleave package used,
+  ;; keeping compatibility with it.
+  (setq org-noter-property-doc-file "INTERLEAVE_PDF")
+  (setq org-noter-property-note-location "INTERLEAVE_PAGE_NOTE")
+
+
+  ;; Org-drill configurations. These variables control how org-drill
+  ;; will work internally.
+  (setq org-drill-learn-fraction 0.35)
+  ;; It adds random noise to the retrieval process.
+  (setq org-drill-add-random-noise-to-intervals-p t)
+  ;; Limits the time an org-drill session can last.
+  (setq org-drill-maximum-duration 25)
+  ;; After the session, save all buffers.
+  (setq org-drill-save-buffers-after-drill-sessions-p nil)
+  (setq org-drill-hide-item-headings-p t)
+  ;; Work on the whole directory
+  (setq org-drill-scope 'file)
+
+  ;; This is an auxiliary function that lets you study a single subtree
+  ;; of an org file. It simply calls 'org-drill-cram' with the 'tree'
+  ;; parameter.
+  (defun m42/org-drill-cram-tree () (interactive) (org-drill-cram 'tree))
+
+  ;; Org-id automatically provides an ID for each header when necessary:
+  ;; for example, when creating a link.
+  (require 'org-id)
+  
+  ;; We only want it to work if no custom id has been already created.
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+
+  ;; Sensible defaults for ispell on org-mode, avoiding markers.
+  ;; http://endlessparentheses.com/ispell-and-org-mode.html
+  (defun endless/org-ispell ()
+    "Configure `ispell-skip-region-alist' for `org-mode'."
+    (make-local-variable 'ispell-skip-region-alist)
+    (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+    (add-to-list 'ispell-skip-region-alist '("~" "~"))
+    (add-to-list 'ispell-skip-region-alist '("=" "="))
+    (add-to-list 'ispell-skip-region-alist '("$" "$"))
+    (add-to-list 'ispell-skip-region-alist '("\\[" "\\]"))
+    (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+  (add-hook 'org-mode-hook #'endless/org-ispell)
+#+END_SRC
+
+** Capture
+#+BEGIN_SRC emacs-lisp
+  (require 'org-protocol)
+
+  ;; Template for contact capturing.
+  ;; https://www.reddit.com/r/emacs/comments/8toivy/tip_how_to_manage_your_contacts_with_orgcontacts/
+  (defvar m42/org-contacts-template "* %^{name}
+  :PROPERTIES:
+  :BIRTHDAY: %^{yyyy-mm-dd}
+  :EMAIL: %^{email}
+  :NOTE: %^{NOTE}
+  :END:" "Template for org-contacts.")
+  
+  ;; List of org-capture-templates.
+  (setq org-capture-templates (quote (
+    ("j" "Journal" entry (file+datetree "~/org/Diary.org")
+         "* %?" :empty-lines 1)
+    ("r" "Research" entry (file+datetree "~/org/math/Research.org")
+         "* %?" :empty-lines 1)
+    ("c" "Contact" entry (file+headline "~/org/Contacts.org" "Inbox")
+      "* %^{Name}
+  :PROPERTIES:
+  :EMAIL: %^{Email}
+  :BIRTHDAY: %^{yyyy-mm-dd}
+  :NOTE: %^{Note}
+  :END:"
+        :empty-lines 1)
+      ("m" "mail" entry (file+headline "~/org/agenda/Tasks.org" "Mail")
+           "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n\n")
+      ("t" "todo" entry (file "~/org/agenda/Inbox.org")
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %(org-insert-time-stamp(org-read-date nil t \"+0d\"))\n:END:\n\n\n")
+    )))
+#+END_SRC
+
+#+RESULTS:
+
+** org-index
+#+BEGIN_SRC emacs-lisp
+  (use-package org-index
+    :ensure t
+    :config (global-set-key "\C-ci" 'org-index))
+#+END_SRC
+
+* Programming
+** Programming languages
+#+BEGIN_SRC emacs-lisp
+  ;; Tuareg is the mode for OCaml
+  (use-package tuareg :ensure t)
+  (add-hook 'tuareg-mode-hook #'(lambda() (setq mode-name "🐫")))
+
+  ;; Idris
+  (use-package idris-mode :ensure t)
+
+  ;; Markdown
+  (use-package markdown-mode :ensure t)
+  (set-face-attribute 'fixed-pitch nil 
+     :family "unspecified")
+
+  ;; R via Emacs speaks statistics.
+  (use-package ess :ensure t)
+  (require 'ess-site)
+
+  ;; Sage
+  (use-package sage-shell-mode :ensure t)
+  (setq sage-shell:use-prompt-toolkit t)
+
+  ;; Dot
+  (use-package graphviz-dot-mode :ensure t)
+  (setq default-tab-width 4)
+
+  ;; GAP
+  (use-package gap-mode
+    :mode "\\.gap\\'"
+    :config
+      (setq gap-executable "~/.local/bin/gap")
+      (setq gap-start-options (list "-E")))
+#+END_SRC
+
+** COMMENT Haskell
+#+BEGIN_SRC emacs-lisp
+  ;; Allows interactive Haskell evaluation in Emacs.
+  (use-package haskell-mode :ensure t)
+  (require 'haskell-interactive-mode)
+  (require 'haskell-process)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (setq haskell-process-type 'cabal-repl)
+  (setq-default flycheck-disabled-checkers '(haskell-ghc))
+#+END_SRC
+
+*** COMMENT Intero
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-haskell :ensure t)
+  (use-package intero :ensure t)
+  (add-hook 'haskell-mode-hook 'intero-mode)
+
+  ; (with-eval-after-load 'intero
+  ;   (with-eval-after-load 'flycheck 
+  ;     (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))
+#+END_SRC
+
+*** COMMENT Hindent
+**** hindent.el
+#+BEGIN_SRC emacs-lisp
+;;; hindent.el --- Indent haskell code using the "hindent" program
+
+;; Copyright (c) 2014 Chris Done. All rights reserved.
+
+;; Author: Chris Done <chrisdone@gmail.com>
+;; URL: https://github.com/chrisdone/hindent
+;; Package-Requires: ((cl-lib "0.5"))
+
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Provides a minor mode and commands for easily using the "hindent"
+;; program to reformat Haskell code.
+
+;; Add `hindent-mode' to your `haskell-mode-hook' and use the provided
+;; keybindings as needed.  Set `hindent-reformat-buffer-on-save' to
+;; `t' globally or in local variables to have your code automatically
+;; reformatted.
+
+;;; Code:
+
+(require 'cl-lib)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customization properties
+
+(defgroup hindent nil
+  "Integration with the \"hindent\" reformatting program."
+  :prefix "hindent-"
+  :group 'haskell)
+
+(defcustom hindent-style
+  nil
+  "The style to use for formatting.
+
+For hindent versions lower than 5, you must set this to a non-nil string."
+  :group 'hindent
+  :type 'string
+  :safe #'stringp)
+
+(make-obsolete-variable 'hindent-style nil "hindent 5")
+
+
+(defcustom hindent-process-path
+  "hindent"
+  "Location where the hindent executable is located."
+  :group 'hindent
+  :type 'string
+  :safe #'stringp)
+
+(defcustom hindent-reformat-buffer-on-save nil
+  "Set to t to run `hindent-reformat-buffer' when a buffer in `hindent-mode' is saved."
+  :group 'hindent
+  :type 'boolean
+  :safe #'booleanp)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Minor mode
+
+(defvar hindent-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [remap indent-region] #'hindent-reformat-region)
+    (define-key map [remap fill-paragraph] #'hindent-reformat-decl-or-fill)
+    map)
+  "Keymap for `hindent-mode'.")
+
+;;;###autoload
+(define-minor-mode hindent-mode
+  "Indent code with the hindent program.
+
+Provide the following keybindings:
+
+\\{hindent-mode-map}"
+  :init-value nil
+  :keymap hindent-mode-map
+  :lighter " HI"
+  :group 'hindent
+  :require 'hindent
+  (if hindent-mode
+      (add-hook 'before-save-hook 'hindent--before-save nil t)
+    (remove-hook 'before-save-hook 'hindent--before-save t)))
+
+(defun hindent--before-save ()
+  "Optionally reformat the buffer on save."
+  (when hindent-reformat-buffer-on-save
+    (hindent-reformat-buffer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interactive functions
+
+;;;###autoload
+(defun hindent-reformat-decl ()
+  "Re-format the current declaration.
+
+The declaration is parsed and pretty printed.  Comments are
+ preserved, although placement may be funky."
+  (interactive)
+  (let ((start-end (hindent-decl-points)))
+    (when start-end
+      (let ((beg (car start-end))
+            (end (cdr start-end)))
+        (hindent-reformat-region beg end t)))))
+
+;;;###autoload
+(defun hindent-reformat-buffer ()
+  "Reformat the whole buffer."
+  (interactive)
+  (hindent-reformat-region (point-min)
+                           (point-max)))
+
+;;;###autoload
+(defun hindent-reformat-decl-or-fill (justify)
+  "Re-format current declaration, or fill paragraph.
+
+Fill paragraph if in a comment, otherwise reformat the current
+declaration.  When filling, the prefix argument JUSTIFY will
+cause the text to be justified, as per `fill-paragraph'."
+  (interactive (progn
+                 ;; Copied from `fill-paragraph'
+                 (barf-if-buffer-read-only)
+                 (list (if current-prefix-arg 'full))))
+  (if (hindent-in-comment)
+      (fill-paragraph justify t)
+    (hindent-reformat-decl)))
+
+;;;###autoload
+(defun hindent-reformat-region (beg end &optional drop-newline)
+  "Reformat the region from BEG to END, accounting for indentation.
+
+If DROP-NEWLINE is non-nil, don't require a newline at the end of
+the file."
+  (interactive "r")
+  (if (= (save-excursion (goto-char beg)
+                         (line-beginning-position))
+         beg)
+      (hindent-reformat-region-as-is beg end drop-newline)
+    (let* ((column (- beg (line-beginning-position)))
+           (string (buffer-substring-no-properties beg end))
+           (new-string (with-temp-buffer
+                         (insert (make-string column ? ) string)
+                         (hindent-reformat-region-as-is (point-min)
+                                                        (point-max)
+                                                        drop-newline)
+                         (delete-region (point-min) (1+ column))
+                         (buffer-substring (point-min)
+                                           (point-max)))))
+      (save-excursion
+        (goto-char beg)
+        (delete-region beg end)
+        (insert new-string)))))
+
+;;;###autoload
+(define-obsolete-function-alias 'hindent/reformat-decl 'hindent-reformat-decl)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Internal library
+
+(defun hindent-reformat-region-as-is (beg end &optional drop-newline)
+  "Reformat the given region from BEG to END as-is.
+
+This is the place where hindent is actually called.
+
+If DROP-NEWLINE is non-nil, don't require a newline at the end of
+the file."
+  (let* ((original (current-buffer))
+         (orig-str (buffer-substring-no-properties beg end)))
+    (with-temp-buffer
+      (let ((temp (current-buffer)))
+        (with-current-buffer original
+          (let ((ret (apply #'call-process-region
+                            (append (list beg
+                                          end
+                                          hindent-process-path
+                                          nil ; delete
+                                          temp ; output
+                                          nil)
+                                    (hindent-extra-arguments)))))
+            (cond
+             ((= ret 1)
+              (let ((error-string
+                     (with-current-buffer temp
+                       (let ((string (progn (goto-char (point-min))
+                                            (buffer-substring (line-beginning-position)
+                                                              (line-end-position)))))
+                         string))))
+                (if (string= error-string "hindent: Parse error: EOF")
+                    (message "language pragma")
+                  (error error-string))))
+             ((= ret 0)
+              (let* ((last-decl (= end (point-max)))
+                     (new-str (with-current-buffer temp
+                                (when (and drop-newline (not last-decl))
+                                  (goto-char (point-max))
+                                  (when (looking-back "\n" (1- (point)))
+                                    (delete-char -1)))
+                                (buffer-string))))
+                (if (not (string= new-str orig-str))
+                    (let ((line (line-number-at-pos))
+                          (col (current-column)))
+                      (delete-region beg
+                                     end)
+                      (let ((new-start (point)))
+                        (insert new-str)
+                        (let ((new-end (point)))
+                          (goto-char (point-min))
+                          (forward-line (1- line))
+                          (goto-char (+ (line-beginning-position) col))
+                          (when (looking-back "^[ ]+" (line-beginning-position))
+                            (back-to-indentation))
+                          (delete-trailing-whitespace new-start new-end)))
+                      (message "Formatted."))
+                  (message "Already formatted.")))))))))))
+
+(defun hindent-decl-points ()
+  "Get the start and end position of the current declaration.
+
+This assumes that declarations start at column zero and that the
+rest is always indented by one space afterwards, so Template
+Haskell uses with it all being at column zero are not expected to
+work."
+  (cond
+   ;; If we're in a block comment spanning multiple lines then let's
+   ;; see if it starts at the beginning of the line (or if any comment
+   ;; is at the beginning of the line, we don't care to treat it as a
+   ;; proper declaration.
+   ((and (hindent-in-comment)
+         (save-excursion (goto-char (line-beginning-position))
+                         (hindent-in-comment)))
+    nil)
+   ((save-excursion
+      (goto-char (line-beginning-position))
+      (or (looking-at "^-}$")
+          (looking-at "^{-$")))
+    nil)
+   ;; Otherwise we just do our line-based hack.
+   (t
+    (save-excursion
+      (let ((start
+             (or (cl-letf
+                     (((symbol-function 'jump)
+                       #'(lambda ()
+                           (search-backward-regexp "^[^ \n]" nil t 1)
+                           (cond
+                            ((save-excursion (goto-char (line-beginning-position))
+                                             (looking-at "|]"))
+                             (jump))
+                            (t (unless (or (looking-at "^-}$")
+                                           (looking-at "^{-$"))
+                                 (point)))))))
+                   (goto-char (line-end-position))
+                   (jump))
+                 0))
+            (end
+             (progn
+               (goto-char (1+ (point)))
+               (or (cl-letf
+                       (((symbol-function 'jump)
+                         #'(lambda ()
+                             (when (search-forward-regexp "[\n]+[^ \n]" nil t 1)
+                               (cond
+                                ((save-excursion (goto-char (line-beginning-position))
+                                                 (looking-at "|]"))
+                                 (jump))
+                                (t (forward-char -1)
+                                   (search-backward-regexp "[^\n ]" nil t)
+                                   (forward-char)
+                                   (point)))))))
+                     (jump))
+                   (point-max)))))
+        (cons start end))))))
+
+(defun hindent-in-comment ()
+  "Are we currently in a comment?"
+  (save-excursion
+    (when (and (= (line-end-position)
+                  (point))
+               (/= (line-beginning-position) (point)))
+      (forward-char -1))
+    (and
+     (elt (syntax-ppss) 4)
+     ;; Pragmas {-# SPECIALIZE .. #-} etc are not to be treated as
+     ;; comments, even though they are highlighted as such
+     (not (save-excursion (goto-char (line-beginning-position))
+                          (looking-at "{-# "))))))
+
+(defun hindent-extra-arguments ()
+  "Extra command line arguments for the hindent invocation."
+  (append
+   (when (boundp 'haskell-language-extensions)
+     haskell-language-extensions)
+   (when hindent-style
+     (list "--style" hindent-style))))
+
+(provide 'hindent)
+
+;;; hindent.el ends here
+#+END_SRC
+**** Hook
+#+BEGIN_SRC emacs-lisp
+(add-hook 'haskell-mode-hook #'hindent-mode)
+#+END_SRC
+
+** COMMENT Haskell-TNG
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-tng-mode
+  :ensure nil
+  :load-path "~/.emacs.d/haskell-tng.el/"
+  :mode ((rx ".hs" eos) . haskell-tng-mode)
+
+  :config
+  (require 'haskell-tng-hsinspect)
+  (require 'haskell-tng-extra)
+  (require 'haskell-tng-extra-abbrev)
+  (require 'haskell-tng-extra-company)
+  (require 'haskell-tng-extra-projectile)
+  (require 'haskell-tng-extra-smartparens)
+  (require 'haskell-tng-extra-yasnippet)
+
+  :bind
+  (:map
+   haskell-tng-mode-map
+   ("RET" . haskell-tng-newline)
+   ("C-c c" . haskell-tng-compile)
+   ("C-c e" . next-error)))
+#+END_SRC
+
+#+RESULTS:
+
+** COMMENT Agda
+#+BEGIN_SRC emacs-lisp
+  (use-package agda2-mode
+      :defer t
+      :init
+        ;; Removes special faces for Agda and changes them by the usual theme faces.
+        ;; This was taken from Spacemacs.
+        ;; https://github.com/syl20bnr/spacemacs/blob/master/layers/%2Blang/agda/packages.el
+        (progn
+          (mapc (lambda (x) (add-to-list 'face-remapping-alist x))
+           '((agda2-highlight-datatype-face              . font-lock-type-face)
+             (agda2-highlight-function-face              . font-lock-type-face)
+             (agda2-highlight-inductive-constructor-face . font-lock-function-name-face)
+             (agda2-highlight-keyword-face               . font-lock-keyword-face)
+             (agda2-highlight-module-face                . font-lock-constant-face)
+             (agda2-highlight-number-face                . nil)
+             (agda2-highlight-postulate-face             . font-lock-type-face)
+             (agda2-highlight-primitive-type-face        . font-lock-type-face)
+             (agda2-highlight-primitive-face             . font-lock-type-face)
+             (agda2-highlight-record-face . font-lock-type-face)))))
+
+  ;; Loads the =agda-mode= configuration. Agda provides the location
+  ;; of its configuration file with the command =agda-mode locate=.
+  ;; Locates agda-mode on the file system.
+  (load-file (let ((coding-system-for-read 'utf-8))
+                  (shell-command-to-string "agda-mode locate")))
+#+END_SRC
+
+** Lisp
+#+BEGIN_SRC emacs-lisp
+  ;; Evaluates Lisp in place with 'C-c e'.
+  ;; http://emacsredux.com/blog/2013/06/21/eval-and-replace/
+  (defun eval-and-replace ()
+    "Replace the preceding sexp with its value."
+    (interactive)
+    (backward-kill-sexp)
+    (condition-case nil
+        (prin1 (eval (read (current-kill 0)))
+               (current-buffer))
+      (error (message "Invalid expression")
+             (insert (current-kill 0)))))
+  (global-set-key (kbd "C-c e") 'eval-and-replace)
+#+END_SRC
+
+** Latex
+#+BEGIN_SRC emacs-lisp
+  (use-package tex
+    :ensure auctex)
+
+  (add-hook 'LaTeX-mode-hook (lambda () (local-set-key (kbd "C-ñ") #'preview-buffer)))
+
+  ;; (add-hook 'LaTeX-mode-hook
+  ;; 	(lambda () (set (make-variable-buffer-local 'TeX-electric-math)
+  ;; 			(cons "$" "$"))))
+
+  (add-hook 'LaTeX-mode-hook
+          '(lambda ()
+            (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)))
+
+  ;; outline mode, making latex behave like org.
+  (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
+#+END_SRC
+
+*** outline magic
+#+BEGIN_SRC emacs-lisp
+;;; outline-magic.el --- outline mode extensions for Emacs
+
+;; Copyright (C) 2002, 2013 Carsten Dominik, Thorsten Jolitz
+
+;; Author: Carsten Dominik <dominik@science.uva.nl>
+;; Maintainer: Thorsten Jolitz <tjolitz AT gmail DOT com>
+;; Version: 0.9.1
+;; Keywords: outlines
+
+;; This file is not part of GNU Emacs.
+
+;; GNU Emacs is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary:
+
+;; This file implements extensions for outline(-minor)-mode.
+;;
+;; - VISIBILITY CYCLING: A *single* command to replace the many
+;;   outline commands for showing and hiding parts of a document.
+;;
+;; - STRUCTURE EDITING: Promotion, demotion and transposition of subtrees.
+;;
+;; Installation
+;; ============
+;;
+;; Byte-compile outline-magic.el, put it on the load path and copy the
+;; following into .emacs (adapting keybindings to your own preferences)
+;;
+;; (add-hook 'outline-mode-hook
+;;           (lambda ()
+;;             (require 'outline-cycle)))
+;;
+;; (add-hook 'outline-minor-mode-hook
+;;           (lambda ()
+;;             (require 'outline-magic)
+;;             (define-key outline-minor-mode-map [(f10)] 'outline-cycle)))
+;;
+;; Usage
+;; =====
+;;
+;; Visibility cycling
+;; ------------------
+;;
+;; The command `outline-cycle' changes the visibility of text and headings
+;; in the buffer.  Instead of using many different commands to show and
+;; hide buffer parts, `outline-cycle' cycles through the most important
+;; states of an outline buffer.  In the major `outline-mode', it will be
+;; bound to the TAB key.  In `outline-minor-mode', the user can choose a
+;; different keybinding.  The action of the command depends on the current
+;; cursor location:
+;;
+;; 1. When point is at the beginning of the buffer, `outline-cycle'
+;;    cycles the entire buffer through 3 different states:
+;;      - OVERVIEW: Only top-level headlines are shown.
+;;      - CONTENTS: All headlines are shown, but no body text.
+;;      - SHOW ALL: Everything is shown.
+;;
+;; 2. When point in a headline, `outline-cycle' cycles the subtree started
+;;    by this line through the following states:
+;;      - FOLDED:   Only the headline is shown.
+;;      - CHILDREN: The headline and its direct children are shown.  From
+;;                  this state, you can move to one of the children and
+;;                  zoom in further.
+;;      - SUBTREE:  The entire subtree under the heading is shown.
+;;
+;; 3. At other positions, `outline-cycle' jumps back to the current heading.
+;;    It can also be configured to emulate TAB at those positions, see
+;;    the option `outline-cycle-emulate-tab'.
+;;
+;; Structure editing
+;; -----------------
+;;
+;; Four commands are provided for structure editing.  The commands work on
+;; the current subtree (the current headline plus all inferior ones). In
+;; addition to menu access, the commands are assigned to the four arrow
+;; keys pressed with a modifier (META by default) in the following way:
+;;
+;;                                 move up
+;;                                    ^
+;;                        promote  <- | ->  demote
+;;                                    v
+;;                                move down
+;;
+;; Thus, M-left will promote a subtree, M-up will move it up
+;; vertically throught the structure.  Configure the variable
+;; `outline-structedit-modifiers' to use different modifier keys.
+;;
+;; Moving subtrees
+;; - - - - - - - -
+;; The commands `outline-move-subtree-up' and `outline-move-subtree-down'
+;; move the entire current subtree (folded or not) past the next same-level
+;; heading in the given direction.  The cursor moves with the subtree, so
+;; these commands can be used to "drag" a subtree to the wanted position.
+;; For example, `outline-move-subtree-down' applied with the cursor at the
+;; beginning of the "* Level 1b" line will change the tree like this:
+;;
+;;   * Level 1a                         * Level 1a
+;;   * Level 1b         ===\            * Level 1c
+;;   ** Level 2b        ===/            * Level 1b
+;;   * Level 1c                         ** Level 2b
+;;
+;; Promotion/Demotion
+;; - - - - - - - - - -
+;; The commands `outline-promote' and `outline-demote' change the current
+;; subtree to a different outline level - i.e. the level of all headings in
+;; the tree is decreased or increased.  For example, `outline-demote'
+;; applied with the cursor at the beginning of the "* Level 1b" line will
+;; change the tree like this:
+;;
+;;   * Level 1a                         * Level 1a
+;;   * Level 1b         ===\            ** Level 1b
+;;   ** Level 2b        ===/            *** Level 2
+;;   * Level 1c                         * Level 1c
+;;
+;; The reverse operation is `outline-promote'.  Note that the scope of
+;; "current subtree" may be changed after a promotion.  To change all
+;; headlines in a region, use transient-mark-mode and apply the command to
+;; the region.
+;;
+;; NOTE: Promotion/Demotion in complex outline setups
+;; - - - - - - - - - - - - - - - - - - - - - - - - - -
+;; Promotion/demotion works easily in a simple outline setup where the
+;; indicator of headings is just a polymer of a single character (e.g. "*"
+;; in the default outline mode).  It can also work in more complicated
+;; setups.  For example, in LaTeX-mode, sections can be promoted to
+;; chapters and vice versa.  However, the outline setup for the mode must
+;; meet two requirements:
+;;
+;; 1. `outline-regexp' must match the full text which has to be changed
+;;    during promotion/demotion.  E.g. for LaTeX, it must match "\chapter"
+;;    and not just "\chap".  Major modes like latex-mode, AUCTeX's
+;;    latex-mode and texinfo-mode do this correctly.
+;;
+;; 2. The variable `outline-promotion-headings' must contain a sorted list
+;;    of headings as matched by `outline-regexp'.  Each of the headings in
+;;    `outline-promotion-headings' must be matched by `outline-regexp'.
+;;    `outline-regexp' may match additional things - those matches will be
+;;    ignored by the promotion commands.  If a mode has multiple sets of
+;;    sectioning commands (for example the texinfo-mode with
+;;    chapter...subsubsection and unnumbered...unnumberedsubsubsec), the
+;;    different sets can all be listed in the same list, but must be
+;;    separated by nil elements to avoid "promotion" accross sets.
+;;    Examples:
+;;
+;;    (add-hook 'latex-mode-hook      ; or 'LaTeX-mode-hook for AUCTeX
+;;     (lambda ()
+;;       (setq outline-promotion-headings
+;;             '("\\chapter" "\\section" "\\subsection"
+;;               "\\subsubsection" "\\paragraph" "\\subparagraph"))))
+;;
+;;    (add-hook 'texinfo-mode-hook
+;;     (lambda ()
+;;      (setq outline-promotion-headings
+;;       '("@chapter" "@section" "@subsection" "@subsubsection" nil
+;;         "@unnumbered" "@unnumberedsec" "@unnumberedsubsec"
+;;                                       "@unnumberedsubsubsec" nil
+;;         "@appendix" "@appendixsec" "@appendixsubsec"
+;;                                         "@appendixsubsubsec" nil
+;;         "@chapheading" "@heading" "@subheading" "@subsubheading"))))
+;;
+;;    If people find this useful enough, maybe the maintainers of the
+;;    modes can be persuaded to set `outline-promotion-headings'
+;;    already as part of the mode setup.
+;;
+;;  Compatibility:
+;;  --------------
+;;  outline-magic was developed to work with the new outline.el
+;;  implementation which uses text properties instead of selective display.
+;;  If you are using XEmacs which still has the old implementation, most
+;;  commands will work fine.  However, structure editing commands will
+;;  require all relevant headlines to be visible.
+;;
+;;; Code:
+
+(require 'outline)
+
+;;; Visibility cycling
+
+(defcustom outline-cycle-emulate-tab nil
+  "Where should `outline-cycle' emulate TAB.
+nil    Never
+white  Only in completely white lines
+t      Everywhere except in headlines"
+  :group 'outlines
+  :type '(choice (const :tag "Never" nil)
+		 (const :tag "Only in completely white lines" white)
+		 (const :tag "Everywhere except in headlines" t)
+		 ))
+
+(defvar outline-promotion-headings nil
+  "A sorted list of headings used for promotion/demotion commands.
+Set this to a list of headings as they are matched by `outline-regexp',
+top-level heading first.  If a mode or document needs several sets of
+outline headings (for example numbered and unnumbered sections), list
+them set by set, separated by a nil element.  See the example for
+`texinfo-mode' in the file commentary.")
+(make-variable-buffer-local 'outline-promotion-headings)
+
+;;;###autoload
+(defun outline-cycle (&optional arg)
+  "Visibility cycling for outline(-minor)-mode.
+
+- When point is at the beginning of the buffer, or when called with a
+  C-u prefix argument, rotate the entire buffer through 3 states:
+  1. OVERVIEW: Show only top-level headlines.
+  2. CONTENTS: Show all headlines of all levels, but no body text.
+  3. SHOW ALL: Show everything.
+
+- When point is at the beginning of a headline, rotate the subtree started
+  by this line through 3 different states:
+  1. FOLDED:   Only the main headline is shown.
+  2. CHILDREN: The main headline and the direct children are shown.  From
+               this state, you can move to one of the children and
+               zoom in further.
+  3. SUBTREE:  Show the entire subtree, including body text.
+
+- When point is not at the beginning of a headline, execute
+  `indent-relative', like TAB normally does."
+  (interactive "P")
+  (setq deactivate-mark t)
+  (cond
+
+   ((equal arg '(4))
+    ; Run `outline-cycle' as if at the top of the buffer.
+    (save-excursion
+      (goto-char (point-min))
+			(let ((current-prefix-argument nil))
+      (outline-cycle nil))))
+
+   (t
+    (cond
+     ((bobp) ;; Beginning of buffer: Global cycling
+
+      (cond
+       ((eq last-command 'outline-cycle-overview)
+	;; We just created the overview - now do table of contents
+	;; This can be slow in very large buffers, so indicate action
+	(message "CONTENTS...")
+	(save-excursion
+	  ;; Visit all headings and show their offspring
+	  (goto-char (point-max))
+	  (catch 'exit
+	    (while (and (progn (condition-case nil
+				   (outline-previous-visible-heading 1)
+				 (error (goto-char (point-min))))
+			       t)
+			(looking-at outline-regexp))
+	      (show-branches)
+	      (if (bobp) (throw 'exit nil))))
+	  (message "CONTENTS...done"))
+	(setq this-command 'outline-cycle-toc))
+       ((eq last-command 'outline-cycle-toc)
+	;; We just showed the table of contents - now show everything
+	(show-all)
+	(message "SHOW ALL")
+	(setq this-command 'outline-cycle-showall))
+       (t
+	;; Default action: go to overview
+	(let ((toplevel (cond
+			 (current-prefix-arg (prefix-numeric-value current-prefix-arg))
+			 ((save-excursion (beginning-of-line)
+					  (looking-at outline-regexp))
+			  (max 1 (funcall outline-level)))
+			 (t 1))))
+	  (hide-sublevels toplevel))
+	(message "OVERVIEW")
+	(setq this-command 'outline-cycle-overview))))
+
+     ((save-excursion (beginning-of-line 1) (looking-at outline-regexp))
+      ;; At a heading: rotate between three different views
+      (outline-back-to-heading)
+      (let ((goal-column 0) beg eoh eol eos)
+	;; First, some boundaries
+	(save-excursion
+	  (outline-back-to-heading)           (setq beg (point))
+	  (save-excursion (outline-next-line) (setq eol (point)))
+	  (outline-end-of-heading)            (setq eoh (point))
+	  (outline-end-of-subtree)            (setq eos (point)))
+	;; Find out what to do next and set `this-command'
+	(cond
+	 ((= eos eoh)
+	  ;; Nothing is hidden behind this heading
+	  (message "EMPTY ENTRY"))
+	 ((>= eol eos)
+	  ;; Entire subtree is hidden in one line: open it
+	  (show-entry)
+	  (show-children)
+	  (message "CHILDREN")
+	  (setq this-command 'outline-cycle-children))
+	 ((eq last-command 'outline-cycle-children)
+	  ;; We just showed the children, now show everything.
+	  (show-subtree)
+	  (message "SUBTREE"))
+	 (t
+	  ;; Default action: hide the subtree.
+	  (hide-subtree)
+	  (message "FOLDED")))))
+
+     ;; TAB emulation
+     ((outline-cycle-emulate-tab)
+      (indent-relative))
+
+     (t
+      ;; Not at a headline: Do indent-relative
+      (outline-back-to-heading))))))
+
+(defun outline-cycle-emulate-tab ()
+  "Check if TAB should be emulated at the current position."
+  ;; This is called after the check for point in a headline,
+  ;; so we can assume we are not in a headline
+  (if (and (eq outline-cycle-emulate-tab 'white)
+	   (save-excursion
+	     (beginning-of-line 1) (looking-at "[ \t]+$")))
+      t
+    outline-cycle-emulate-tab))
+
+;;;###autoload
+(defun outline-next-line ()
+  "Forward line, but mover over invisible line ends.
+Essentially a much simplified version of `next-line'."
+  (interactive)
+  (beginning-of-line 2)
+  (while (and (not (eobp))
+	      (get-char-property (1- (point)) 'invisible))
+    (beginning-of-line 2)))
+
+;;; Vertical tree motion
+
+;;;###autoload
+(defun outline-move-subtree-up (&optional arg)
+  "Move the currrent subtree up past ARG headlines of the same level."
+  (interactive "p")
+  (let ((headers (or arg 1)))
+    (outline-move-subtree-down (- headers))))
+
+;;;###autoload
+(defun outline-move-subtree-down (&optional arg)
+  "Move the currrent subtree down past ARG headlines of the same level."
+  (interactive "p")
+  (let* ((headers (or arg 1))
+        (re (concat "^" outline-regexp))
+	(movfunc (if (> headers 0) 'outline-get-next-sibling
+		   'outline-get-last-sibling))
+	(ins-point (make-marker))
+	(cnt (abs headers))
+	beg end txt)
+    ;; Select the tree
+    (outline-back-to-heading)
+    (setq beg (point))
+    (outline-end-of-subtree)
+    (if (= (char-after) ?\n) (forward-char 1))
+    (setq end (point))
+    ;; Find insertion point, with error handling
+    (goto-char beg)
+    (while (> cnt 0)
+      (or (funcall movfunc)
+	  (progn (goto-char beg)
+		 (error "Cannot move past superior level")))
+      (setq cnt (1- cnt)))
+    (if (> headers 0)
+	;; Moving forward - still need to move over subtree
+	(progn (outline-end-of-subtree)
+	       (if (= (char-after) ?\n) (forward-char 1))))
+    (move-marker ins-point (point))
+    (setq txt (buffer-substring beg end))
+    (delete-region beg end)
+    (insert txt)
+    (goto-char ins-point)
+    (move-marker ins-point nil)))
+
+;;; Promotion and Demotion
+
+;;;###autoload
+(defun outline-promote (&optional arg)
+  "Decrease the level of an outline-structure by ARG levels.
+When the region is active in transient-mark-mode, all headlines in the
+region are changed.  Otherwise the current subtree is targeted. Note that
+after each application of the command the scope of \"current subtree\"
+may have changed."
+  (interactive "p")
+  (let ((delta (or arg 1)))
+    (outline-change-level (- delta))))
+
+;;;###autoload
+(defun outline-demote (&optional arg)
+  "Increase the level of an outline-structure by ARG levels.
+When the region is active in transient-mark-mode, all headlines in the
+region are changed.  Otherwise the current subtree is targeted. Note that
+after each application of the command the scope of \"current subtree\"
+may have changed."
+  (interactive "p")
+  (let ((delta (or arg 1)))
+    (outline-change-level delta)))
+
+(defun outline-change-level (delta)
+  "Workhorse for `outline-demote' and `outline-promote'."
+  (let* ((headlist (outline-headings-list))
+	 (atom (outline-headings-atom headlist))
+	 (re (concat "^" outline-regexp))
+	 (transmode (and transient-mark-mode mark-active))
+	 beg end)
+
+    ;; Find the boundaries for this operation
+    (save-excursion
+      (if transmode
+	  (setq beg (min (point) (mark))
+		end (max (point) (mark)))
+	(outline-back-to-heading)
+	(setq beg (point))
+	(outline-end-of-heading)
+	(outline-end-of-subtree)
+	(setq end (point)))
+      (setq beg (move-marker (make-marker) beg)
+	    end (move-marker (make-marker) end))
+
+      (let (head newhead level newlevel static)
+
+	;; First a dry run to test if there is any trouble ahead.
+	(goto-char beg)
+	(while (re-search-forward re end t)
+	  (outline-change-heading headlist delta atom 'test))
+
+	;; Now really do replace the headings
+	(goto-char beg)
+	(while (re-search-forward re end t)
+	  (outline-change-heading headlist delta atom))))))
+
+(defun outline-headings-list ()
+  "Return a list of relevant headings, either a user/mode defined
+list, or an alist derived from scanning the buffer."
+  (let (headlist)
+    (cond
+     (outline-promotion-headings
+      ;; configured by the user or the mode
+      (setq headlist outline-promotion-headings))
+
+     ((and (eq major-mode 'outline-mode) (string= outline-regexp "[*\^L]+"))
+      ;; default outline mode with original regexp
+      ;; this need special treatment because of the \f in the regexp
+      (setq headlist '(("*" . 1) ("**" . 2))))  ; will be extrapolated
+
+     (t ;; Check if the buffer contains a complete set of headings
+      (let ((re (concat "^" outline-regexp)) head level)
+	(save-excursion
+	  (goto-char (point-min))
+	  (while (re-search-forward re nil t)
+	    (save-excursion
+	      (beginning-of-line 1)
+	      (setq head (outline-cleanup-match (match-string 0))
+		    level (funcall outline-level))
+	      (add-to-list  'headlist (cons head level))))))
+      ;; Check for uniqueness of levels in the list
+      (let* ((hl headlist) entry level seen nonunique)
+	(while (setq entry (car hl))
+	  (setq hl (cdr hl)
+		level (cdr entry))
+	  (if (and (not (outline-static-level-p level))
+		   (member level seen))
+	      ;; We have two entries for the same level.
+	      (add-to-list 'nonunique level))
+	  (add-to-list 'seen level))
+	(if nonunique
+	    (error "Cannot promote/demote: non-unique headings at level %s\nYou may want to configure `outline-promotion-headings'."
+		   (mapconcat 'int-to-string nonunique ","))))))
+    ;; OK, return the list
+    headlist))
+
+(defun outline-change-heading (headlist delta atom &optional test)
+  "Change heading just matched by `outline-regexp' by DELTA levels.
+HEADLIST can be either an alist ((\"outline-match\" . level)...) or a
+straight list like `outline-promotion-headings'. ATOM is a character
+if all headlines are composed of a single character.
+If TEST is non-nil, just prepare the change and error if there are problems.
+TEST nil means, really replace old heading with new one."
+  (let* ((head (outline-cleanup-match (match-string 0)))
+	 (level (save-excursion
+		  (beginning-of-line 1)
+		  (funcall outline-level)))
+	 (newhead  ; compute the new head
+	  (cond
+	   ((= delta 0) t)
+	   ((outline-static-level-p level) t)
+	   ((null headlist) nil)
+	   ((consp (car headlist))
+	    ;; The headlist is an association list
+	    (or (car (rassoc (+ delta level) headlist))
+		(and atom
+		     (> (+ delta level) 0)
+		     (make-string (+ delta level) atom))))
+	   (t
+	    ;; The headlist is a straight list - grab the correct element.
+	    (let* ((l (length headlist))
+		   (n1 (- l (length (member head headlist)))) ; index old
+		   (n2 (+ delta n1)))                         ; index new
+	      ;; Careful checking
+	      (cond
+	       ((= n1 l) nil)                ; head not found
+	       ((< n2 0) nil)                ; newlevel too low
+	       ((>= n2 l) nil)               ; newlevel too high
+	       ((let* ((tail (nthcdr (min n1 n2) headlist))
+		       (nilpos (- (length tail) (length (memq nil tail)))))
+		  (< nilpos delta))          ; nil element between old and new
+		nil)
+	       (t (nth n2 headlist))))))))      ; OK, we have a match!
+    (if (not newhead)
+	(error "Cannot shift level %d heading \"%s\" to level %d"
+	       level head (+ level delta)))
+    (if (and (not test) (stringp newhead))
+	(save-excursion
+	  (beginning-of-line 1)
+	  (or (looking-at (concat "[ \t]*\\(" (regexp-quote head) "\\)"))
+	      (error "Please contact maintainer"))
+	  (replace-match (outline-cleanup-match newhead) t t nil 1)))))
+
+(defun outline-headings-atom (headlist)
+  "Use the list created by `outline-headings-list' and check if all
+headings are polymers of a single character, e.g. \"*\".
+If yes, return this character."
+  (if (consp (car headlist))
+      ;; this is an alist - it makes sense to check for atomic structure
+      (let ((re (concat "\\`"
+			(regexp-quote (substring (car (car headlist)) 0 1))
+			"+\\'")))
+	(if (not (delq nil (mapcar (lambda (x) (not (string-match re (car x))))
+				   headlist)))
+	    (string-to-char (car (car headlist)))))))
+
+(defun outline-cleanup-match (s)
+  "Remove text properties and start/end whitespace from a string."
+  (set-text-properties 1 (length s) nil s)
+  (save-match-data
+    (if (string-match "^[ \t]+" s) (setq s (replace-match "" t t s)))
+    (if (string-match "[ \t]+$" s) (setq s (replace-match "" t t s))))
+  s)
+
+(defun outline-static-level-p (level)
+  "Test if a level should not be changed by level promotion/demotion."
+  (>= level 1000))
+
+;;; Key bindings
+
+(defcustom outline-structedit-modifiers '(meta)
+  "List of modifiers for outline structure editing with the arrow keys."
+  :group 'outlines
+  :type '(repeat symbol))
+
+(define-key outline-mode-map [(tab)] 'outline-cycle)
+(let ((keys '((left . outline-promote)
+	      (right . outline-demote)
+	      (up . outline-move-subtree-up)
+	      (down . outline-move-subtree-down)))
+      key)
+  (while (setq key (pop keys))
+    (apply 'define-key outline-mode-map
+	   (list
+	    (vector (append outline-structedit-modifiers (list (car key))))
+	    (cdr key)))))
+
+;;; Menu entries
+
+(define-key outline-mode-menu-bar-map [headings outline-move-subtree-down]
+  '("Move subtree down" . outline-move-subtree-down))
+(define-key outline-mode-menu-bar-map [headings outline-move-subtree-up]
+  '("Move subtree up" . outline-move-subtree-up))
+(define-key outline-mode-menu-bar-map [headings outline-demote]
+  '("Demote by 1 level" . outline-demote))
+(define-key outline-mode-menu-bar-map [headings outline-promote]
+  '("Promote by 1 level" . outline-promote))
+(define-key outline-mode-menu-bar-map [show outline-cycle]
+  '("Rotate visibility" . outline-cycle))
+(define-key outline-mode-menu-bar-map [hide outline-cycle]
+  '("Rotate visibility" . outline-cycle))
+
+;;; Finish up
+
+; (provide 'outline-magic)
+
+;;; outline-magic.el ends here
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+ (add-hook 'outline-minor-mode-hook
+           (lambda ()
+             (define-key outline-minor-mode-map [(tab)] 'outline-cycle)
+             (define-key outline-minor-mode-map (kbd "C-c C-n") 'outline-next-visible-heading)
+             (define-key outline-minor-mode-map (kbd "C-c C-p") 'outline-previous-visible-heading)
+             (setq outline-cycle-emulate-tab t)
+             ))
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC emacs-lisp
+;; extra outline headers 
+(setq TeX-outline-extra
+      '(("%chapter" 1)
+        ("%section" 2)
+        ("%subsection" 3)
+        ("%subsubsection" 4)
+        ("%paragraph" 5)))
+
+;; add font locking to the headers
+(font-lock-add-keywords
+ 'latex-mode
+ '(("^%\\(chapter\\|\\(sub\\|subsub\\)?section\\|paragraph\\)"
+    0 'font-lock-keyword-face t)
+   ("^%chapter{\\(.*\\)}"       1 'font-latex-sectioning-1-face t)
+   ("^%section{\\(.*\\)}"       1 'font-latex-sectioning-2-face t)
+   ("^%subsection{\\(.*\\)}"    1 'font-latex-sectioning-3-face t)
+   ("^%subsubsection{\\(.*\\)}" 1 'font-latex-sectioning-4-face t)
+   ("^%paragraph{\\(.*\\)}"     1 'font-latex-sectioning-5-face t)))
+#+END_SRC
+
+#+RESULTS:
+
+*** Pdf generation process
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-pdf-process
+	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+    "bibtex %b"
+    "makeindex %b"
+    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+END_SRC
+
+*** Fontify-titles
+#+BEGIN_SRC emacs-lisp
+  (setq font-latex-fontify-sectioning 'color)
+  (setq font-latex-fontify-sectioning 1.0)
+  (setq font-latex-slide-title-face 1.0)
+  (setq font-latex-fontify-script nil)
+  (fset 'tex-font-lock-suscript 'ignore)
+
+  ; (set-face-attribute 'font-latex-sectioning-1-face nil 
+  ;    :weight 'bold
+  ;    :height 1.0)
+
+  ;(set-face-attribute 'font-latex-sectioning-2-face nil 
+  ;   :weight 'bold
+  ;   :height 1.0)
+
+  ;(set-face-attribute 'font-latex-sectioning-3-face nil 
+  ;   :weight 'bold
+  ;   :height 1.0)
+#+END_SRC
+** COMMENT Proof General
+#+BEGIN_SRC emacs-lisp
+  ;; Loads the Proof General file. Proof General can be installed
+  ;; directly from AUR.
+
+  (load "~/.emacs.d/lisp/PG/generic/proof-site")
+
+  (setq proof-electric-terminator-enable t)
+#+END_SRC
+
+** COMMENT Agda input
+#+BEGIN_SRC emacs-lisp
+;;; agda-input.el --- The Agda input method
+
+;;; Commentary:
+
+;; A highly customisable input method which can inherit from other
+;; Quail input methods. By default the input method is geared towards
+;; the input of mathematical and other symbols in Agda programs.
+;;
+;; Use M-x customize-group agda-input to customise this input method.
+;; Note that the functions defined under "Functions used to tweak
+;; translation pairs" below can be used to tweak both the key
+;; translations inherited from other input methods as well as the
+;; ones added specifically for this one.
+;;
+;; Use agda-input-show-translations to see all the characters which
+;; can be typed using this input method (except for those
+;; corresponding to ASCII characters).
+
+;;; Code:
+
+(require 'quail)
+(require 'cl)
+;; Quail is quite stateful, so be careful when editing this code.  Note
+;; that with-temp-buffer is used below whenever buffer-local state is
+;; modified.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Utility functions
+
+(defun agda-input-concat-map (f xs)
+  "Concat (map F XS)."
+  (apply 'append (mapcar f xs)))
+
+(defun agda-input-to-string-list (s)
+  "Convert a string S to a list of one-character strings, after
+removing all space and newline characters."
+  (agda-input-concat-map
+   (lambda (c) (if (member c (string-to-list " \n"))
+              nil
+            (list (string c))))
+   (string-to-list s)))
+
+(defun agda-input-character-range (from to)
+  "A string consisting of the characters from FROM to TO."
+  (let (seq)
+    (dotimes (i (1+ (- to from)))
+      (setq seq (cons (+ from i) seq)))
+    (concat (nreverse seq))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions used to tweak translation pairs
+
+;; lexical-let is used since Elisp lacks lexical scoping.
+
+(defun agda-input-compose (f g)
+  "\x -> concatMap F (G x)"
+  (lexical-let ((f1 f) (g1 g))
+    (lambda (x) (agda-input-concat-map f1 (funcall g1 x)))))
+
+(defun agda-input-or (f g)
+  "\x -> F x ++ G x"
+  (lexical-let ((f1 f) (g1 g))
+    (lambda (x) (append (funcall f1 x) (funcall g1 x)))))
+
+(defun agda-input-nonempty ()
+  "Only keep pairs with a non-empty first component."
+  (lambda (x) (if (> (length (car x)) 0) (list x))))
+
+(defun agda-input-prepend (prefix)
+  "Prepend PREFIX to all key sequences."
+  (lexical-let ((prefix1 prefix))
+    (lambda (x) `((,(concat prefix1 (car x)) . ,(cdr x))))))
+
+(defun agda-input-prefix (prefix)
+  "Only keep pairs whose key sequence starts with PREFIX."
+  (lexical-let ((prefix1 prefix))
+    (lambda (x)
+      (if (equal (substring (car x) 0 (length prefix1)) prefix1)
+          (list x)))))
+
+(defun agda-input-suffix (suffix)
+  "Only keep pairs whose key sequence ends with SUFFIX."
+  (lexical-let ((suffix1 suffix))
+    (lambda (x)
+      (if (equal (substring (car x)
+                            (- (length (car x)) (length suffix1)))
+                 suffix1)
+          (list x)))))
+
+(defun agda-input-drop (ss)
+  "Drop pairs matching one of the given key sequences.
+SS should be a list of strings."
+  (lexical-let ((ss1 ss))
+    (lambda (x) (unless (member (car x) ss1) (list x)))))
+
+(defun agda-input-drop-beginning (n)
+  "Drop N characters from the beginning of each key sequence."
+  (lexical-let ((n1 n))
+    (lambda (x) `((,(substring (car x) n1) . ,(cdr x))))))
+
+(defun agda-input-drop-end (n)
+  "Drop N characters from the end of each key sequence."
+  (lexical-let ((n1 n))
+    (lambda (x)
+      `((,(substring (car x) 0 (- (length (car x)) n1)) .
+         ,(cdr x))))))
+
+(defun agda-input-drop-prefix (prefix)
+  "Only keep pairs whose key sequence starts with PREFIX.
+This prefix is dropped."
+  (agda-input-compose
+   (agda-input-drop-beginning (length prefix))
+   (agda-input-prefix prefix)))
+
+(defun agda-input-drop-suffix (suffix)
+  "Only keep pairs whose key sequence ends with SUFFIX.
+This suffix is dropped."
+  (lexical-let ((suffix1 suffix))
+    (agda-input-compose
+     (agda-input-drop-end (length suffix1))
+     (agda-input-suffix suffix1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customization
+
+;; The :set keyword is set to 'agda-input-incorporate-changed-setting
+;; so that the input method gets updated immediately when users
+;; customize it. However, the setup functions cannot be run before all
+;; variables have been defined. Hence the :initialize keyword is set to
+;; 'custom-initialize-default to ensure that the setup is not performed
+;; until agda-input-setup is called at the end of this file.
+
+(defgroup agda-input nil
+  "The Agda input method.
+After tweaking these settings you may want to inspect the resulting
+translations using `agda-input-show-translations'."
+  :group 'agda2
+  :group 'leim)
+
+(defcustom agda-input-tweak-all
+  '(agda-input-compose
+    (agda-input-prepend "\\")
+    (agda-input-nonempty))
+  "An expression yielding a function which can be used to tweak
+all translations before they are included in the input method.
+The resulting function (if non-nil) is applied to every
+\(KEY-SEQUENCE . TRANSLATION) pair and should return a list of such
+pairs. (Note that the translations can be anything accepted by
+`quail-defrule'.)
+If you change this setting manually (without using the
+customization buffer) you need to call `agda-input-setup' in
+order for the change to take effect."
+  :group 'agda-input
+  :set 'agda-input-incorporate-changed-setting
+  :initialize 'custom-initialize-default
+  :type 'sexp)
+
+(defcustom agda-input-inherit
+  `(("TeX" . (agda-input-compose
+              (agda-input-drop '("geq" "leq" "bullet" "qed" "par"))
+              (agda-input-or
+               (agda-input-drop-prefix "\\")
+               (agda-input-or
+                (agda-input-compose
+                 (agda-input-drop '("^l" "^o" "^r" "^v"))
+                 (agda-input-prefix "^"))
+                (agda-input-prefix "_")))))
+    )
+  "A list of Quail input methods whose translations should be
+inherited by the Agda input method (with the exception of
+translations corresponding to ASCII characters).
+The list consists of pairs (qp . tweak), where qp is the name of
+a Quail package, and tweak is an expression of the same kind as
+`agda-input-tweak-all' which is used to tweak the translation
+pairs of the input method.
+The inherited translation pairs are added last, after
+`agda-input-user-translations' and `agda-input-translations'.
+If you change this setting manually (without using the
+customization buffer) you need to call `agda-input-setup' in
+order for the change to take effect."
+  :group 'agda-input
+  :set 'agda-input-incorporate-changed-setting
+  :initialize 'custom-initialize-default
+  :type '(repeat (cons (string :tag "Quail package")
+                       (sexp :tag "Tweaking function"))))
+
+(defcustom agda-input-translations
+  (let ((max-lisp-eval-depth 2800)) `(
+
+  ;; Equality and similar symbols.
+
+  ("eq"  . ,(agda-input-to-string-list "=∼∽≈≋∻∾∿≀≃⋍≂≅ ≌≊≡≣≐≑≒≓≔≕≖≗≘≙≚≛≜≝≞≟≍≎≏≬⋕"))
+  ("eqn" . ,(agda-input-to-string-list "≠≁ ≉     ≄  ≇≆  ≢                 ≭    "))
+
+                    ("=n"  . ("≠"))
+  ("~"    . ("∼"))  ("~n"  . ("≁"))
+  ("~~"   . ("≈"))  ("~~n" . ("≉"))
+  ("~~~"  . ("≋"))
+  (":~"   . ("∻"))
+  ("~-"   . ("≃"))  ("~-n" . ("≄"))
+  ("-~"   . ("≂"))
+  ("~="   . ("≅"))  ("~=n" . ("≇"))
+  ("~~-"  . ("≊"))
+  ("=="   . ("≡"))  ("==n" . ("≢"))
+  ("==="  . ("≣"))
+  (".="   . ("≐"))  (".=." . ("≑"))
+  (":="   . ("≔"))  ("=:"  . ("≕"))
+  ("=o"   . ("≗"))
+  ("(="   . ("≘"))
+  ("and=" . ("≙"))  ("or=" . ("≚"))
+  ("*="   . ("≛"))
+  ("t="   . ("≜"))
+  ("def=" . ("≝"))
+  ("m="   . ("≞"))
+  ("?="   . ("≟"))
+
+  ;; Inequality and similar symbols.
+
+  ("leq"  . ,(agda-input-to-string-list "<≪⋘≤≦≲ ≶≺≼≾⊂⊆ ⋐⊏⊑ ⊰⊲⊴⋖⋚⋜⋞"))
+  ("leqn" . ,(agda-input-to-string-list "≮  ≰≨≴⋦≸⊀ ⋨⊄⊈⊊  ⋢⋤ ⋪⋬   ⋠"))
+  ("geq"  . ,(agda-input-to-string-list ">≫⋙≥≧≳ ≷≻≽≿⊃⊇ ⋑⊐⊒ ⊱⊳⊵⋗⋛⋝⋟"))
+  ("geqn" . ,(agda-input-to-string-list "≯  ≱≩≵⋧≹⊁ ⋩⊅⊉⊋  ⋣⋥ ⋫⋭   ⋡"))
+
+  ("<="   . ("≤"))  (">="   . ("≥"))
+  ("<=n"  . ("≰"))  (">=n"  . ("≱"))
+  ("len"  . ("≰"))  ("gen"  . ("≱"))
+  ("<n"   . ("≮"))  (">n"   . ("≯"))
+  ("<~"   . ("≲"))  (">~"   . ("≳"))
+  ("<~n"  . ("⋦"))  (">~n"  . ("⋧"))
+  ("<~nn" . ("≴"))  (">~nn" . ("≵"))
+
+  ("sub"   . ("⊂"))  ("sup"   . ("⊃"))
+  ("subn"  . ("⊄"))  ("supn"  . ("⊅"))
+  ("sub="  . ("⊆"))  ("sup="  . ("⊇"))
+  ("sub=n" . ("⊈"))  ("sup=n" . ("⊉"))
+
+  ("squb"   . ("⊏"))  ("squp"   . ("⊐"))
+  ("squb="  . ("⊑"))  ("squp="  . ("⊒"))
+  ("squb=n" . ("⋢"))  ("squp=n" . ("⋣"))
+
+  ;; Set membership etc.
+
+  ("member" . ,(agda-input-to-string-list "∈∉∊∋∌∍⋲⋳⋴⋵⋶⋷⋸⋹⋺⋻⋼⋽⋾⋿"))
+
+  ("inn" . ("∉"))
+  ("nin" . ("∌"))
+
+  ;; Intersections, unions etc.
+
+  ("intersection" . ,(agda-input-to-string-list "∩⋂∧⋀⋏⨇⊓⨅⋒∏ ⊼      ⨉"))
+  ("union"        . ,(agda-input-to-string-list "∪⋃∨⋁⋎⨈⊔⨆⋓∐⨿⊽⊻⊍⨃⊎⨄⊌∑⅀"))
+
+  ("and" . ("∧"))  ("or"  . ("∨"))
+  ("And" . ("⋀"))  ("Or"  . ("⋁"))
+  ("i"   . ("∩"))  ("un"  . ("∪"))  ("u+" . ("⊎"))  ("u." . ("⊍"))
+  ("I"   . ("⋂"))  ("Un"  . ("⋃"))  ("U+" . ("⨄"))  ("U." . ("⨃"))
+  ("glb" . ("⊓"))  ("lub" . ("⊔"))
+  ("Glb" . ("⨅"))  ("Lub" . ("⨆"))
+
+  ;; Entailment etc.
+
+  ("entails" . ,(agda-input-to-string-list "⊢⊣⊤⊥⊦⊧⊨⊩⊪⊫⊬⊭⊮⊯"))
+
+  ("|-"   . ("⊢"))  ("|-n"  . ("⊬"))
+  ("-|"   . ("⊣"))
+  ("|="   . ("⊨"))  ("|=n"  . ("⊭"))
+  ("||-"  . ("⊩"))  ("||-n" . ("⊮"))
+  ("||="  . ("⊫"))  ("||=n" . ("⊯"))
+  ("|||-" . ("⊪"))
+
+  ;; Divisibility, parallelity.
+
+  ("|"  . ("∣"))  ("|n"  . ("∤"))
+  ("||" . ("∥"))  ("||n" . ("∦"))
+
+  ;; Some symbols from logic and set theory.
+
+  ("all" . ("∀"))
+  ("ex"  . ("∃"))
+  ("exn" . ("∄"))
+  ("0"   . ("∅"))
+  ("C"   . ("∁"))
+
+  ;; Corners, ceilings and floors.
+
+  ("c"  . ,(agda-input-to-string-list "⌜⌝⌞⌟⌈⌉⌊⌋"))
+  ("cu" . ,(agda-input-to-string-list "⌜⌝  ⌈⌉  "))
+  ("cl" . ,(agda-input-to-string-list "  ⌞⌟  ⌊⌋"))
+
+  ("cul" . ("⌜"))  ("cuL" . ("⌈"))
+  ("cur" . ("⌝"))  ("cuR" . ("⌉"))
+  ("cll" . ("⌞"))  ("clL" . ("⌊"))
+  ("clr" . ("⌟"))  ("clR" . ("⌋"))
+
+  ;; Various operators/symbols.
+
+  ("qed"       . ("∎"))
+  ("x"         . ("×"))
+  ("o"         . ("∘"))
+  ("comp"      . ("∘"))
+  ("."         . ("∙"))
+  ("*"         . ("⋆"))
+  (".+"        . ("∔"))
+  (".-"        . ("∸"))
+  (":"         . ("∶"))
+  ("::"        . ("∷"))
+  ("::-"       . ("∺"))
+  ("-:"        . ("∹"))
+  ("+ "        . ("⊹"))
+  ("surd3"     . ("∛"))
+  ("surd4"     . ("∜"))
+  ("increment" . ("∆"))
+  ("inf"       . ("∞"))
+  ("&"         . ("⅋"))
+
+  ;; Circled operators.
+
+  ("o+"  . ("⊕"))
+  ("o--" . ("⊖"))
+  ("ox"  . ("⊗"))
+  ("o/"  . ("⊘"))
+  ("o."  . ("⊙"))
+  ("oo"  . ("⊚"))
+  ("o*"  . ("⊛"))
+  ("o="  . ("⊜"))
+  ("o-"  . ("⊝"))
+
+  ("O+"  . ("⨁"))
+  ("Ox"  . ("⨂"))
+  ("O."  . ("⨀"))
+  ("O*"  . ("⍟"))
+
+  ;; Boxed operators.
+
+  ("b+" . ("⊞"))
+  ("b-" . ("⊟"))
+  ("bx" . ("⊠"))
+  ("b." . ("⊡"))
+
+  ;; Various symbols.
+
+  ("integral" . ,(agda-input-to-string-list "∫∬∭∮∯∰∱∲∳"))
+  ("angle"    . ,(agda-input-to-string-list "∟∡∢⊾⊿"))
+  ("join"     . ,(agda-input-to-string-list "⋈⋉⋊⋋⋌⨝⟕⟖⟗"))
+
+  ;; Arrows.
+
+  ("l"  . ,(agda-input-to-string-list "←⇐⇚⇇⇆↤⇦↞↼↽⇠⇺↜⇽⟵⟸↚⇍⇷ ↹     ↢↩↫⇋⇜⇤⟻⟽⤆↶↺⟲                                     "))
+  ("r"  . ,(agda-input-to-string-list "→⇒⇛⇉⇄↦⇨↠⇀⇁⇢⇻↝⇾⟶⟹↛⇏⇸⇶ ↴    ↣↪↬⇌⇝⇥⟼⟾⤇↷↻⟳⇰⇴⟴⟿ ➵➸➙➔➛➜➝➞➟➠➡➢➣➤➧➨➩➪➫➬➭➮➯➱➲➳➺➻➼➽➾⊸"))
+  ("u"  . ,(agda-input-to-string-list "↑⇑⟰⇈⇅↥⇧↟↿↾⇡⇞          ↰↱➦ ⇪⇫⇬⇭⇮⇯                                           "))
+  ("d"  . ,(agda-input-to-string-list "↓⇓⟱⇊⇵↧⇩↡⇃⇂⇣⇟         ↵↲↳➥ ↯                                                "))
+  ("ud" . ,(agda-input-to-string-list "↕⇕   ↨⇳                                                                    "))
+  ("lr" . ,(agda-input-to-string-list "↔⇔         ⇼↭⇿⟷⟺↮⇎⇹                                                        "))
+  ("ul" . ,(agda-input-to-string-list "↖⇖                        ⇱↸                                               "))
+  ("ur" . ,(agda-input-to-string-list "↗⇗                                         ➶➹➚                             "))
+  ("dr" . ,(agda-input-to-string-list "↘⇘                        ⇲                ➴➷➘                             "))
+  ("dl" . ,(agda-input-to-string-list "↙⇙                                                                         "))
+
+  ("l-"  . ("←"))  ("<-"  . ("←"))  ("l="  . ("⇐"))
+  ("r-"  . ("→"))  ("->"  . ("→"))  ("r="  . ("⇒"))  ("=>"  . ("⇒"))
+  ("u-"  . ("↑"))                   ("u="  . ("⇑"))
+  ("d-"  . ("↓"))                   ("d="  . ("⇓"))
+  ("ud-" . ("↕"))                   ("ud=" . ("⇕"))
+  ("lr-" . ("↔"))  ("<->" . ("↔"))  ("lr=" . ("⇔"))  ("<=>" . ("⇔"))
+  ("ul-" . ("↖"))                   ("ul=" . ("⇖"))
+  ("ur-" . ("↗"))                   ("ur=" . ("⇗"))
+  ("dr-" . ("↘"))                   ("dr=" . ("⇘"))
+  ("dl-" . ("↙"))                   ("dl=" . ("⇙"))
+
+  ("l==" . ("⇚"))  ("l-2" . ("⇇"))                   ("l-r-" . ("⇆"))
+  ("r==" . ("⇛"))  ("r-2" . ("⇉"))  ("r-3" . ("⇶"))  ("r-l-" . ("⇄"))
+  ("u==" . ("⟰"))  ("u-2" . ("⇈"))                   ("u-d-" . ("⇅"))
+  ("d==" . ("⟱"))  ("d-2" . ("⇊"))                   ("d-u-" . ("⇵"))
+
+  ("l--"  . ("⟵"))  ("<--"  . ("⟵"))  ("l~"  . ("↜" "⇜"))
+  ("r--"  . ("⟶"))  ("-->"  . ("⟶"))  ("r~"  . ("↝" "⇝" "⟿"))
+  ("lr--" . ("⟷"))  ("<-->" . ("⟷"))  ("lr~" . ("↭"))
+
+  ("l-n"  . ("↚"))  ("<-n"  . ("↚"))  ("l=n"  . ("⇍"))
+  ("r-n"  . ("↛"))  ("->n"  . ("↛"))  ("r=n"  . ("⇏"))  ("=>n"  . ("⇏"))
+  ("lr-n" . ("↮"))  ("<->n" . ("↮"))  ("lr=n" . ("⇎"))  ("<=>n" . ("⇎"))
+
+  ("l-|"  . ("↤"))  ("ll-" . ("↞"))
+  ("r-|"  . ("↦"))  ("rr-" . ("↠"))
+  ("u-|"  . ("↥"))  ("uu-" . ("↟"))
+  ("d-|"  . ("↧"))  ("dd-" . ("↡"))
+  ("ud-|" . ("↨"))
+
+  ("l->" . ("↢"))
+  ("r->" . ("↣"))
+
+  ("r-o" . ("⊸"))  ("-o"  . ("⊸"))
+
+  ("dz" . ("↯"))
+
+  ;; Ellipsis.
+
+  ("..." . ,(agda-input-to-string-list "⋯⋮⋰⋱"))
+
+  ;; Box-drawing characters.
+
+  ("---" . ,(agda-input-to-string-list "─│┌┐└┘├┤┬┼┴╴╵╶╷╭╮╯╰╱╲╳"))
+  ("--=" . ,(agda-input-to-string-list "═║╔╗╚╝╠╣╦╬╩     ╒╕╘╛╞╡╤╪╧ ╓╖╙╜╟╢╥╫╨"))
+  ("--_" . ,(agda-input-to-string-list "━┃┏┓┗┛┣┫┳╋┻╸╹╺╻
+                                        ┍┯┑┕┷┙┝┿┥┎┰┒┖┸┚┠╂┨┞╀┦┟╁┧┢╈┪┡╇┩
+                                        ┮┭┶┵┾┽┲┱┺┹╊╉╆╅╄╃ ╿╽╼╾"))
+  ("--." . ,(agda-input-to-string-list "╌╎┄┆┈┊
+                                        ╍╏┅┇┉┋"))
+
+  ;; Triangles.
+
+  ;; Big/small, black/white.
+
+  ("t" . ,(agda-input-to-string-list "◂◃◄◅▸▹►▻▴▵▾▿◢◿◣◺◤◸◥◹"))
+  ("T" . ,(agda-input-to-string-list "◀◁▶▷▲△▼▽◬◭◮"))
+
+  ("tb" . ,(agda-input-to-string-list "◂▸▴▾◄►◢◣◤◥"))
+  ("tw" . ,(agda-input-to-string-list "◃▹▵▿◅▻◿◺◸◹"))
+
+  ("Tb" . ,(agda-input-to-string-list "◀▶▲▼"))
+  ("Tw" . ,(agda-input-to-string-list "◁▷△▽"))
+
+  ;; Squares.
+
+  ("sq"  . ,(agda-input-to-string-list "■□◼◻◾◽▣▢▤▥▦▧▨▩◧◨◩◪◫◰◱◲◳"))
+  ("sqb" . ,(agda-input-to-string-list "■◼◾"))
+  ("sqw" . ,(agda-input-to-string-list "□◻◽"))
+  ("sq." . ("▣"))
+  ("sqo" . ("▢"))
+
+  ;; Rectangles.
+
+  ("re"  . ,(agda-input-to-string-list "▬▭▮▯"))
+  ("reb" . ,(agda-input-to-string-list "▬▮"))
+  ("rew" . ,(agda-input-to-string-list "▭▯"))
+
+  ;; Parallelograms.
+
+  ("pa"  . ,(agda-input-to-string-list "▰▱"))
+  ("pab" . ("▰"))
+  ("paw" . ("▱"))
+
+  ;; Diamonds.
+
+  ("di"  . ,(agda-input-to-string-list "◆◇◈"))
+  ("dib" . ("◆"))
+  ("diw" . ("◇"))
+  ("di." . ("◈"))
+
+  ;; Circles.
+
+  ("ci"   . ,(agda-input-to-string-list "●○◎◌◯◍◐◑◒◓◔◕◖◗◠◡◴◵◶◷⚆⚇⚈⚉"))
+  ("cib"  . ("●"))
+  ("ciw"  . ("○"))
+  ("ci."  . ("◎"))
+  ("ci.." . ("◌"))
+  ("ciO"  . ("◯"))
+
+  ;; Stars.
+
+  ("st"   . ,(agda-input-to-string-list "⋆✦✧✶✴✹ ★☆✪✫✯✰✵✷✸"))
+  ("st4"  . ,(agda-input-to-string-list "✦✧"))
+  ("st6"  . ("✶"))
+  ("st8"  . ("✴"))
+  ("st12" . ("✹"))
+
+  ;; Blackboard bold letters.
+
+  ("bn"   . ("ℕ"))
+  ("bz"   . ("ℤ"))
+  ("bq"   . ("ℚ"))
+  ("br"   . ("ℝ"))
+  ("bc"   . ("ℂ"))
+  ("bp"   . ("ℙ"))
+  ("bb"   . ("𝔹"))
+  ("bsum" . ("⅀"))
+
+  ;; Blackboard bold numbers.
+
+  ("b0"   . ("𝟘"))
+  ("b1"   . ("𝟙"))
+  ("b2"   . ("𝟚"))
+  ("b3"   . ("𝟛"))
+  ("b4"   . ("𝟜"))
+  ("b5"   . ("𝟝"))
+  ("b6"   . ("𝟞"))
+  ("b7"   . ("𝟟"))
+  ("b8"   . ("𝟠"))
+  ("b9"   . ("𝟡"))
+
+  ;; Parentheses.
+
+  ("(" . ,(agda-input-to-string-list "([{⁅⁽₍〈⎴⟅⟦⟨⟪⦃〈《「『【〔〖〚︵︷︹︻︽︿﹁﹃﹙﹛﹝（［｛｢"))
+  (")" . ,(agda-input-to-string-list ")]}⁆⁾₎〉⎵⟆⟧⟩⟫⦄〉》」』】〕〗〛︶︸︺︼︾﹀﹂﹄﹚﹜﹞）］｝｣"))
+
+  ("[[" . ("⟦"))
+  ("]]" . ("⟧"))
+  ("<"  . ("⟨"))
+  (">"  . ("⟩"))
+  ("<<" . ("⟪"))
+  (">>" . ("⟫"))
+  ("{{" . ("⦃"))
+  ("}}" . ("⦄"))
+
+  ("(b" . ("⟅"))
+  (")b" . ("⟆"))
+
+  ("lbag" . ("⟅"))
+  ("rbag" . ("⟆"))
+
+  ;; Primes.
+
+  ("'" . ,(agda-input-to-string-list "′″‴⁗"))
+  ("`" . ,(agda-input-to-string-list "‵‶‷"))
+
+  ;; Fractions.
+
+  ("frac" . ,(agda-input-to-string-list "¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞⅟"))
+
+  ;; Bullets.
+
+  ("bu"  . ,(agda-input-to-string-list "•◦‣⁌⁍"))
+  ("bub" . ("•"))
+  ("buw" . ("◦"))
+  ("but" . ("‣"))
+
+  ;; Musical symbols.
+
+  ("note" . ,(agda-input-to-string-list "♩♪♫♬"))
+  ("b"    . ("♭"))
+  ("#"    . ("♯"))
+
+  ;; Other punctuation and symbols.
+
+  ("\\"         . ("\\"))
+  ("en"         . ("–"))
+  ("em"         . ("—"))
+  ("!!"         . ("‼"))
+  ("??"         . ("⁇"))
+  ("?!"         . ("‽" "⁈"))
+  ("!?"         . ("⁉"))
+  ("die"        . ,(agda-input-to-string-list "⚀⚁⚂⚃⚄⚅"))
+  ("asterisk"   . ,(agda-input-to-string-list "⁎⁑⁂✢✣✤✥✱✲✳✺✻✼✽❃❉❊❋"))
+  ("8<"         . ("✂" "✄"))
+  ("tie"        . ("⁀"))
+  ("undertie"   . ("‿"))
+  ("apl"        . ,(agda-input-to-string-list "⌶⌷⌸⌹⌺⌻⌼⌽⌾⌿⍀⍁⍂⍃⍄⍅⍆⍇⍈
+                                               ⍉⍊⍋⍌⍍⍎⍏⍐⍑⍒⍓⍔⍕⍖⍗⍘⍙⍚⍛
+                                               ⍜⍝⍞⍟⍠⍡⍢⍣⍤⍥⍦⍧⍨⍩⍪⍫⍬⍭⍮
+                                               ⍯⍰⍱⍲⍳⍴⍵⍶⍷⍸⍹⍺⎕"))
+
+  ;; Some combining characters.
+  ;;
+  ;; The following combining characters also have (other)
+  ;; translations:
+  ;; ̀ ́ ̂ ̃ ̄ ̆ ̇ ̈ ̋ ̌ ̣ ̧ ̱
+
+  ("^--" . ,(agda-input-to-string-list"̅̿"))
+  ("_--" . ,(agda-input-to-string-list"̲̳"))
+  ("^~"  . ,(agda-input-to-string-list"̃͌"))
+  ("_~"  .  (                         "̰"))
+  ("^."  . ,(agda-input-to-string-list"̇̈⃛⃜"))
+  ("_."  . ,(agda-input-to-string-list"̣̤"))
+  ("^l"  . ,(agda-input-to-string-list"⃖⃐⃔"))
+  ("^l-" .  (                         "⃖"))
+  ("^r"  . ,(agda-input-to-string-list"⃗⃑⃕"))
+  ("^r-" .  (                         "⃗"))
+  ("^lr" .  (                         "⃡"))
+  ("_lr" .  (                         "͍"))
+  ("^^"  . ,(agda-input-to-string-list"̂̑͆"))
+  ("_^"  . ,(agda-input-to-string-list"̭̯̪"))
+  ("^v"  . ,(agda-input-to-string-list"̌̆"))
+  ("_v"  . ,(agda-input-to-string-list"̬̮̺"))
+
+  ;; Shorter forms of many greek letters plus ƛ.
+
+  ("Ga"  . ("α"))  ("GA"  . ("Α"))
+  ("Gb"  . ("β"))  ("GB"  . ("Β"))
+  ("Gg"  . ("γ"))  ("GG"  . ("Γ"))
+  ("Gd"  . ("δ"))  ("GD"  . ("Δ"))
+  ("Ge"  . ("ε"))  ("GE"  . ("Ε"))
+  ("Gz"  . ("ζ"))  ("GZ"  . ("Ζ"))
+  ;; \eta \Eta
+  ("Gth" . ("θ"))  ("GTH" . ("Θ"))
+  ("Gi"  . ("ι"))  ("GI"  . ("Ι"))
+  ("Gk"  . ("κ"))  ("GK"  . ("Κ"))
+  ("Gl"  . ("λ"))  ("GL"  . ("Λ"))  ("Gl-" . ("ƛ"))
+  ("Gm"  . ("μ"))  ("GM"  . ("Μ"))
+  ("Gn"  . ("ν"))  ("GN"  . ("Ν"))
+  ("Gx"  . ("ξ"))  ("GX"  . ("Ξ"))
+  ;; \omicron \Omicron
+  ;; \pi \Pi
+  ("Gr"  . ("ρ"))  ("GR"  . ("Ρ"))
+  ("Gs"  . ("σ"))  ("GS"  . ("Σ"))
+  ("Gt"  . ("τ"))  ("GT"  . ("Τ"))
+  ("Gu"  . ("υ"))  ("GU"  . ("Υ"))
+  ("Gf"  . ("φ"))  ("GF"  . ("Φ"))
+  ("Gc"  . ("χ"))  ("GC"  . ("Χ"))
+  ("Gp"  . ("ψ"))  ("GP"  . ("Ψ"))
+  ("Go"  . ("ω"))  ("GO"  . ("Ω"))
+
+  ;; Mathematical characters
+
+  ("MiA" . ("𝐴"))
+  ("MiB" . ("𝐵"))
+  ("MiC" . ("𝐶"))
+  ("MiD" . ("𝐷"))
+  ("MiE" . ("𝐸"))
+  ("MiF" . ("𝐹"))
+  ("MiG" . ("𝐺"))
+  ("MiH" . ("𝐻"))
+  ("MiI" . ("𝐼"))
+  ("MiJ" . ("𝐽"))
+  ("MiK" . ("𝐾"))
+  ("MiL" . ("𝐿"))
+  ("MiM" . ("𝑀"))
+  ("MiN" . ("𝑁"))
+  ("MiO" . ("𝑂"))
+  ("MiP" . ("𝑃"))
+  ("MiQ" . ("𝑄"))
+  ("MiR" . ("𝑅"))
+  ("MiS" . ("𝑆"))
+  ("MiT" . ("𝑇"))
+  ("MiU" . ("𝑈"))
+  ("MiV" . ("𝑉"))
+  ("MiW" . ("𝑊"))
+  ("MiX" . ("𝑋"))
+  ("MiY" . ("𝑌"))
+  ("MiZ" . ("𝑍"))
+  ("Mia" . ("𝑎"))
+  ("Mib" . ("𝑏"))
+  ("Mic" . ("𝑐"))
+  ("Mid" . ("𝑑"))
+  ("Mie" . ("𝑒"))
+  ("Mif" . ("𝑓"))
+  ("Mig" . ("𝑔"))
+  ("Mii" . ("𝑖"))
+  ("Mij" . ("𝑗"))
+  ("Mik" . ("𝑘"))
+  ("Mil" . ("𝑙"))
+  ("Mim" . ("𝑚"))
+  ("Min" . ("𝑛"))
+  ("Mio" . ("𝑜"))
+  ("Mip" . ("𝑝"))
+  ("Miq" . ("𝑞"))
+  ("Mir" . ("𝑟"))
+  ("Mis" . ("𝑠"))
+  ("Mit" . ("𝑡"))
+  ("Miu" . ("𝑢"))
+  ("Miv" . ("𝑣"))
+  ("Miw" . ("𝑤"))
+  ("Mix" . ("𝑥"))
+  ("Miy" . ("𝑦"))
+  ("Miz" . ("𝑧"))
+  ("MIA" . ("𝑨"))
+  ("MIB" . ("𝑩"))
+  ("MIC" . ("𝑪"))
+  ("MID" . ("𝑫"))
+  ("MIE" . ("𝑬"))
+  ("MIF" . ("𝑭"))
+  ("MIG" . ("𝑮"))
+  ("MIH" . ("𝑯"))
+  ("MII" . ("𝑰"))
+  ("MIJ" . ("𝑱"))
+  ("MIK" . ("𝑲"))
+  ("MIL" . ("𝑳"))
+  ("MIM" . ("𝑴"))
+  ("MIN" . ("𝑵"))
+  ("MIO" . ("𝑶"))
+  ("MIP" . ("𝑷"))
+  ("MIQ" . ("𝑸"))
+  ("MIR" . ("𝑹"))
+  ("MIS" . ("𝑺"))
+  ("MIT" . ("𝑻"))
+  ("MIU" . ("𝑼"))
+  ("MIV" . ("𝑽"))
+  ("MIW" . ("𝑾"))
+  ("MIX" . ("𝑿"))
+  ("MIY" . ("𝒀"))
+  ("MIZ" . ("𝒁"))
+  ("MIa" . ("𝒂"))
+  ("MIb" . ("𝒃"))
+  ("MIc" . ("𝒄"))
+  ("MId" . ("𝒅"))
+  ("MIe" . ("𝒆"))
+  ("MIf" . ("𝒇"))
+  ("MIg" . ("𝒈"))
+  ("MIh" . ("𝒉"))
+  ("MIi" . ("𝒊"))
+  ("MIj" . ("𝒋"))
+  ("MIk" . ("𝒌"))
+  ("MIl" . ("𝒍"))
+  ("MIm" . ("𝒎"))
+  ("MIn" . ("𝒏"))
+  ("MIo" . ("𝒐"))
+  ("MIp" . ("𝒑"))
+  ("MIq" . ("𝒒"))
+  ("MIr" . ("𝒓"))
+  ("MIs" . ("𝒔"))
+  ("MIt" . ("𝒕"))
+  ("MIu" . ("𝒖"))
+  ("MIv" . ("𝒗"))
+  ("MIw" . ("𝒘"))
+  ("MIx" . ("𝒙"))
+  ("MIy" . ("𝒚"))
+  ("MIz" . ("𝒛"))
+  ("McA" . ("𝒜"))
+  ("McC" . ("𝒞"))
+  ("McD" . ("𝒟"))
+  ("McG" . ("𝒢"))
+  ("McJ" . ("𝒥"))
+  ("McK" . ("𝒦"))
+  ("McN" . ("𝒩"))
+  ("McO" . ("𝒪"))
+  ("McP" . ("𝒫"))
+  ("McQ" . ("𝒬"))
+  ("McS" . ("𝒮"))
+  ("McT" . ("𝒯"))
+  ("McU" . ("𝒰"))
+  ("McV" . ("𝒱"))
+  ("McW" . ("𝒲"))
+  ("McX" . ("𝒳"))
+  ("McY" . ("𝒴"))
+  ("McZ" . ("𝒵"))
+  ("Mca" . ("𝒶"))
+  ("Mcb" . ("𝒷"))
+  ("Mcc" . ("𝒸"))
+  ("Mcd" . ("𝒹"))
+  ("Mcf" . ("𝒻"))
+  ("Mch" . ("𝒽"))
+  ("Mci" . ("𝒾"))
+  ("Mcj" . ("𝒿"))
+  ("Mck" . ("𝓀"))
+  ("Mcl" . ("𝓁"))
+  ("Mcm" . ("𝓂"))
+  ("Mcn" . ("𝓃"))
+  ("Mcp" . ("𝓅"))
+  ("Mcq" . ("𝓆"))
+  ("Mcr" . ("𝓇"))
+  ("Mcs" . ("𝓈"))
+  ("Mct" . ("𝓉"))
+  ("Mcu" . ("𝓊"))
+  ("Mcv" . ("𝓋"))
+  ("Mcw" . ("𝓌"))
+  ("Mcx" . ("𝓍"))
+  ("Mcy" . ("𝓎"))
+  ("Mcz" . ("𝓏"))
+  ("MCA" . ("𝓐"))
+  ("MCB" . ("𝓑"))
+  ("MCC" . ("𝓒"))
+  ("MCD" . ("𝓓"))
+  ("MCE" . ("𝓔"))
+  ("MCF" . ("𝓕"))
+  ("MCG" . ("𝓖"))
+  ("MCH" . ("𝓗"))
+  ("MCI" . ("𝓘"))
+  ("MCJ" . ("𝓙"))
+  ("MCK" . ("𝓚"))
+  ("MCL" . ("𝓛"))
+  ("MCM" . ("𝓜"))
+  ("MCN" . ("𝓝"))
+  ("MCO" . ("𝓞"))
+  ("MCP" . ("𝓟"))
+  ("MCQ" . ("𝓠"))
+  ("MCR" . ("𝓡"))
+  ("MCS" . ("𝓢"))
+  ("MCT" . ("𝓣"))
+  ("MCU" . ("𝓤"))
+  ("MCV" . ("𝓥"))
+  ("MCW" . ("𝓦"))
+  ("MCX" . ("𝓧"))
+  ("MCY" . ("𝓨"))
+  ("MCZ" . ("𝓩"))
+  ("MCa" . ("𝓪"))
+  ("MCb" . ("𝓫"))
+  ("MCc" . ("𝓬"))
+  ("MCd" . ("𝓭"))
+  ("MCe" . ("𝓮"))
+  ("MCf" . ("𝓯"))
+  ("MCg" . ("𝓰"))
+  ("MCh" . ("𝓱"))
+  ("MCi" . ("𝓲"))
+  ("MCj" . ("𝓳"))
+  ("MCk" . ("𝓴"))
+  ("MCl" . ("𝓵"))
+  ("MCm" . ("𝓶"))
+  ("MCn" . ("𝓷"))
+  ("MCo" . ("𝓸"))
+  ("MCp" . ("𝓹"))
+  ("MCq" . ("𝓺"))
+  ("MCr" . ("𝓻"))
+  ("MCs" . ("𝓼"))
+  ("MCt" . ("𝓽"))
+  ("MCu" . ("𝓾"))
+  ("MCv" . ("𝓿"))
+  ("MCw" . ("𝔀"))
+  ("MCx" . ("𝔁"))
+  ("MCy" . ("𝔂"))
+  ("MCz" . ("𝔃"))
+  ("MfA" . ("𝔄"))
+  ("MfB" . ("𝔅"))
+  ("MfD" . ("𝔇"))
+  ("MfE" . ("𝔈"))
+  ("MfF" . ("𝔉"))
+  ("MfG" . ("𝔊"))
+  ("MfJ" . ("𝔍"))
+  ("MfK" . ("𝔎"))
+  ("MfL" . ("𝔏"))
+  ("MfM" . ("𝔐"))
+  ("MfN" . ("𝔑"))
+  ("MfO" . ("𝔒"))
+  ("MfP" . ("𝔓"))
+  ("MfQ" . ("𝔔"))
+  ("MfS" . ("𝔖"))
+  ("MfT" . ("𝔗"))
+  ("MfU" . ("𝔘"))
+  ("MfV" . ("𝔙"))
+  ("MfW" . ("𝔚"))
+  ("MfX" . ("𝔛"))
+  ("MfY" . ("𝔜"))
+  ("Mfa" . ("𝔞"))
+  ("Mfb" . ("𝔟"))
+  ("Mfc" . ("𝔠"))
+  ("Mfd" . ("𝔡"))
+  ("Mfe" . ("𝔢"))
+  ("Mff" . ("𝔣"))
+  ("Mfg" . ("𝔤"))
+  ("Mfh" . ("𝔥"))
+  ("Mfi" . ("𝔦"))
+  ("Mfj" . ("𝔧"))
+  ("Mfk" . ("𝔨"))
+  ("Mfl" . ("𝔩"))
+  ("Mfm" . ("𝔪"))
+  ("Mfn" . ("𝔫"))
+  ("Mfo" . ("𝔬"))
+  ("Mfp" . ("𝔭"))
+  ("Mfq" . ("𝔮"))
+  ("Mfr" . ("𝔯"))
+  ("Mfs" . ("𝔰"))
+  ("Mft" . ("𝔱"))
+  ("Mfu" . ("𝔲"))
+  ("Mfv" . ("𝔳"))
+  ("Mfw" . ("𝔴"))
+  ("Mfx" . ("𝔵"))
+  ("Mfy" . ("𝔶"))
+  ("Mfz" . ("𝔷"))
+
+  ;; (Sub / Super) scripts
+
+  ("_a" . ("ₐ"))
+  ("_e" . ("ₑ"))
+  ("_h" . ("ₕ"))
+  ("_i" . ("ᵢ"))
+  ("_j" . ("ⱼ"))
+  ("_k" . ("ₖ"))
+  ("_l" . ("ₗ"))
+  ("_m" . ("ₘ"))
+  ("_n" . ("ₙ"))
+  ("_o" . ("ₒ"))
+  ("_p" . ("ₚ"))
+  ("_r" . ("ᵣ"))
+  ("_s" . ("ₛ"))
+  ("_t" . ("ₜ"))
+  ("_u" . ("ᵤ"))
+  ("_v" . ("ᵥ"))
+  ("_x" . ("ₓ"))
+
+  ("^a" . ("ᵃ"))
+  ("^b" . ("ᵇ"))
+  ("^c" . ("ᶜ"))
+  ("^d" . ("ᵈ"))
+  ("^e" . ("ᵉ"))
+  ("^f" . ("ᶠ"))
+  ("^g" . ("ᵍ"))
+  ("^h" . ("ʰ"))
+  ("^i" . ("ⁱ"))
+  ("^j" . ("ʲ"))
+  ("^k" . ("ᵏ"))
+  ("^l" . ("ˡ"))
+  ("^m" . ("ᵐ"))
+  ("^n" . ("ⁿ"))
+  ("^o" . ("ᵒ"))
+  ("^p" . ("ᵖ"))
+  ("^r" . ("ʳ"))
+  ("^s" . ("ˢ"))
+  ("^t" . ("ᵗ"))
+  ("^u" . ("ᵘ"))
+  ("^v" . ("ᵛ"))
+  ("^w" . ("ʷ"))
+  ("^x" . ("ˣ"))
+  ("^y" . ("ʸ"))
+  ("^z" . ("ᶻ"))
+
+  ("^A" . ("ᴬ"))
+  ("^B" . ("ᴮ"))
+  ("^D" . ("ᴰ"))
+  ("^E" . ("ᴱ"))
+  ("^G" . ("ᴳ"))
+  ("^H" . ("ᴴ"))
+  ("^I" . ("ᴵ"))
+  ("^J" . ("ᴶ"))
+  ("^K" . ("ᴷ"))
+  ("^L" . ("ᴸ"))
+  ("^M" . ("ᴹ"))
+  ("^N" . ("ᴺ"))
+  ("^O" . ("ᴼ"))
+  ("^P" . ("ᴾ"))
+  ("^R" . ("ᴿ"))
+  ("^T" . ("ᵀ"))
+  ("^U" . ("ᵁ"))
+  ("^V" . ("ⱽ"))
+  ("^W" . ("ᵂ"))
+
+  ;; Some ISO8859-1 characters.
+
+  (" "         . (" "))
+  ("!"         . ("¡"))
+  ("cent"      . ("¢"))
+  ("brokenbar" . ("¦"))
+  ("degree"    . ("°"))
+  ("?"         . ("¿"))
+  ("^a_"       . ("ª"))
+  ("^o_"       . ("º"))
+
+  ;; Circled, parenthesised etc. numbers and letters.
+
+  ( "(0)" . ,(agda-input-to-string-list " ⓪"))
+  ( "(1)" . ,(agda-input-to-string-list "⑴①⒈❶➀➊"))
+  ( "(2)" . ,(agda-input-to-string-list "⑵②⒉❷➁➋"))
+  ( "(3)" . ,(agda-input-to-string-list "⑶③⒊❸➂➌"))
+  ( "(4)" . ,(agda-input-to-string-list "⑷④⒋❹➃➍"))
+  ( "(5)" . ,(agda-input-to-string-list "⑸⑤⒌❺➄➎"))
+  ( "(6)" . ,(agda-input-to-string-list "⑹⑥⒍❻➅➏"))
+  ( "(7)" . ,(agda-input-to-string-list "⑺⑦⒎❼➆➐"))
+  ( "(8)" . ,(agda-input-to-string-list "⑻⑧⒏❽➇➑"))
+  ( "(9)" . ,(agda-input-to-string-list "⑼⑨⒐❾➈➒"))
+  ("(10)" . ,(agda-input-to-string-list "⑽⑩⒑❿➉➓"))
+  ("(11)" . ,(agda-input-to-string-list "⑾⑪⒒"))
+  ("(12)" . ,(agda-input-to-string-list "⑿⑫⒓"))
+  ("(13)" . ,(agda-input-to-string-list "⒀⑬⒔"))
+  ("(14)" . ,(agda-input-to-string-list "⒁⑭⒕"))
+  ("(15)" . ,(agda-input-to-string-list "⒂⑮⒖"))
+  ("(16)" . ,(agda-input-to-string-list "⒃⑯⒗"))
+  ("(17)" . ,(agda-input-to-string-list "⒄⑰⒘"))
+  ("(18)" . ,(agda-input-to-string-list "⒅⑱⒙"))
+  ("(19)" . ,(agda-input-to-string-list "⒆⑲⒚"))
+  ("(20)" . ,(agda-input-to-string-list "⒇⑳⒛"))
+
+  ("(a)"  . ,(agda-input-to-string-list "⒜Ⓐⓐ"))
+  ("(b)"  . ,(agda-input-to-string-list "⒝Ⓑⓑ"))
+  ("(c)"  . ,(agda-input-to-string-list "⒞Ⓒⓒ"))
+  ("(d)"  . ,(agda-input-to-string-list "⒟Ⓓⓓ"))
+  ("(e)"  . ,(agda-input-to-string-list "⒠Ⓔⓔ"))
+  ("(f)"  . ,(agda-input-to-string-list "⒡Ⓕⓕ"))
+  ("(g)"  . ,(agda-input-to-string-list "⒢Ⓖⓖ"))
+  ("(h)"  . ,(agda-input-to-string-list "⒣Ⓗⓗ"))
+  ("(i)"  . ,(agda-input-to-string-list "⒤Ⓘⓘ"))
+  ("(j)"  . ,(agda-input-to-string-list "⒥Ⓙⓙ"))
+  ("(k)"  . ,(agda-input-to-string-list "⒦Ⓚⓚ"))
+  ("(l)"  . ,(agda-input-to-string-list "⒧Ⓛⓛ"))
+  ("(m)"  . ,(agda-input-to-string-list "⒨Ⓜⓜ"))
+  ("(n)"  . ,(agda-input-to-string-list "⒩Ⓝⓝ"))
+  ("(o)"  . ,(agda-input-to-string-list "⒪Ⓞⓞ"))
+  ("(p)"  . ,(agda-input-to-string-list "⒫Ⓟⓟ"))
+  ("(q)"  . ,(agda-input-to-string-list "⒬Ⓠⓠ"))
+  ("(r)"  . ,(agda-input-to-string-list "⒭Ⓡⓡ"))
+  ("(s)"  . ,(agda-input-to-string-list "⒮Ⓢⓢ"))
+  ("(t)"  . ,(agda-input-to-string-list "⒯Ⓣⓣ"))
+  ("(u)"  . ,(agda-input-to-string-list "⒰Ⓤⓤ"))
+  ("(v)"  . ,(agda-input-to-string-list "⒱Ⓥⓥ"))
+  ("(w)"  . ,(agda-input-to-string-list "⒲Ⓦⓦ"))
+  ("(x)"  . ,(agda-input-to-string-list "⒳Ⓧⓧ"))
+  ("(y)"  . ,(agda-input-to-string-list "⒴Ⓨⓨ"))
+  ("(z)"  . ,(agda-input-to-string-list "⒵Ⓩⓩ"))
+
+  ))
+  "A list of translations specific to the Agda input method.
+Each element is a pair (KEY-SEQUENCE-STRING . LIST-OF-TRANSLATION-STRINGS).
+All the translation strings are possible translations
+of the given key sequence; if there is more than one you can choose
+between them using the arrow keys.
+Note that if you customize this setting you will not
+automatically benefit (or suffer) from modifications to its
+default value when the library is updated.  If you just want to
+add some bindings it is probably a better idea to customize
+`agda-input-user-translations'.
+These translation pairs are included after those in
+`agda-input-user-translations', but before the ones inherited
+from other input methods (see `agda-input-inherit').
+If you change this setting manually (without using the
+customization buffer) you need to call `agda-input-setup' in
+order for the change to take effect."
+  :group 'agda-input
+  :set 'agda-input-incorporate-changed-setting
+  :initialize 'custom-initialize-default
+  :type '(repeat (cons (string :tag "Key sequence")
+                       (repeat :tag "Translations" string))))
+
+(defcustom agda-input-user-translations nil
+  "Like `agda-input-translations', but more suitable for user
+customizations since by default it is empty.
+These translation pairs are included first, before those in
+`agda-input-translations' and the ones inherited from other input
+methods."
+  :group 'agda-input
+  :set 'agda-input-incorporate-changed-setting
+  :initialize 'custom-initialize-default
+  :type '(repeat (cons (string :tag "Key sequence")
+                       (repeat :tag "Translations" string))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inspecting and modifying translation maps
+
+(defun agda-input-get-translations (qp)
+  "Return a list containing all translations from the Quail
+package QP (except for those corresponding to ASCII).
+Each pair in the list has the form (KEY-SEQUENCE . TRANSLATION)."
+  (with-temp-buffer
+    (activate-input-method qp) ; To make sure that the package is loaded.
+    (unless (quail-package qp)
+      (error "%s is not a Quail package." qp))
+    (let ((decode-map (list 'decode-map)))
+      (quail-build-decode-map (list (quail-map)) "" decode-map 0)
+      (cdr decode-map))))
+
+(defun agda-input-show-translations (qp)
+  "Display all translations used by the Quail package QP (a string).
+\(Except for those corresponding to ASCII)."
+  (interactive (list (read-input-method-name
+                      "Quail input method (default %s): " "Agda")))
+  (let ((buf (concat "*" qp " input method translations*")))
+    (with-output-to-temp-buffer buf
+      (with-current-buffer buf
+        (quail-insert-decode-map
+         (cons 'decode-map (agda-input-get-translations qp)))))))
+
+(defun agda-input-add-translations (trans)
+  "Add the given translations TRANS to the Agda input method.
+TRANS is a list of pairs (KEY-SEQUENCE . TRANSLATION). The
+translations are appended to the current translations."
+  (with-temp-buffer
+    (dolist (tr (agda-input-concat-map (eval agda-input-tweak-all) trans))
+      (quail-defrule (car tr) (cdr tr) "Agda" t))))
+
+(defun agda-input-inherit-package (qp &optional fun)
+  "Let the Agda input method inherit the translations from the
+Quail package QP (except for those corresponding to ASCII).
+The optional function FUN can be used to modify the translations.
+It is given a pair (KEY-SEQUENCE . TRANSLATION) and should return
+a list of such pairs."
+  (let ((trans (agda-input-get-translations qp)))
+    (agda-input-add-translations
+     (if fun (agda-input-concat-map fun trans)
+       trans))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Setting up the input method
+
+(defun agda-input-setup ()
+  "Set up the Agda input method based on the customisable
+variables and underlying input methods."
+
+  ;; Create (or reset) the input method.
+  (with-temp-buffer
+    (quail-define-package "Agda" "UTF-8" "∏" t ; guidance
+     "Agda input method.
+The purpose of this input method is to edit Agda programs, but
+since it is highly customisable it can be made useful for other
+tasks as well."
+     nil nil nil nil nil nil t ; maximum-shortest
+     ))
+
+  (agda-input-add-translations
+   (mapcar (lambda (tr) (cons (car tr) (vconcat (cdr tr))))
+           (append agda-input-user-translations
+                   agda-input-translations)))
+  (dolist (def agda-input-inherit)
+    (agda-input-inherit-package (car def)
+                                (eval (cdr def)))))
+
+(defun agda-input-incorporate-changed-setting (sym val)
+  "Update the Agda input method based on the customisable
+variables and underlying input methods.
+Suitable for use in the :set field of `defcustom'."
+  (set-default sym val)
+  (agda-input-setup))
+
+;; Set up the input method.
+
+(agda-input-setup)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Administrative details
+
+(provide 'agda-input)
+;;; agda-input.el ends here
+#+END_SRC
+
+#+RESULTS:
+: agda-input
+
+** COMMENT GAP
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+** COMMENT RedPRL
+#+BEGIN_SRC emacs-lisp
+(use-package redprl
+  :mode "\\.redprl\\'"
+  :ensure t)
+#+END_SRC
+
+** COMMENT Lean
+#+BEGIN_SRC emacs-lisp
+(use-package lean-mode
+  :mode "\\.lean\\'"
+  :config (setq lean-rootdir "~/lean"))
+#+END_SRC
+* Snippets
+#+BEGIN_SRC emacs-lisp
+  ;; Yasnippet provides support for snippets inside Emacs.
+  (use-package yasnippet
+    :ensure t
+    :init (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
+    :config (yas-global-mode 1)
+    :bind (("<C-dead-grave>" . yas-insert-snippet))
+    )
+
+  (add-hook 'term-mode-hook (lambda() (yas-minor-mode -1)))
+  (add-hook 'term-mode-hook (lambda() (setq yas-dont-activate t)))
+
+  (use-package haskell-snippets :ensure t)
+#+END_SRC
+
+They must be loaded with
+
+ * =yas-recompile-all=
+ * =yas-reload-all=
+
+** aligned
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/aligned
+# -*- mode: snippet -*-
+# name: aligned
+# key: %aligned
+# --
+\[\begin{aligned}
+$1 
+&=
+&& \mbox{\texit{ (  ) }} \\\\&=
+\end{aligned}\]
+#+END_SRC
+
+** square
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/square
+# -*- mode: snippet -*-
+# name: square
+# key: %square
+# --
+\[\begin{tikzcd}
+$1 \rar{$5} \dar[swap]{$6} & $2 \dar{$7} \\\\
+$3 \rar{$8} & $4 
+\end{tikzcd}\]
+#+END_SRC
+
+** statement
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/statement
+# -*- mode: snippet -*-
+# name: statement
+# key: %state
+# --
+#+begin_statement
+$1
+#+end_statement
+#+END_SRC
+
+** note
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/note
+# -*- mode: snippet -*-
+# name: note
+# key: %note
+# --
+#+begin_note
+$1
+#+end_note
+#+END_SRC
+
+** definition
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/definition
+# -*- mode: snippet -*-
+# name: definition
+# key: %definition
+# --
+#+begin_definition
+$1
+#+end_definition
+#+END_SRC
+
+** lemma
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/lemma
+# -*- mode: snippet -*-
+# name: lemma
+# key: %lemma
+# --
+#+begin_lemma
+$1
+#+end_lemma
+#+END_SRC
+
+** theorem
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/theorem
+# -*- mode: snippet -*-
+# name: theorem
+# key: %theorem
+# --
+#+begin_theorem
+$1
+#+end_theorem
+#+END_SRC
+
+** proof
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/proof
+# -*- mode: snippet -*-
+# name: proof
+# key: %proof
+# --
+#+begin_proof
+$1
+#+end_proof
+#+END_SRC
+
+** prop
+#+BEGIN_SRC snippet :mkdirp yes :tangle ./snippets/org-mode/prop
+# -*- mode: snippet -*-
+# name: proposition
+# key: %prop
+# --
+#+begin_proposition
+$1
+#+end_proposition
+#+END_SRC
+
+* Autocompletion
+#+BEGIN_SRC emacs-lisp
+  ;; Company provides autocompletion on Emacs.
+  ;; This configuration was taken from malb's emacs.d.
+  ;; https://github.com/malb/emacs.d/blob/master/malb.org#latex
+  (use-package company
+    :ensure t
+    :config (progn
+      (global-company-mode 1)
+      (setq company-tooltip-limit 10)
+      (setq company-idle-delay 0.5)
+      (setq company-require-match nil)
+      (setq company-minimum-prefix-length 3)
+      (bind-key "<tab>" #'company-complete company-active-map)))
+
+    ;; Completion for mathematics. We create a sane list of backends,
+    ;; preventing some of them from firing while writing latex.
+    (use-package company-math :ensure t)
+    (add-to-list 'company-backends #'company-math-symbols-latex)
+    (add-to-list 'company-backends #'company-math-latex-commands)
+    (delete #'company-files company-backends)
+#+END_SRC
+
+* Customization
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Customization")
+#+END_SRC
+** Window customization
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Window customization")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; Startup dashboard.
+  (use-package dashboard
+      :ensure t
+      :diminish dashboard-mode
+      :config
+         (setq dashboard-banner-logo-title "Welcome to Cosmoi Emacs!")
+         (setq dashboard-items '((recents  . 10) (bookmarks . 10)))
+         (dashboard-setup-startup-hook)
+         (setq dashboard-set-footer nil)
+      )
+
+  ;; ;; Spaceline provides a really nice-looking bar for Emacs.
+  ;; (use-package spaceline
+  ;;   :ensure t
+  ;;   :demand t
+  ;;   :init
+  ;;     (setq powerline-default-separator 'contour)
+  ;;   :config
+  ;;     (require 'spaceline-config)
+  ;;     (spaceline-emacs-theme)
+  ;;     (setq-default spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  ;;     (spaceline-toggle-minor-modes-off))
+
+  ;; ;; Apply icons to emacs.
+  ; (use-package all-the-icons :ensure t)
+
+  ;; The package volatile highlights temporarily highlights changes to
+  ;; the buffer associated with certain commands that add blocks of text
+  ;; at once. An example is that if you paste (yank) a block of text, it
+  ;; will be highlighted until you press the next key. This is just a
+  ;; small tweak, but gives a nice bit of visual feedback.
+  ;; http://pragmaticemacs.com/emacs/volatile-highlights/
+  (use-package volatile-highlights
+    :ensure t
+    :config (volatile-highlights-mode t))
+
+  ;; Beacon signals the position of the cursor when the view changes.  
+  (use-package beacon
+    :ensure t
+    :config (beacon-mode 1))
+
+  ;; Rainbow delimiters colors parentheses with matching and different
+  ;; colors. It helps to visually determine the pairing.
+  (use-package rainbow-delimiters
+    :ensure t
+    :config
+      (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+      ; disabled for org (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
+      (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode))
+
+  ;; The window split should be colored in gray. I do not want it to be
+  ;; too prominent.
+  ;(set-face-background 'vertical-border "gray")
+  ;(set-face-foreground 'vertical-border (face-background 'vertical-border))
+
+  ;; The delimiter character whould be a unicode variant of |.
+  (let ((display-table (or standard-display-table (make-display-table))))
+    (set-display-table-slot display-table 'vertical-border (make-glyph-code ?┃))
+    (setq standard-display-table display-table))
+#+END_SRC
+
+** COMMENT Olivetti mode
+#+BEGIN_SRC emacs-lisp
+  (use-package olivetti
+     :ensure t)
+#+END_SRC
+
+* COMMENT Old packages
+These are the packages I stopped using. I stil keep the configuration
+for some of them here because it is useful if I want to quickly
+recover it.
+
+** COMMENT Clock
+#+BEGIN_SRC emacs-lisp
+    ;; After using org-clock, we save buffers to ensure the tracking
+    ;; information is saved.  If we do not do this, we could close Emacs and
+    ;; lose clocking information.
+    ;; http://fdavidcl.me/blog/2017/11/30/time-tracking-org/
+    (add-hook 'org-clock-in-hook 'save-buffer)
+    (add-hook 'org-clock-out-hook 'save-buffer)
+    (setq org-clock-mode-line-total 'current)
+  
+    ;; Org-pomodoro lets you start a pomodoro time tracker.
+    (use-package org-pomodoro :ensure t)
+
+    ;; Effortlessly clock in/out of org-mode tasks, with completion and
+    ;; persistent history
+    ;; https://github.com/unhammer/org-mru-clock
+    (use-package org-mru-clock
+      :ensure t
+      :bind* (("C-c C-x i" . org-mru-clock-in)
+	      ("C-c C-x TAB" . org-mru-clock-in)
+	      ("C-c C-x C-j" . org-mru-clock-select-recent-task))
+      :init
+	(setq org-mru-clock-how-many 100
+	    org-mru-clock-completing-read #'ivy-completing-read))
+
+    ;; This saves clock history, even if we restart Emacs while clocking.
+    (setq org-clock-persist t)
+    (org-clock-persistence-insinuate)
+
+    ;; ;; Current clocking is sent into a file. There is a shell script
+    ;; ;; that simply runs 'echo -e " $(cat tmp/clocking)"' and its output
+    ;; ;; can be fed into Polybar or any other status bar.
+    ;; ;; From https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00709.html
+    ;; (defun m42/org-clocking-info-to-file ()
+    ;;   (with-temp-file "~/tmp/clocking"
+    ;;     (if (org-clock-is-active)
+    ;;       (if (= (length (org-clock-get-clock-string)) 0)
+    ;;           (insert "Task: idle time")
+    ;;           (insert (org-clock-get-clock-string))))))
+  
+    ;; (add-hook 'org-clock-in-hook #'m42/org-clocking-info-to-file)
+    ;; (add-hook 'org-clock-out-hook #'m42/org-clocking-info-to-file)
+    ;; (run-with-timer 0 2 'm42/org-clocking-info-to-file)
+#+END_SRC
+
+** COMMENT Font
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Font")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; Uses Iosevka as the default font.
+  (add-to-list 'default-frame-alist '(font . "Iosevka42-11" ))
+  (set-face-attribute 'default t :font "Iosevka42-11" )
+
+  ;; Fallback unicode font.  It is really useful for Agda and it works
+  ;; great with Fira Mono. It could be DejaVuSans, which has great
+  ;; unicode support. It could also be Pragmata Pro, which is a bit more
+  ;; limited.  
+  (set-fontset-font "fontset-default" 'unicode "DejaVu Sans")
+  ;;(set-fontset-font "fontset-default" nil "Pragmata Pro")
+#+END_SRC
+
+** COMMENT Habits on todo lists
+#+BEGIN_SRC emacs-lisp
+;; Shows the habits also on todo lists. It allows us to make them
+;; disappear from the main agenda view and make them appear on the
+;; tasks view.
+;; https://emacs.stackexchange.com/questions/13360/org-habit-graph-on-todo-list-agenda-view
+
+(defvar my/org-habit-show-graphs-everywhere t
+  "If non-nil, show habit graphs in all types of agenda buffers.
+
+Normally, habits display consistency graphs only in
+\"agenda\"-type agenda buffers, not in other types of agenda
+buffers.  Set this variable to any non-nil variable to show
+consistency graphs in all Org mode agendas.")
+
+(defun my/org-agenda-mark-habits ()
+  "Mark all habits in current agenda for graph display.
+
+This function enforces `my/org-habit-show-graphs-everywhere' by
+marking all habits in the current agenda as such.  When run just
+before `org-agenda-finalize' (such as by advice; unfortunately,
+`org-agenda-finalize-hook' is run too late), this has the effect
+of displaying consistency graphs for these habits.
+
+When `my/org-habit-show-graphs-everywhere' is nil, this function
+has no effect."
+  (when (and my/org-habit-show-graphs-everywhere
+         (not (get-text-property (point) 'org-series)))
+    (let ((cursor (point))
+          item data) 
+      (while (setq cursor (next-single-property-change cursor 'org-marker))
+        (setq item (get-text-property cursor 'org-marker))
+        (when (and item (org-is-habit-p item)) 
+          (with-current-buffer (marker-buffer item)
+            (setq data (org-habit-parse-todo item))) 
+          (put-text-property cursor
+                             (next-single-property-change cursor 'org-marker)
+                             'org-habit-p data))))))
+
+(advice-add #'org-agenda-finalize :before #'my/org-agenda-mark-habits)
+#+END_SRC
+
+** COMMENT Elfeed
+ #+BEGIN_SRC emacs-lisp
+   ;; Elfeed can be used to read RSS feeds.
+   (use-package elfeed
+     :ensure t
+     :bind (:map elfeed-search-mode-map
+                 ("j" . mz/hydra-elfeed/body)))
+
+   (use-package elfeed-org
+     :ensure t
+     :init (setq rhm-elfeed-org-files (list "~/org/Elfeed.org"))
+     :config (elfeed-org))
+
+   (use-package elfeed-goodies :ensure t)
+
+   ;; Use Iosevka consistently.
+   (set-face-attribute 'variable-pitch nil :font "Iosevka")
+ #+END_SRC
+
+ #+RESULTS:
+
+** COMMENT Gcalendar
+#+BEGIN_SRC emacs-lisp
+  ;; Initial configuration, using the Google API.
+  ;; https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WNpulq2xVhE
+  (use-package org-gcal
+    :ensure t
+    :config
+    (setq org-gcal-client-id "139081640689-4njrqlrlidldfo9j0s8vp20qrgvbr06g.apps.googleusercontent.com" 
+            org-gcal-client-secret m42/gcal-client-secret
+  	        org-gcal-file-alist '(("mromang08@gmail.com" . "~/org/GCalendar.org"))))
+
+  ;; Hooks for synchronization at startup
+  (org-gcal-sync)
+
+  ;; FAQ: Evaluating (org-gcal-request-token) may solve Error "http 400".
+#+END_SRC
+
+** COMMENT IRC
+ #+BEGIN_SRC emacs-lisp
+ (use-package erc
+   :defer t
+   :init
+     (setq erc-server-coding-system '(utf-8 . utf-8))
+
+     ;; Username and password.
+     (setq erc-nick "mroman42")
+     (setq erc-password "psrliifs42")
+   :custom
+     ;; The list of channels to which it connects by default.
+     (erc-autojoin-channels-alist '(("freenode.net" "#haskell" "#emacs" "#archlinux" "#latex" "#org-mode")))
+
+     ; Some of these configurations are taken from the following post
+     ; https://www.reddit.com/r/emacs/comments/8ml6na/tip_how_to_make_erc_fun_to_use/
+     (erc-autojoin-timing 'ident)
+     (erc-fill-function 'erc-fill-static)
+     (erc-fill-static-center 22)
+     (erc-hide-list '("JOIN" "PART" "QUIT"))
+     (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+     (erc-lurker-threshold-time 43200)
+     (erc-prompt-for-nickserv-password nil)
+     (erc-server-reconnect-attempts 5)
+     (erc-server-reconnect-timeout 3)
+   :config   
+     (add-to-list 'erc-modules 'notifications)
+     (add-to-list 'erc-modules 'spelling)
+     (erc-update-modules)       
+     (erc-services-mode 1))
+
+   (use-package erc-autoway
+     :defer t
+     :init (progn
+       (setq erc-auto-discard-away t)
+       (setq erc-autoaway-idle-seconds 600)))
+
+   ;; Associates a different color to each nick.
+   (use-package erc-hl-nicks
+     :after erc)
+
+   ;; So you don't have to click a link to see an image.
+   (use-package erc-image
+     :after erc)
+ #+END_SRC
+
+** COMMENT Contacts
+#+BEGIN_SRC emacs-lisp
+(use-package org-contacts
+  :after org
+  :custom (org-contacts-files '("~/org/Contacts.org")))
+#+END_SRC
+
+** COMMENT Anki
+#+BEGIN_SRC emacs-lisp
+  (use-package anki-editor
+    :ensure t
+    :custom
+      (anki-editor-create-decks t "A header creates a deck")
+      (anki-editor-use-math-jax t "Use Anki's built in MathJax support instead of LaTeX.")
+      (anki-editor-break-consecutive-braces-in-latex t) 
+      )
+
+(defun anki-editor--translate-latex-delimiters (latex-code)
+  (catch 'done
+    (let ((delimiter-map (list (list (cons (format "^%s" (regexp-quote "$$")) "\\[")
+                                     (cons (format "%s$" (regexp-quote "$$")) "\\]"))
+                               (list (cons (format "^%s" (regexp-quote "$")) "\\(")
+                                     (cons (format "%s$" (regexp-quote "$")) "\\)"))
+                               (list (cons (format "^%s" (regexp-quote "\\(")) "\\(")
+                                     (cons (format "%s$" (regexp-quote "\\)")) "\\)"))
+                               (list (cons (format "^%s" (regexp-quote "\\[")) "\\[")
+                                     (cons (format "%s$" (regexp-quote "\\]")) "\\]"))))
+          (matched nil))
+      (save-match-data
+        (dolist (pair delimiter-map)
+          (dolist (delimiter pair)
+            (when (setq matched (string-match (car delimiter) latex-code))
+              (setq latex-code (replace-match (cdr delimiter) t t latex-code))))
+          (when matched (throw 'done latex-code)))))
+    latex-code))
+#+END_SRC
+
+** COMMENT Spacemacs dark theme
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Spacemacs theme")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; Getting the Spacemacs look.
+  ;; http://pragmaticemacs.com/emacs/get-that-spacemacs-look-without-spacemacs/
+  (use-package spacemacs-theme
+   :ensure t
+   :no-require t
+   :init
+     (setq spacemacs-theme-org-agenda-height nil)
+     (setq spacemacs-theme-org-height nil)
+     (setq spacemacs-theme-comment-italic t)
+     )
+
+  ;; The function that loads the entire theme. It first loads spacemacs, then
+  ;; applies the face preferences.
+  (defun m42/reload-theme ()
+    (interactive)
+    (setq default "#cfcecd")
+    (load-theme 'spacemacs-dark 1)
+    
+    ;; Colors
+    (setq color/space-comment "#1e757f")
+    (setq color/space-comment "#3E8991")
+    (setq color/space-block "#827591")
+
+    ;; More contrast for the default font.
+    (set-face-attribute 'default nil :foreground "#cfcecd")
+
+    ;; Comments and docs should share font
+    (set-face-attribute 'font-lock-doc-face nil :foreground color/space-comment)
+    (set-face-attribute 'font-lock-comment-face nil :foreground color/space-comment)
+    
+    ;; Standard org-mode faces.
+    (set-face-attribute 'org-document-title nil :underline nil :height 1.0 :foreground "#4f97d7")
+    (set-face-attribute 'org-document-info nil :underline nil :height 1.0 :foreground "#4f97d7")
+    (set-face-attribute 'org-document-info-keyword nil :underline nil :height 1.0 :foreground color/space-block)
+    (set-face-attribute 'org-special-keyword nil :foreground color/space-block) 
+    (set-face-attribute 'org-meta-line nil :foreground color/space-block) 
+    (set-face-attribute 'org-link nil :inherit 'link :weight 'normal :underline nil)
+    (set-face-attribute 'org-todo nil :foreground "#ba6328")
+    (set-face-attribute 'org-done nil :foreground "#5e9b20")
+    (set-face-attribute 'org-date nil :foreground color/space-comment)
+    (set-face-attribute 'org-priority nil :foreground "#ba6328" :weight 'normal)
+    (set-face-attribute 'org-tag nil :foreground color/space-block)
+    (set-face-attribute 'org-verbatim nil :foreground "#979797")
+    (set-face-attribute 'org-table nil :background "#292b2e")
+    (set-face-attribute 'org-block-begin-line nil :background "#292b2e")
+    (set-face-attribute 'org-block-end-line nil :background "#292b2e")
+
+    ;; Org agenda faces
+    (set-face-attribute 'org-habit-ready-future-face nil :background "#5e9b20")
+    (set-face-attribute 'org-habit-ready-face nil :background "#5e9b20")
+    (set-face-attribute 'org-habit-overdue-future-face nil :background "#ba6328")
+    (set-face-attribute 'org-habit-overdue-face nil :background "#ba6328")
+    (set-face-attribute 'org-agenda-date-today nil :foreground "#7590db")
+    (set-face-attribute 'org-agenda-date-today nil :inherit 'org-agenda-date :weight 'ultrabold :slant 'normal :underline nil)
+    (set-face-attribute 'org-agenda-date-weekend nil :weight 'normal)
+    (set-face-attribute 'org-scheduled nil :foreground "#2d9574")
+    (set-face-attribute 'org-agenda-calendar-event nil :foreground "#2d9574")
+  
+    ;; Org mode levels.
+    (set-face-attribute 'org-level-1 nil :weight 'normal :foreground "#4f97d7"); :foreground "#d08770"
+    (set-face-attribute 'org-level-2 nil :weight 'normal :foreground "#5e81ac")
+    (set-face-attribute 'org-level-3 nil :weight 'normal :foreground "#81a1c1"); :foreground "#a3be8c"
+    (set-face-attribute 'org-level-4 nil :weight 'normal :foreground "#88c0d0")
+    (set-face-attribute 'org-level-5 nil :weight 'normal :foreground "#8fbcbb")
+    (set-face-attribute 'org-level-6 nil :weight 'normal :foreground "#b48ead")
+    (set-face-attribute 'org-level-7 nil :weight 'normal :foreground "#a3be8c")
+    (set-face-attribute 'org-level-8 nil :weight 'normal :foreground "#b3be8c")
+
+    ;; Neotree arrow
+    (set-face-attribute 'neo-expand-btn-face nil :foreground "#5e81ac")
+  )
+
+  ;; I have a problem with this theme: =unspecified-background= is an error I
+  ;; get if I try to use it with emacs --daemon. That is why it is necessary to
+  ;; wait until the frame is created to reload the complete theme.
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions (lambda (frame)
+          (when (eq (length (frame-list)) 2)
+              (progn
+                (select-frame frame)
+                (m42/reload-theme)))))
+    (m42/reload-theme))
+#+END_SRC
+
+#+RESULTS:
+| (lambda (frame) (when (eq (length (frame-list)) 2) (progn (select-frame frame) (m42/reload-theme)))) | x-dnd-init-frame |
+
+** COMMENT Spacemacs light theme
+#+BEGIN_SRC emacs-lisp
+  (message "[init] Spacemacs theme")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; Getting the Spacemacs look.
+  ;; http://pragmaticemacs.com/emacs/get-that-spacemacs-look-without-spacemacs/
+  (use-package spacemacs-theme
+   :ensure t
+   :no-require t
+   :init
+     (setq spacemacs-theme-org-agenda-height nil)
+     (setq spacemacs-theme-org-height nil)
+     (setq spacemacs-theme-comment-italic t)
+     )
+
+  ;; The function that loads the entire theme. It first loads spacemacs, then
+  ;; applies the face preferences.
+  (defun m42/reload-theme ()
+    (interactive)
+    (setq default "#cfcecd")
+    (load-theme 'spacemacs-dark 1)
+    
+    ;; Colors
+    (setq color/space-comment "#1e757f")
+    (setq color/space-comment "#3E8991")
+    (setq color/space-block "#827591")
+
+    ;; More contrast for the default font.
+    (set-face-attribute 'default nil :foreground "#cfcecd")
+
+    ;; Comments and docs should share font
+    (set-face-attribute 'font-lock-doc-face nil :foreground color/space-comment)
+    (set-face-attribute 'font-lock-comment-face nil :foreground color/space-comment)
+    
+    ;; Standard org-mode faces.
+    (set-face-attribute 'org-document-title nil :underline nil :height 1.0 :foreground "#4f97d7")
+    (set-face-attribute 'org-document-info nil :underline nil :height 1.0 :foreground "#4f97d7")
+    (set-face-attribute 'org-document-info-keyword nil :underline nil :height 1.0 :foreground color/space-block)
+    (set-face-attribute 'org-special-keyword nil :foreground color/space-block) 
+    (set-face-attribute 'org-meta-line nil :foreground color/space-block) 
+    (set-face-attribute 'org-link nil :inherit 'link :weight 'normal :underline nil)
+    (set-face-attribute 'org-todo nil :foreground "#ba6328")
+    (set-face-attribute 'org-done nil :foreground "#5e9b20")
+    (set-face-attribute 'org-date nil :foreground color/space-comment)
+    (set-face-attribute 'org-priority nil :foreground "#ba6328" :weight 'normal)
+    (set-face-attribute 'org-tag nil :foreground color/space-block)
+    (set-face-attribute 'org-verbatim nil :foreground "#979797")
+    (set-face-attribute 'org-table nil :background "#292b2e")
+    (set-face-attribute 'org-block-begin-line nil :background "#292b2e")
+    (set-face-attribute 'org-block-end-line nil :background "#292b2e")
+
+    ;; Org agenda faces
+    (set-face-attribute 'org-habit-ready-future-face nil :background "#5e9b20")
+    (set-face-attribute 'org-habit-ready-face nil :background "#5e9b20")
+    (set-face-attribute 'org-habit-overdue-future-face nil :background "#ba6328")
+    (set-face-attribute 'org-habit-overdue-face nil :background "#ba6328")
+    (set-face-attribute 'org-agenda-date-today nil :foreground "#7590db")
+    (set-face-attribute 'org-agenda-date-today nil :inherit 'org-agenda-date :weight 'ultrabold :slant 'normal :underline nil)
+    (set-face-attribute 'org-agenda-date-weekend nil :weight 'normal)
+    (set-face-attribute 'org-scheduled nil :foreground "#2d9574")
+    (set-face-attribute 'org-agenda-calendar-event nil :foreground "#2d9574")
+  
+    ;; Org mode levels.
+    (set-face-attribute 'org-level-1 nil :weight 'normal :foreground "#4f97d7"); :foreground "#d08770"
+    (set-face-attribute 'org-level-2 nil :weight 'normal :foreground "#5e81ac")
+    (set-face-attribute 'org-level-3 nil :weight 'normal :foreground "#81a1c1"); :foreground "#a3be8c"
+    (set-face-attribute 'org-level-4 nil :weight 'normal :foreground "#88c0d0")
+    (set-face-attribute 'org-level-5 nil :weight 'normal :foreground "#8fbcbb")
+    (set-face-attribute 'org-level-6 nil :weight 'normal :foreground "#b48ead")
+    (set-face-attribute 'org-level-7 nil :weight 'normal :foreground "#a3be8c")
+    (set-face-attribute 'org-level-8 nil :weight 'normal :foreground "#b3be8c")
+
+    ;; Neotree arrow
+    (set-face-attribute 'neo-expand-btn-face nil :foreground "#5e81ac")
+  )
+
+  ;; I have a problem with this theme: =unspecified-background= is an error I
+  ;; get if I try to use it with emacs --daemon. That is why it is necessary to
+  ;; wait until the frame is created to reload the complete theme.
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions (lambda (frame)
+          (when (eq (length (frame-list)) 2)
+              (progn
+                (select-frame frame)
+                (m42/reload-theme)))))
+    (m42/reload-theme))
+#+END_SRC
+
+#+RESULTS:
+| (lambda (frame) (when (eq (length (frame-list)) 2) (progn (select-frame frame) (m42/reload-theme)))) | (lambda (frame) (if (eq (length (frame-list)) 2) (progn (progn (select-frame frame) (m42/reload-theme))))) | x-dnd-init-frame |
+
+** COMMENT Minimal theme
+#+BEGIN_SRC emacs-lisp
+(load-file "~/.emacs.d/minimal-light-theme.el")
+(load-theme 'minimal-light 1)
+#+END_SRC
+
+** COMMENT dict-replace
+My dict-replace package. I am no longer using it.
+
+#+BEGIN_SRC emacs-lisp
+  ;(load-file "~/.emacs.d/dict-replace.el")
+  ;(global-set-key (kbd "<f5>") 'dict-translate)
+#+END_SRC
+
+** COMMENT God-mode
+#+BEGIN_SRC emacs-lisp
+(use-package god-mode
+  :ensure t)
+(global-set-key (kbd "<escape>") 'god-mode-all)
+#+END_SRC
+
+*** Change cursor style to indicate mode
+#+BEGIN_SRC emacs-lisp
+(defun my-update-cursor ()
+  (setq cursor-type (if (or god-local-mode buffer-read-only)
+                        '(hbar . 20)
+                      'box)))
+
+(add-hook 'god-mode-enabled-hook 'my-update-cursor)
+(add-hook 'god-mode-disabled-hook 'my-update-cursor)
+#+END_SRC
+
+** COMMENT Evil
+Use Emacs keybindings by default. Change to Vi keybindings using =C-z=.
+Spaceline is colored in blue or orange depending on the current mode.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil
+    :ensure t
+    :init 
+      (evil-mode 1)
+      (global-undo-tree-mode 0)
+      (evil-emacs-state)
+    :config
+      (setq evil-default-state 'emacs))
+#+END_SRC
+
+Escape is useful in evil mode, not that much in emacs mode. This works
+in Emacs mode but does not affect (apparently?) evil mode.
+
+#+BEGIN_SRC emacs-lisp
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+#+END_SRC
+
+** COMMENT Xah fly keys
+#+BEGIN_SRC emacs-lisp
+(use-package xah-fly-keys
+  :ensure t
+  :config 
+    (xah-fly-keys-set-layout "qwerty")
+    (xah-fly-keys 1))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+** COMMENT EXWM
+Window manager on Emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package exwm
+   :ensure t)
+
+  (use-package exwm-edit
+   :ensure t)
+
+  (require 'exwm-config)
+  (exwm-config-default)
+#+END_SRC
+
+*** Desktop-environment
+#+BEGIN_SRC emacs-lisp
+(use-package desktop-environment
+  :ensure t)
+(desktop-environment-mode)
+#+END_SRC
+
+*** Executing programs
+
+#+BEGIN_SRC emacs-lisp
+;; Firefox
+(exwm-input-set-key (kbd "s-f") 
+  (lambda () 
+    (interactive)
+    (start-process-shell-command "firefox" nil "firefox")))
+;; Spotify
+(exwm-input-set-key (kbd "s-s") 
+  (lambda () 
+    (interactive)
+    (start-process-shell-command "spotify" nil "spotify")))
+;; Nemo
+(exwm-input-set-key (kbd "s-n")
+  (lambda () 
+    (interactive)
+    (start-process-shell-command "nemo" nil "nemo")))
+#+END_SRC
+
+** COMMENT Engine-mode
+[[https://github.com/hrs/engine-mode][Engine mode]] allows us to use a search engine directly on Emacs. It binds the different 
+search engines to =C-x / ?=, where =?= is a char representing the engine.
+
+#+BEGIN_SRC emacs-lisp
+(use-package engine-mode
+  :ensure t)
+
+(defengine duckduckgo
+  "https://duckduckgo.com/?q=%s"
+  :keybinding "d")
+(defengine github
+  "https://github.com/search?ref=simplesearch&q=%s"
+  :keybinding "g")
+(defengine google
+  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
+(defengine rfcs
+  "http://pretty-rfc.herokuapp.com/search?q=%s")
+(defengine stack-overflow
+  "https://stackoverflow.com/search?q=%s"
+  :keybinding "s")
+(defengine wikipedia
+  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+  :keybinding "w")
+(defengine wiktionary
+  "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
+
+(engine-mode t)
+#+END_SRC
+** COMMENT Hydra
+#+BEGIN_SRC emacs-lisp
+(use-package hydra :ensure t)
+#+END_SRC
+
+*** COMMENT Windows hydra
+From
+
+ * https://oremacs.com/2015/01/29/more-hydra-goodness/
+ * https://irreal.org/blog/?p=3724
+
+#+BEGIN_SRC emacs-lisp
+(defun hydra-universal-argument (arg)
+  (interactive "P")
+  (setq prefix-arg (if (consp arg)
+                       (list (* 4 (car arg)))
+                     (if (eq arg '-)
+                         (list -4)
+                       '(4)))))
+
+(defhydra hydra-window (:color red) "window"
+  ("h" windmove-left)
+  ("j" windmove-down)
+  ("k" windmove-up)
+  ("l" windmove-right)
+  ("x" (lambda ()
+    (interactive)
+    (split-window-right)
+    (windmove-right))
+    "vert")
+  ("y" (lambda ()
+    (interactive)
+    (split-window-below)
+    (windmove-down))
+    "horz")
+  ("o" delete-other-windows "one" :color blue)
+  ("a" ace-window "ace")
+  ("s" ace-swap-window "swap")
+  ("d" ace-delete-window "del")
+  ("i" ace-maximize-window "ace-one" :color blue)
+  ("b" ido-switch-buffer "buf")
+  ("m" headlong-bookmark-jump "bmk")
+  ("g" magit-status "magit" :color blue)
+  ("q" nil "cancel"))
+#+END_SRC
+
+*** COMMENT Hydras for elfeed
+https://cestlaz.github.io/posts/using-emacs-30-elfeed-2/
+
+#+BEGIN_SRC emacs-lisp
+(defhydra mz/hydra-elfeed ()
+   "filter"
+   ("a" (elfeed-search-set-filter "@6-months-ago") "All")
+   ("e" (elfeed-search-set-filter "@6-months-ago +emacs") "emacs")
+   ("m" (elfeed-search-set-filter "@6-months-ago +math") "math")
+   ("s" (elfeed-search-set-filter "@6-months-ago +stack") "stack overflow")
+   ("r" (elfeed-search-set-filter "@6-months-ago +rational") "rational")
+   ("h" (elfeed-search-set-filter "@6-months-ago +health") "health")
+   ("c" (elfeed-search-set-filter "@6-months-ago +computer") "computer")
+   ("w" (elfeed-search-set-filter "@6-months-ago +humour") "webcomics")
+   ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
+   ("Q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
+   ("q" nil "quit" :color blue)
+   )
+#+END_SRC
+
+** COMMENT Internet
+#+BEGIN_SRC emacs-lisp
+(defun m42/wifi-off ()
+  (interactive)
+  (shell-command "nmcli r wifi off"))
+(defun m42/wifi-on ()
+  (interactive)
+  (shell-command "nmcli r wifi on"))
+#+END_SRC
+** COMMENT Pomodoro+orgnoter+wifioff
+#+BEGIN_SRC emacs-lisp
+(defun m42/pomodoro ()
+  (interactive)
+;  (org-noter)
+  (org-clock-in)
+  (m42/wifi-off)
+  )
+(defun m42/pomodoro-end ()
+  (interactive)
+  (org-clock-out)
+  (m42/wifi-on)
+  )
+#+END_SRC
+
+** COMMENT Ledger
+#+BEGIN_SRC emacs-lisp
+(use-package ledger-mode :ensure t)
+#+END_SRC
+
+** COMMENT Mastodon
+[[https://en.wikipedia.org/wiki/Mastodon_(software)][Mastodon]] is a free software federated social network. A specific
+[[https://github.com/jdenen/mastodon.el][mastodon-mode]] was written by Johnson Denen (@jdenen).
+
+#+BEGIN_SRC emacs-lisp
+(use-package mastodon
+  :config (setq mastodon-instance-url "https://mastodon.social")
+  :ensure t)
+#+END_SRC
+
+** COMMENT Stackoverflow
+#+BEGIN_SRC emacs-lisp
+(use-package sx
+  :ensure t
+  :config
+  (bind-keys :prefix "C-c s"
+             :prefix-map my-sx-map
+             :prefix-docstring "Global keymap for SX."
+             ("q" . sx-tab-all-questions)
+             ("i" . sx-inbox)
+             ("o" . sx-open-link)
+             ("u" . sx-tab-unanswered-my-tags)
+             ("a" . sx-ask)
+             ("s" . sx-search)))
+#+END_SRC
+
+** COMMENT Wikipedia
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package mediawiki
+  ;;   :ensure t)
+
+  ;; (setq mediawiki-site-alist
+  ;;       (append '(("ArchWiki" "https://wiki.archlinux.org/" "username" "password" "Main page"))
+  ;;               mediawiki-site-alist))
+#+END_SRC
+
+** COMMENT Yankpad
+[[https://github.com/Kungsgeten/yankpad][Yankpad]] provides a simpler way of managing snippets within an
+org-mode file. Snippets are stored in the =yankpad-file=, which
+in my case is [[file:yankpad.org][this]] file.
+
+ * Snippets can be inserted with =yankpad-insert=.
+ * Current category of snippets can be set with =yankpad-capture=.
+ * Snippets can be added to the current category using
+   =yankpad-capture=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yankpad
+    :ensure t
+    :defer 10
+    :init (setq yankpad-file "~/.emacs.d/yankpad.org")
+    :bind (("M-ñ" . yankpad-insert))
+  )
+#+END_SRC
+** COMMENT writegood-mode
+#+BEGIN_SRC emacs-lisp
+(use-package writegood-mode
+  :ensure t)
+(global-set-key "\C-cg" 'writegood-mode)
+#+END_SRC
+
+#+RESULTS:
+: writegood-mode
+
+** COMMENT Google translate
+#+BEGIN_SRC emacs-lisp
+;; (use-package google-translate
+;;   :ensure t)
+
+;; (require 'google-translate)
+;; (require 'google-translate-default-ui)
+;; (global-set-key "\C-ct" 'google-translate-at-point)
+;; (global-set-key "\C-cT" 'google-translate-query-translate)
+
+;; (setq google-translate-default-source-language "en")
+;; (setq google-translate-default-target-language "es")
+#+END_SRC
+
+** COMMENT Pronounce word
+Pronounces an English word using the howjsay dictionary.
+
+#+BEGIN_SRC emacs-lisp
+(defun mroman42/pronounce (word)
+  (interactive)
+  (start-process-shell-command "howjsay" nil 
+    (concat "mplayer " "https://www.howjsay.com/mp3/" word ".mp3")))
+#+END_SRC
+
+** COMMENT crux-openwith
+#+BEGIN_SRC emacs-lisp
+(use-package crux
+  :ensure t
+  :bind (("C-c o" . crux-open-with))
+  )
+#+END_SRC
+
+** COMMENT Fira mono
+Uses Fira as default font.
+
+#+BEGIN_SRC emacs-lisp
+; Fira mono
+;(add-to-list 'default-frame-alist '(font . "Fira Mono-10" ))
+;(set-face-attribute 'default t :font "Fira Mono-10" )
+;(set-default-font "Fira Mono")
+#+END_SRC
+
+** COMMENT Fira code
+https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
+
+#+BEGIN_SRC emacs-lisp
+  ;; This works when using emacs --daemon + emacsclient
+  (add-hook 'after-make-frame-functions (lambda (frame) (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")))
+  ;; This works when using emacs without server/client
+  (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+   ; https://github.com/ekaschalk/.spacemacs.d/blob/master/layers/display/local/pretty-fonts/pretty-fonts.el
+   ;;; API
+
+   ;;;###autoload
+   (defun pretty-fonts-set-fontsets (CODE-FONT-ALIST)
+     "Utility to associate many unicode points with specified fonts."
+     (--each CODE-FONT-ALIST
+       (-let (((font . codes) it))
+         (--each codes
+           (set-fontset-font t `(,it . ,it) font)))))
+
+   ;;;###autoload
+   (defun pretty-fonts--add-kwds (FONT-LOCK-ALIST)
+     "Exploits `font-lock-add-keywords' to apply regex-unicode replacements."
+     (font-lock-add-keywords
+      nil (--map (-let (((rgx uni-point) it))
+                  `(,rgx (0 (progn
+                              (compose-region
+                               (match-beginning 1) (match-end 1)
+                               ,(concat "\t" (list uni-point)))
+                              nil))))
+                FONT-LOCK-ALIST)))
+
+   ;;;###autoload
+   (defmacro pretty-fonts-set-kwds (FONT-LOCK-HOOKS-ALIST)
+     "Set regex-unicode replacements to many modes."
+     `(--each ,FONT-LOCK-HOOKS-ALIST
+        (-let (((font-locks . mode-hooks) it))
+          (--each mode-hooks
+            (add-hook it (-partial 'pretty-fonts--add-kwds
+                                   (symbol-value font-locks)))))))
+
+   ;;; Fira Font
+
+   (defconst pretty-fonts-fira-font
+     '(;; OPERATORS
+       ;; Pipes
+       ("\\(<|\\)" #Xe14d) ("\\(<>\\)" #Xe15b) ("\\(<|>\\)" #Xe14e) ("\\(|>\\)" #Xe135)
+
+       ;; Brackets
+       ("\\(<\\*\\)" #Xe14b) ("\\(<\\*>\\)" #Xe14c) ("\\(\\*>\\)" #Xe104)
+       ("\\(<\\$\\)" #Xe14f) ("\\(<\\$>\\)" #Xe150) ("\\(\\$>\\)" #Xe137)
+       ("\\(<\\+\\)" #Xe155) ("\\(<\\+>\\)" #Xe156) ("\\(\\+>\\)" #Xe13a)
+
+       ;; Equality
+       ("\\(!=\\)" #Xe10e) ("\\(!==\\)"         #Xe10f) ("\\(=/=\\)" #Xe143)
+       ("\\(/=\\)" #Xe12c) ("\\(/==\\)"         #Xe12d)
+       ("\\(===\\)"#Xe13d) ("[^!/]\\(==\\)[^>]" #Xe13c)
+
+       ;; Equality Special
+       ("\\(||=\\)"  #Xe133) ("[^|]\\(|=\\)" #Xe134)
+       ("\\(~=\\)"   #Xe166)
+       ("\\(\\^=\\)" #Xe136)
+       ("\\(=:=\\)"  #Xe13b)
+
+       ;; Comparisons
+       ("\\(<=\\)" #Xe141) ("\\(>=\\)" #Xe145)
+       ("\\(</\\)" #Xe162) ("\\(</>\\)" #Xe163)
+
+       ;; Shifts
+       ("[^-=]\\(>>\\)" #Xe147) ("\\(>>>\\)" #Xe14a)
+       ("[^-=]\\(<<\\)" #Xe15c) ("\\(<<<\\)" #Xe15f)
+
+       ;; Dots
+       ("\\(\\.-\\)"    #Xe122) ("\\(\\.=\\)" #Xe123)
+       ("\\(\\.\\.<\\)" #Xe125)
+
+       ;; Hashes
+       ("\\(#{\\)"  #Xe119) ("\\(#(\\)"   #Xe11e) ("\\(#_\\)"   #Xe120)
+       ("\\(#_(\\)" #Xe121) ("\\(#\\?\\)" #Xe11f) ("\\(#\\[\\)" #Xe11a)
+
+       ;; REPEATED CHARACTERS
+       ;; 2-Repeats
+       ("\\(||\\)" #Xe132)
+       ("\\(!!\\)" #Xe10d)
+       ("\\(%%\\)" #Xe16a)
+       ("\\(&&\\)" #Xe131)
+
+       ;; 2+3-Repeats
+       ("\\(##\\)"       #Xe11b) ("\\(###\\)"         #Xe11c) ("\\(####\\)" #Xe11d)
+       ("\\(--\\)"       #Xe111) ("\\(---\\)"         #Xe112)
+       ("\\({-\\)"       #Xe108) ("\\(-}\\)"          #Xe110)
+       ("\\(\\\\\\\\\\)" #Xe106) ("\\(\\\\\\\\\\\\\\)" #Xe107)
+       ("\\(\\.\\.\\)"   #Xe124) ("\\(\\.\\.\\.\\)"   #Xe126)
+       ("\\(\\+\\+\\)"   #Xe138) ("\\(\\+\\+\\+\\)"   #Xe139)
+       ("\\(//\\)"       #Xe12f) ("\\(///\\)"         #Xe130)
+       ("\\(::\\)"       #Xe10a) ("\\(:::\\)"         #Xe10b)
+
+       ;; ARROWS
+       ;; Direct
+       ("[^-]\\(->\\)" #Xe114) ("[^=]\\(=>\\)" #Xe13f)
+       ("\\(<-\\)"     #Xe152)
+       ("\\(-->\\)"    #Xe113) ("\\(->>\\)"    #Xe115)
+       ("\\(==>\\)"    #Xe13e) ("\\(=>>\\)"    #Xe140)
+       ("\\(<--\\)"    #Xe153) ("\\(<<-\\)"    #Xe15d)
+       ("\\(<==\\)"    #Xe158) ("\\(<<=\\)"    #Xe15e)
+       ("\\(<->\\)"    #Xe154) ("\\(<=>\\)"    #Xe159)
+
+       ;; Branches
+       ("\\(-<\\)"  #Xe116) ("\\(-<<\\)" #Xe117)
+       ("\\(>-\\)"  #Xe144) ("\\(>>-\\)" #Xe148)
+       ("\\(=<<\\)" #Xe142) ("\\(>>=\\)" #Xe149)
+       ("\\(>=>\\)" #Xe146) ("\\(<=<\\)" #Xe15a)
+
+       ;; Squiggly
+       ("\\(<~\\)" #Xe160) ("\\(<~~\\)" #Xe161)
+       ("\\(~>\\)" #Xe167) ("\\(~~>\\)" #Xe169)
+       ("\\(-~\\)" #Xe118) ("\\(~-\\)"  #Xe165)
+
+       ;; MISC
+       ("\\(www\\)"                   #Xe100)
+       ("\\(<!--\\)"                  #Xe151)
+       ("\\(~@\\)"                    #Xe164)
+       ("[^<]\\(~~\\)"                #Xe168)
+       ("\\(\\?=\\)"                  #Xe127)
+       ("[^=]\\(:=\\)"                #Xe10c)
+       ("\\(/>\\)"                    #Xe12e)
+       ("[^\\+<>]\\(\\+\\)[^\\+<>]"   #Xe16d)
+       ("[^:=]\\(:\\)[^:=]"           #Xe16c)
+       ("\\(<=\\)"                    #Xe157))
+     "Fira font ligatures and their regexes")
+
+   (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+;(pretty-fonts-set-kwds
+;  '((pretty-fonts-fira-font prog-mode-hook org-mode-hook)))
+#+END_SRC
+** COMMENT Iosevka ligatures
+Iosevka-haskell must be installed.
+
+#+BEGIN_SRC emacs-lisp
+  ;; ;; https://gist.github.com/mrkgnao/49c7480e1df42405a36b7ab09fe87f3d
+
+  ;; ;; I use Spacemacs, so I put this in user-config
+  ;; ;; Note that the script above only generates the long list of pairs.
+  ;; ;; The surrounding code is stolen from the PragmataPro scripts floating around on Gist.
+
+  ;;   (setq prettify-symbols-unprettify-at-point 'right-edge)
+
+  ;;   (defun setup-iosevka-ligatures ()
+  ;;     (setq prettify-symbols-alist
+  ;;           (append prettify-symbols-alist '(
+
+  ;; ;; Double-ended hyphen arrows ----------------
+  ;; ("<->" . #Xe100)
+  ;; ("<-->" . #Xe101)
+  ;; ("<--->" . #Xe102)
+  ;; ("<---->" . #Xe103)
+  ;; ("<----->" . #Xe104)
+
+  ;; ;; Double-ended equals arrows ----------------
+  ;; ("<=>" . #Xe105)
+  ;; ("<==>" . #Xe106)
+  ;; ("<===>" . #Xe107)
+  ;; ("<====>" . #Xe108)
+  ;; ("<=====>" . #Xe109)
+
+  ;; ;; Double-ended asterisk operators ----------------
+  ;; ("<**>" . #Xe10a)
+  ;; ("<***>" . #Xe10b)
+  ;; ("<****>" . #Xe10c)
+  ;; ("<*****>" . #Xe10d)
+
+  ;; ;; HTML comments ----------------
+  ;; ("<!--" . #Xe10e)
+  ;; ("<!---" . #Xe10f)
+
+  ;; ;; Three-char ops with discards ----------------
+  ;; ("<$" . #Xe110)
+  ;; ("<$>" . #Xe111)
+  ;; ("$>" . #Xe112)
+  ;; ("<." . #Xe113)
+  ;; ("<.>" . #Xe114)
+  ;; (".>" . #Xe115)
+  ;; ("<*" . #Xe116)
+  ;; ("<*>" . #Xe117)
+  ;; ("*>" . #Xe118)
+  ;; ("<\\" . #Xe119)
+  ;; ("<\\>" . #Xe11a)
+  ;; ("\\>" . #Xe11b)
+  ;; ("</" . #Xe11c)
+  ;; ("</>" . #Xe11d)
+  ;; ("/>" . #Xe11e)
+  ;; ("<\"" . #Xe11f)
+  ;; ("<\">" . #Xe120)
+  ;; ("\">" . #Xe121)
+  ;; ("<'" . #Xe122)
+  ;; ("<'>" . #Xe123)
+  ;; ("'>" . #Xe124)
+  ;; ("<^" . #Xe125)
+  ;; ("<^>" . #Xe126)
+  ;; ("^>" . #Xe127)
+  ;; ("<&" . #Xe128)
+  ;; ("<&>" . #Xe129)
+  ;; ("&>" . #Xe12a)
+  ;; ("<%" . #Xe12b)
+  ;; ("<%>" . #Xe12c)
+  ;; ("%>" . #Xe12d)
+  ;; ("<@" . #Xe12e)
+  ;; ("<@>" . #Xe12f)
+  ;; ("@>" . #Xe130)
+  ;; ("<#" . #Xe131)
+  ;; ("<#>" . #Xe132)
+  ;; ("#>" . #Xe133)
+  ;; ("<+" . #Xe134)
+  ;; ("<+>" . #Xe135)
+  ;; ("+>" . #Xe136)
+  ;; ("<-" . #Xe137)
+  ;; ("<->" . #Xe138)
+  ;; ("->" . #Xe139)
+  ;; ("<!" . #Xe13a)
+  ;; ("<!>" . #Xe13b)
+  ;; ("!>" . #Xe13c)
+  ;; ("<?" . #Xe13d)
+  ;; ("<?>" . #Xe13e)
+  ;; ("?>" . #Xe13f)
+  ;; ("<|" . #Xe140)
+  ;; ("<|>" . #Xe141)
+  ;; ("|>" . #Xe142)
+  ;; ("<:" . #Xe143)
+  ;; ("<:>" . #Xe144)
+  ;; (":>" . #Xe145)
+
+  ;; ;; Colons ----------------
+  ;; ("::" . #Xe146)
+  ;; (":::" . #Xe147)
+  ;; ("::::" . #Xe148)
+
+  ;; ;; Arrow-like operators ----------------
+  ;; ("->" . #Xe149)
+  ;; ("->-" . #Xe14a)
+  ;; ("->--" . #Xe14b)
+  ;; ("->>" . #Xe14c)
+  ;; ("->>-" . #Xe14d)
+  ;; ("->>--" . #Xe14e)
+  ;; ("->>>" . #Xe14f)
+  ;; ("->>>-" . #Xe150)
+  ;; ("->>>--" . #Xe151)
+  ;; ("-->" . #Xe152)
+  ;; ("-->-" . #Xe153)
+  ;; ("-->--" . #Xe154)
+  ;; ("-->>" . #Xe155)
+  ;; ("-->>-" . #Xe156)
+  ;; ("-->>--" . #Xe157)
+  ;; ("-->>>" . #Xe158)
+  ;; ("-->>>-" . #Xe159)
+  ;; ("-->>>--" . #Xe15a)
+  ;; (">-" . #Xe15b)
+  ;; (">--" . #Xe15c)
+  ;; (">>-" . #Xe15d)
+  ;; (">>--" . #Xe15e)
+  ;; (">>>-" . #Xe15f)
+  ;; (">>>--" . #Xe160)
+  ;; ("=>" . #Xe161)
+  ;; ("=>=" . #Xe162)
+  ;; ("=>==" . #Xe163)
+  ;; ("=>>" . #Xe164)
+  ;; ("=>>=" . #Xe165)
+  ;; ("=>>==" . #Xe166)
+  ;; ("=>>>" . #Xe167)
+  ;; ("=>>>=" . #Xe168)
+  ;; ("=>>>==" . #Xe169)
+  ;; ("==>" . #Xe16a)
+  ;; ("==>=" . #Xe16b)
+  ;; ("==>==" . #Xe16c)
+  ;; ("==>>" . #Xe16d)
+  ;; ("==>>=" . #Xe16e)
+  ;; ("==>>==" . #Xe16f)
+  ;; ("==>>>" . #Xe170)
+  ;; ("==>>>=" . #Xe171)
+  ;; ("==>>>==" . #Xe172)
+  ;; (">=" . #Xe173)
+  ;; (">==" . #Xe174)
+  ;; (">>=" . #Xe175)
+  ;; (">>==" . #Xe176)
+  ;; (">>>=" . #Xe177)
+  ;; (">>>==" . #Xe178)
+  ;; ("<-" . #Xe179)
+  ;; ("-<-" . #Xe17a)
+  ;; ("--<-" . #Xe17b)
+  ;; ("<<-" . #Xe17c)
+  ;; ("-<<-" . #Xe17d)
+  ;; ("--<<-" . #Xe17e)
+  ;; ("<<<-" . #Xe17f)
+  ;; ("-<<<-" . #Xe180)
+  ;; ("--<<<-" . #Xe181)
+  ;; ("<--" . #Xe182)
+  ;; ("-<--" . #Xe183)
+  ;; ("--<--" . #Xe184)
+  ;; ("<<--" . #Xe185)
+  ;; ("-<<--" . #Xe186)
+  ;; ("--<<--" . #Xe187)
+  ;; ("<<<--" . #Xe188)
+  ;; ("-<<<--" . #Xe189)
+  ;; ("--<<<--" . #Xe18a)
+  ;; ("-<" . #Xe18b)
+  ;; ("--<" . #Xe18c)
+  ;; ("-<<" . #Xe18d)
+  ;; ("--<<" . #Xe18e)
+  ;; ("-<<<" . #Xe18f)
+  ;; ("--<<<" . #Xe190)
+  ;; ("<=" . #Xe191)
+  ;; ("=<=" . #Xe192)
+  ;; ("==<=" . #Xe193)
+  ;; ("<<=" . #Xe194)
+  ;; ("=<<=" . #Xe195)
+  ;; ("==<<=" . #Xe196)
+  ;; ("<<<=" . #Xe197)
+  ;; ("=<<<=" . #Xe198)
+  ;; ("==<<<=" . #Xe199)
+  ;; ("<==" . #Xe19a)
+  ;; ("=<==" . #Xe19b)
+  ;; ("==<==" . #Xe19c)
+  ;; ("<<==" . #Xe19d)
+  ;; ("=<<==" . #Xe19e)
+  ;; ("==<<==" . #Xe19f)
+  ;; ("<<<==" . #Xe1a0)
+  ;; ("=<<<==" . #Xe1a1)
+  ;; ("==<<<==" . #Xe1a2)
+  ;; ("=<" . #Xe1a3)
+  ;; ("==<" . #Xe1a4)
+  ;; ("=<<" . #Xe1a5)
+  ;; ("==<<" . #Xe1a6)
+  ;; ("=<<<" . #Xe1a7)
+  ;; ("==<<<" . #Xe1a8)
+
+  ;; ;; Monadic operators ----------------
+  ;; (">=>" . #Xe1a9)
+  ;; (">->" . #Xe1aa)
+  ;; (">-->" . #Xe1ab)
+  ;; (">==>" . #Xe1ac)
+  ;; ("<=<" . #Xe1ad)
+  ;; ("<-<" . #Xe1ae)
+  ;; ("<--<" . #Xe1af)
+  ;; ("<==<" . #Xe1b0)
+
+  ;; ;; Composition operators ----------------
+  ;; (">>" . #Xe1b1)
+  ;; (">>>" . #Xe1b2)
+  ;; ("<<" . #Xe1b3)
+  ;; ("<<<" . #Xe1b4)
+
+  ;; ;; Lens operators ----------------
+  ;; (":+" . #Xe1b5)
+  ;; (":-" . #Xe1b6)
+  ;; (":=" . #Xe1b7)
+  ;; ("+:" . #Xe1b8)
+  ;; ("-:" . #Xe1b9)
+  ;; ("=:" . #Xe1ba)
+  ;; ("=^" . #Xe1bb)
+  ;; ("=+" . #Xe1bc)
+  ;; ("=-" . #Xe1bd)
+  ;; ("=*" . #Xe1be)
+  ;; ("=/" . #Xe1bf)
+  ;; ("=%" . #Xe1c0)
+  ;; ("^=" . #Xe1c1)
+  ;; ("+=" . #Xe1c2)
+  ;; ("-=" . #Xe1c3)
+  ;; ("*=" . #Xe1c4)
+  ;; ("/=" . #Xe1c5)
+  ;; ("%=" . #Xe1c6)
+
+  ;; ;; Logical ----------------
+  ;; ("/\\" . #Xe1c7)
+  ;; ("\\/" . #Xe1c8)
+
+  ;; ;; Semigroup/monoid operators ----------------
+  ;; ("<>" . #Xe1c9)
+  ;; ("<+" . #Xe1ca)
+  ;; ("<+>" . #Xe1cb)
+  ;; ("+>" . #Xe1cc)
+  ;; ))))
+
+  ;;   (defun refresh-pretty ()
+  ;;     (prettify-symbols-mode -1)
+  ;;     (prettify-symbols-mode +1))
+
+  ;;   ;; Hooks for modes in which to install the Iosevka ligatures
+  ;;   (mapc (lambda (hook)
+  ;;           (add-hook hook (lambda () (setup-iosevka-ligatures) (refresh-pretty))))
+  ;;         '(text-mode-hook
+  ;;           prog-mode-hook
+  ;;           haskell-mode-hook))
+  ;; (global-prettify-symbols-mode +1)
+#+END_SRC
+
+** COMMENT Doom-one theme
+#+BEGIN_SRC emacs-lisp
+(use-package doom-themes
+  :ensure t
+  :init (load-theme 'doom-one t))
+#+END_SRC
+
+#+RESULTS:
+** COMMENT Tomorrow night
+#+BEGIN_SRC emacs-lisp
+(use-package base16-theme
+  :ensure t
+  :config
+  (load-theme 'base16-default-dark t))
+#+END_SRC
+
+** COMMENT Spacemacs theme
+#+BEGIN_SRC emacs-lisp
+ (use-package spacemacs-theme
+   :ensure t
+   :init
+   (load-theme 'spacemacs-dark t)
+   (setq spacemacs-theme-org-agenda-height nil)
+   (setq spacemacs-theme-org-height nil)
+   :config
+   (set-face-attribute 'org-level-1 nil :height 1.0)
+   (set-face-attribute 'org-level-2 nil :height 1.0)
+   (set-face-attribute 'org-level-3 nil :height 1.0)
+   (set-face-attribute 'org-scheduled-today nil :height 1.0)
+   (set-face-attribute 'org-agenda-date-today nil :height 1.1)
+   (set-face-attribute 'org-table nil :foreground "#008787")
+ )
+#+END_SRC
+** COMMENT Nord
+#+BEGIN_SRC emacs-lisp
+(use-package nord-theme :ensure t)
+(load-theme 'nord t)
+#+END_SRC
+** COMMENT Dracula
+#+BEGIN_SRC emacs-lisp
+(use-package dracula-theme
+  :ensure t)
+#+END_SRC
+
+** COMMENT Golden ratio
+#+BEGIN_SRC emacs-lisp
+ (use-package golden-ratio
+   :ensure t
+   :init
+     (golden-ratio-mode 1)
+   :config
+     (add-to-list 'golden-ratio-exclude-modes "agda2-mode")
+     (add-to-list 'golden-ratio-exclude-modes "compilation-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-goals-mode")
+     (add-to-list 'golden-ratio-exclude-modes "coq-response-mode")
+ )
+#+END_SRC
+
+** COMMENT Python
+Elpy support.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package elpy
+    :ensure t)
+  (elpy-enable)
+  (elpy-use-ipython)
+  (setq elpy-rpc-python-command "python2")
+#+END_SRC
+
+*** COMMENT Jupyter notebook
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+  :ensure t)
+#+END_SRC
+
+** COMMENT HAML
+HAML support.
+
+#+BEGIN_SRC emacs-lisp
+   (use-package haml-mode
+     :ensure t)
+
+   (add-hook 'haml-mode-hook
+             (lambda ()
+               (setq indent-tabs-mode nil)
+               (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+#+END_SRC
+
+** COMMENT org-expiry
+#+BEGIN_SRC emacs-lisp
+(use-package org-expiry
+  :ensure t)
+(setq org-expiry-inactive-timestamps t)
+#+END_SRC
+
+** COMMENT Tasks & To-read
+Following the advice of [[https://rafaelleru.github.io/2017/01/22/to_read_list_emacs/][@rafaelleru]].
+
+#+BEGIN_SRC emacs-lisp
+;  (defun m42/export-html-if-agenda()
+;    "Auto exports an html file"
+;    (when (equal buffer-file-name m42/links-file)
+;      (org-twbs-export-to-html)))
+;
+;  (add-hook 'after-save-hook 'm42/export-html-if-agenda)
+#+END_SRC
+
+** COMMENT org-drill-table
+#+BEGIN_SRC emacs-lisp
+;;; org-drill-table.el --- Generate drill cards from org tables
+
+;; Copyright (C) 2014 Chris Barrett
+
+;; Author: Chris Barrett <chris.d.barrett@me.com>
+;; Package-Requires: ((s "1.7.0") (dash "2.2.0") (cl-lib "0.3") (org "8.2") (emacs "24.1"))
+;; Version: 0.1.1
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Generate drill cards from org tables.
+
+;; org-drill requires individual headlines with the "drill" tag; creating these
+;; can be laborious and it is difficult to get an overview of your cards when
+;; the buffer is folded.
+
+;; This package provides a command, `org-drill-table-generate', that will
+;; generate drill cards based on an org-mode table in the current subtree. The
+;; cards will inserted under a new "Cards" heading in the current tree.
+
+;; For example, given the following org headline,
+
+;;    * Vocab
+;;    |-----------+---------+----------------|
+;;    | English   | Spanish | Example        |
+;;    |-----------+---------+----------------|
+;;    | Today     | Hoy     | Hoy es domingo |
+;;    | Yesterday | Ayer    |                |
+;;    | Tomorrow  | Mañana  |                |
+;;    |-----------+---------+----------------|
+
+;; invoking `org-drill-table-generate' will generate cards for each table row:
+
+;;    * Vocab
+;;    :PROPERTIES:
+;;    :DRILL_HEADING:
+;;    :DRILL_CARD_TYPE: twosided
+;;    :DRILL_INSTRUCTIONS: Translate the following word.
+;;    :END:
+;;    |-----------+---------+----------------|
+;;    | English   | Spanish | Example        |
+;;    |-----------+---------+----------------|
+;;    | Today     | Hoy     | Hoy es domingo |
+;;    | Yesterday | Ayer    |                |
+;;    | Tomorrow  | Mañana  |                |
+;;    |-----------+---------+----------------|
+;;    ** Cards
+;;    *** Today                                                          :drill:
+;;    :PROPERTIES:
+;;    :Drill_card_type: Twosided
+;;    :End:
+;;    Translate The Following Word.
+;;    **** English
+;;    Today
+;;    **** Spanish
+;;    HOY
+;;    **** Example
+;;    Hoy es domingo
+;;    *** Yesterday                                                      :drill:
+;;    :PROPERTIES:
+;;    :DRILL_CARD_TYPE: twosided
+;;    :END:
+;;    Translate the following word.
+;;    **** English
+;;    Yesterday
+;;    **** Spanish
+;;    Ayer
+;;    *** Tomorrow                                                       :drill:
+;;    :PROPERTIES:
+;;    :DRILL_CARD_TYPE: twosided
+;;    :END:
+;;    Translate the following word.
+;;    **** English
+;;    Tomorrow
+;;    **** Spanish
+;;    Mañana
+;;
+;; Note that there are several things happening here:
+;;   - Each column in the table is put on its own row if it's non-empty
+;;   - Instead of using the DRILL_HEADING property as a generic heading, the first element of each row is used as the heading
+
+;;
+;; If instead of using the words from the first column as the headings, you want to use the same string for each heading,
+;; (i.e. the old behavior) this can be done by specifying the DRILL_HEADING property
+;;
+;; `org-drill-table-generate' checks the existing list of cards so it does not
+;; add duplicates.
+
+;; This package provides an additional command, `org-drill-table-update', which
+;; can be added to `org-ctrl-c-ctrl-c-hook'.
+
+;;; Code:
+
+(require 'dash)
+(require 's)
+(require 'cl-lib)
+(require 'org)
+(require 'org-drill nil t)
+
+(defgroup org-drill-table nil
+  "Generate drill cards from org tables."
+  :group 'org
+  :prefix "org-drill-table")
+
+(defcustom org-drill-table-noexport-cards t
+  "When non-nil, apply :noexport: tag to generated Cards."
+  :group 'org-drill-table
+  :type 'boolean)
+
+;; -----------------------------------------------------------------------------
+
+;; Silence byte-compiler warning.
+(defvar org-drill-card-type-alist nil)
+
+
+(cl-defstruct (OrgDrillCard
+               (:constructor OrgDrillCard (heading type instructions subheadings)))
+  "Defines a card to generate for use with org-drill.
+
+  HEADING is the headline for the card.
+
+  TYPE is a string, which should be one of the valid values of
+  DRILL_CARD_TYPE.
+
+  INSTRUCTIONS is a short string describing how to complete this
+  card.
+
+  SUBHEADINGS is an alist of (\"header\" . \"body\")."
+  heading type instructions subheadings)
+
+(defun org-drill-table--drill-table-rows ()
+  "Extract the rows from the table at point.
+Return a list of rows, where each row a cons of the column name
+and the row value."
+  (cl-destructuring-bind
+      (header &rest body) (--remove (equal 'hline it) (org-table-to-lisp))
+    (->> body
+         (--map (-zip-with 'cons header it))
+         (--map (-remove (lambda (x) (string= "" (cdr x))) it)))))
+
+(defun org-drill-table--goto-table-in-subtree ()
+  "Move to the first table in the current subtree."
+  (let ((bound (save-excursion (outline-next-heading) (point))))
+    (search-forward-regexp (rx bol "|") bound t)))
+
+(defun org-drill-table--insert-card (card)
+  "Insert an OrgDrillCard CARD into the current buffer."
+  (insert (OrgDrillCard-heading card))
+  (org-set-tags-to ":drill:")
+  (goto-char (line-end-position))
+  (newline)
+  (org-set-property "DRILL_CARD_TYPE" (OrgDrillCard-type card))
+  (insert (OrgDrillCard-instructions card))
+  ;; Insert subheadings. Create a subheading for the first and use the same
+  ;; heading level for the rest.
+  (--each (-map-indexed 'cons (OrgDrillCard-subheadings card))
+    (cl-destructuring-bind (idx header . value) it
+      (if (zerop idx) (org-insert-subheading nil) (org-insert-heading))
+      (insert header)
+      (newline)
+      (insert value))))
+
+(defun org-drill-table--skip-props-and-schedule ()
+  "Move past the properties and schedule of the current subtree."
+  ;; Properties.
+  (-when-let (bounds (org-get-property-block))
+    (goto-char (cdr bounds))
+    (forward-line))
+  ;; Schedule.
+  (when (s-matches? "SCHEDULED" (buffer-substring (line-beginning-position)
+                                                  (line-end-position)))
+    (forward-line))
+  ;; Advance point if we're still on an org-heading. This is required because
+  ;; if the sub-heading has no properties or scheduled, then point won't move
+  (when (org-at-heading-p)
+    (forward-line)))
+
+(defun org-drill-table--subtree->card ()
+  "Convert an individual drill card at point to an OrgDrillCard."
+  (let ((heading (elt (org-heading-components) 4))
+        (type (org-entry-get (point) "DRILL_CARD_TYPE")))
+    (save-excursion
+      (save-restriction
+        (org-narrow-to-subtree)
+        (org-drill-table--skip-props-and-schedule)
+
+        ;; Instructions are the rest of the text up to the first child.
+        (let ((instructions
+               (s-trim
+                (buffer-substring-no-properties
+                 (point)
+                 (save-excursion
+                   (outline-next-heading)
+                   (1- (point)))))))
+
+          ;; Get an alist of headings to content.
+          (let (acc)
+            (while (outline-next-heading)
+              (let ((hd (elt (org-heading-components) 4))
+                    (content (save-restriction
+                               (org-narrow-to-subtree)
+                               (org-drill-table--skip-props-and-schedule)
+                               (s-trim (buffer-substring-no-properties (point) (point-max))))))
+                (setq acc (cons (cons hd content) acc))))
+
+            (OrgDrillCard heading type instructions (nreverse acc))))))))
+
+(defun org-drill-table--forward-heading-until-at-cards ()
+  "Move forward by headings at this level until the Cards heading is found."
+  (save-restriction
+    (org-narrow-to-subtree)
+    (unless (org-at-heading-p) (outline-next-heading))
+    (let ((moved? t)
+          (cards-heading-pos nil))
+      (while (and moved? (not cards-heading-pos))
+        (let ((before (point)))
+          (org-forward-heading-same-level nil t)
+          (setq moved? (/= before (point)))
+          (when (s-matches? (rx bol (+ "*") (+ space) "Cards")
+                            (buffer-substring (line-beginning-position)
+                                              (line-end-position)))
+            (setq cards-heading-pos (point)))))
+
+      cards-heading-pos)))
+
+(defun org-drill-table--goto-or-insert-cards-heading ()
+  "Move to the Cards heading for the current subtree.
+Create the heading if it does not exist."
+  (save-restriction
+    (org-narrow-to-subtree)
+    (let ((subtrees? (save-excursion (outline-next-heading)))
+          (found? (org-drill-table--forward-heading-until-at-cards)))
+      (unless found?
+        (goto-char (point-max))
+        (if subtrees? (org-insert-heading) (org-insert-subheading nil))
+        (insert "Cards")
+        (when org-drill-table-noexport-cards
+          (org-set-tags-to ":noexport:"))))
+    (goto-char (line-end-position))))
+
+(defun org-drill-table--existing-cards ()
+  "Parse the Cards subtree for existing drill cards.
+Return a list of OrgDrillCard."
+  (save-excursion
+    (when (org-drill-table--forward-heading-until-at-cards)
+      (save-restriction
+        (org-narrow-to-subtree)
+        (let (acc)
+          (while (outline-next-heading)
+            (setq acc (cons (org-drill-table--subtree->card) acc)))
+          (nreverse acc))))))
+
+(defun org-drill-table--table->cards (heading type instructions)
+  "Convert the drill-table tree at point to a list of OrgDrillCards. "
+  (--map (OrgDrillCard
+          (if (string= "" heading)
+              (cdr (car it)) heading)
+          type instructions it)
+         (org-drill-table--drill-table-rows)))
+
+(defun org-drill-table--get-or-read-prop (name read-fn)
+  "Get the value of property NAME for the headline at point.
+If the property is not set, read from the user using READ-FN."
+  (or (org-entry-get (point) name)
+      (let ((val (funcall read-fn)))
+        (org-entry-put (point) name val)
+        val)))
+
+;;;###autoload
+(defun org-drill-table-generate (heading type instructions)
+  "Use a table at the current heading to generate org-drill cards.
+
+HEADING is the title to use for each card.
+
+TYPE is a string, of one of the card types in `org-drill-card-type-alist'.
+
+INSTRUCTIONS is a string describing how to use the card."
+  (interactive
+   (list
+    (org-drill-table--get-or-read-prop
+     "DRILL_HEADING" (lambda () (read-string "Card heading: ")))
+    (org-drill-table--get-or-read-prop
+     "DRILL_CARD_TYPE"
+     (lambda ()
+       (completing-read "Type: "
+                        (-keep 'car org-drill-card-type-alist)
+                        nil
+                        t
+                        "twosided")))
+    (org-drill-table--get-or-read-prop
+     "DRILL_INSTRUCTIONS" (lambda () (read-string "Card instructions: ")))))
+
+  (unless (org-at-table-p)
+    (org-drill-table--goto-table-in-subtree))
+
+  (let* ((cards (org-drill-table--table->cards heading type instructions))
+         (existing (org-drill-table--existing-cards))
+         (new-cards (-difference cards existing)))
+    (save-excursion
+      (org-drill-table--goto-or-insert-cards-heading)
+      ;; Find only cards that have not been inserted.
+      (--each (-map-indexed 'cons new-cards)
+        ;; Insert each tree, retaining the current heading level.
+        (cl-destructuring-bind (idx . card) it
+          (org-insert-subheading nil)
+          (unless (zerop idx)
+            (org-promote-subtree)
+            (org-promote-subtree))
+
+          (org-drill-table--insert-card card))))
+
+    (let ((len (length new-cards)))
+
+      (if (zerop len)
+          (when (called-interactively-p nil)
+            (message "No new cards to insert"))
+        (org-align-all-tags)
+        (when (called-interactively-p nil)
+          (message "Inserted %s new card%s"
+                   len
+                   (if (= 1 len) "" "s")))))))
+
+;;;###autoload
+(defun org-drill-table-update ()
+  "Update an existing org drill table.
+Suitable for adding to `org-ctrl-c-ctrl-c-hook'."
+  (interactive "*")
+  (when (and (org-at-table-p)
+             (org-entry-get (point) "DRILL_HEADING"))
+    (call-interactively 'org-drill-table-generate)))
+
+;;;###autoload
+(defun org-drill-table-update-all ()
+  "Call `org-drill-table-update' on each table in the buffer."
+  (interactive "*")
+  (org-table-map-tables 'org-drill-table-update))
+
+(provide 'org-drill-table)
+
+;;; org-drill-table.el ends here
+#+END_SRC
+
+** COMMENT Pinta in org
+Creates an image using =imagemagick= and opens
+a =pinta= window to edit it.
+
+# It should be generalized to an editor-agnostic function,
+# not using pinta, but the given editor.
+
+#+BEGIN_SRC emacs-lisp
+  (setq pinta-dir "./images/")
+  (setq pinta-dimension "300x300")
+
+  (defun org-pinta (filename)
+    "Creates an image using pinta"
+    (interactive "sImage name: ")
+
+    (let ((file (concat pinta-dir "/" filename ".png")))
+      ; creates the image, opens pinta
+      (shell-command (concat "mkdir -p $(dirname " file ") && touch " file))
+      (shell-command (concat "convert -size " pinta-dimension " xc:white png24:" file))
+      (shell-command (concat "pinta " file))
+
+      ; inserts the image in the current buffer
+      (insert "#+begin_center")
+      (newline)
+      (insert "#+attr_latex: :width 50px")
+      (newline)
+      (insert (concat "[[" file "]]"))
+      (newline)
+      (insert "#+end_center")
+    )
+  )
+#+END_SRC
+
+#+begin_center
+#+attr_latex: :width 50px
+[[./pinta//painting.png]]
+#+end_center
+** COMMENT Calfw
+#+BEGIN_SRC emacs-lisp
+  ;; A nice calendar for Emacs.
+  (use-package calfw
+    :ensure t
+    :config
+      (setq cfw:org-overwrite-default-keybinding t)
+    )
+
+  (use-package calfw-org
+    :ensure t
+    )
+
+  (setq cfw:display-calendar-holidays nil)
+#+END_SRC
+
+** COMMENT Report without parts
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+           '("report-noparts"
+              "\\documentclass{report}"
+              ("\\chapter{%s}" . "\\chapter*{%s}")
+              ("\\section{%s}" . "\\section*{%s}")
+              ("\\subsection{%s}" . "\\subsection*{%s}")
+              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+
+** COMMENT Export all
+#+BEGIN_SRC emacs-lisp
+  ;; Exports all subtrees of a file into separate HTMLs.
+  (defun m42/org-export-all-html ()
+    "Export all subtrees that are *not* tagged with :noexport: to
+    separate files. Note that subtrees must have the
+    :EXPORT_FILE_NAME: property set to a unique value for this to
+    work properly."
+   (interactive)
+   (org-map-entries 
+      (lambda () 
+         (if (org-entry-get (point) "EXPORT_FILE_NAME") 
+           (funcall 'org-html-export-to-html nil t))) "-noexport" nil))
+
+#+END_SRC
+
+** COMMENT Default packages
+#+BEGIN_SRC emacs-lisp
+  ;; (setq org-latex-default-packages-alist
+  ;;   (quote
+  ;;     (("utf8x" "inputenc" t)
+  ;;      ("T1" "fontenc" t)
+  ;;      ("" "fixltx2e" nil)
+  ;;      ("" "graphicx" t)
+  ;;      ("" "grffile" t)
+  ;;      ("" "longtable" nil)
+  ;;      ("" "wrapfig" nil)
+  ;;      ("" "rotating" nil)
+  ;;      ("normalem" "ulem" t)
+  ;;      ("" "amsmath" t)
+  ;;      ("" "textcomp" t)
+  ;;      ("" "amssymb" t)
+  ;;      ("" "capt-of" nil)
+  ;;      ("colorlinks=true" "hyperref" nil))))
+#+END_SRC
+
+** COMMENT Zooming & scale
+Zooms latex image previews along with the text using =C-x C-+=.
+
+#+BEGIN_SRC emacs-lisp
+;  (defun update-org-latex-fragment-scale ()
+;    (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
+;      (plist-put org-format-latex-options :scale (* 1.2 text-scale-factor)))
+;  )
+;  (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
+#+END_SRC
+
+** COMMENT org-wiki
+#+BEGIN_SRC emacs-lisp
+  ;; The org-wiki package is installed in a different location.
+  (add-to-list 'load-path "~/.emacs.d/org-wiki")
+  (require 'org-wiki)
+  (setq org-wiki-location "~/org/wiki")
+#+END_SRC
+
+** COMMENT Zenburn+Wombat
+#+BEGIN_SRC emacs-lisp
+  ;; Uses the Zenburn color theme, which is a dark, low-contrast theme
+  ;; ported from Vim. It also loads the Wombat theme, also a dark theme
+  ;; ported from Vim. The result is a combination of the two that I have
+  ;; been unable to replicate in any other way.
+
+  ;; https://github.com/bbatsov/zenburn-emacs
+  ;; https://github.com/jasonblewis/color-theme-wombat
+
+  (use-package zenburn-theme :ensure t)
+  (load-theme 'zenburn t)
+  (load-theme 'wombat t)
+#+END_SRC
