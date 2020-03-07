@@ -3,44 +3,40 @@
 #+Email: mromang08@gmail.com
 #+TODO: WIP | DONE
 
-This is my Emacs init file, written in org-mode using literate
-programming and =org-babel= blocks. The =init.el= file tangles the Elisp
-code blocks of this file into =config.el=. I have taken ideas for my
-configuration mainly from
+* Emacs
+This is my *Emacs* init file, written in org-mode using literate programming and =org-babel= blocks. The =init.el= file tangles the Elisp code blocks of this file into =config.el=. 
+
+I have taken ideas for my configuration from many sources, and I am really grateful to all of them.
 
   * [[http://cestlaz.github.io/][C'est la Z]]
   * [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][Harry R. Schwartz's configuration file]]
-
-and from many other configuration files and blogs such as
-
   * [[http://emacsredux.com/][Emacs Redux]]
   * [[http://irreal.org/blog/][Irreal]]
   * [[https://oremacs.com][(or emacs irrelevant)]]
   * [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's configuration file]]
   * [[http://karl-voit.at/2017/06/03/emacs-org/][Karl Voit's configuration file]]
   * [[http://spacemacs.org/][Spacemacs]]
+  * [[https://github.com/alhassy/emacs.d][Musa Al-hassy's configuration file]]
 
-It /works for me/ on Emacs 26.3 and org-version 9.3.6. You can check
-your Emacs version with =M-x version= and your org-mode version with
-=M-x org-version=.
+It /works for me/ on Emacs 26.3 and org-version 9.3.6. You can check your Emacs version with =M-x version= and your org-mode version with =M-x org-version=.
 
 * Basic
-#+BEGIN_SRC emacs-lisp
-  (message "[init] Basic configuration")
+These are the declarations for the basic configuration variables.
 
-  ;; User information is used by Emacs in frame titles and email.
-  ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html
-  ;; It is also used by Gnus.
+ * [[https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html][User identification - Emacs]]
+
+#+BEGIN_SRC emacs-lisp
+  ;; A message to know that it is loading.
+  (message "[cosmoi-emacs]: Basic configuration")
+
+  ;; User information is used by Emacs in frame titles and
+  ;; email. 
   (setq user-full-name "Mario Román")
   (setq user-mail-address "mromang08@gmail.com")
 
-  ;; Sensitive information is stored into a different file which I do not
-  ;; upload to GitHub. It sets some variables.
-  (load "~/.emacs.d/emacs.secrets" t)
-
-  ;; A list of the most important files on my workflow. Those variables are
-  ;; used all across the configuration file; and listing them here eases
-  ;; the process of rewriting directory paths.
+  ;; A list of the most important files on my workflow. Those
+  ;; variables are used all across the configuration file; and listing
+  ;; them here eases the process of rewriting directory paths.
   (setq m42/math-file       (expand-file-name "~/org/Math.org"))
   (setq cosmoi/init-file    (expand-file-name "~/.emacs.d/main.org"))
   (setq m42/agenda-file     (expand-file-name "~/org/agenda/Tasks.org"))
@@ -49,11 +45,13 @@ your Emacs version with =M-x version= and your org-mode version with
   (setq m42/org-folder      (expand-file-name "~/org"))
 
   ;; Jumps to the important files with a single keystroke.
-  (global-set-key (kbd "<f8>") (lambda() (interactive) (find-file cosmoi/init-file)))
+  (global-set-key (kbd "<f8>") 
+    (lambda() (interactive) (find-file cosmoi/init-file)))
   
-  ;; I prefer to use a separate custom file for Emacs. This means any configurations
-  ;; that are created using the Customize menu and the list of installed packages will
-  ;; be kept separate of this org configuration.
+  ;; I prefer to use a separate custom file for Emacs. This means any
+  ;; configurations that are created using the Customize menu and the
+  ;; list of installed packages will be kept separate of this org
+  ;; configuration.
   ;; http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/
   (setq custom-file "~/.emacs.d/custom.el")
   (load custom-file 'noerror)
@@ -68,15 +66,16 @@ your Emacs version with =M-x version= and your org-mode version with
   ;(scroll-bar-mode -1)
   (tooltip-mode -1)
 
-  ;; Includes the local bin on the 'exec-path'. This allows Emacs to find
-  ;; executables in the local binaries folder.
+  ;; Includes the local bin on the 'exec-path'. This allows Emacs to
+  ;; find executables in the local binaries folder.
   (setq exec-path (cons "/home/mario/.local/bin" exec-path))
 
   ;; The configuration files can be reloaded at any time using
   ;; =M-insert=.  This eases the process of writing, debugging and
   ;; testing the configuration file. Current set variables will not be
   ;; removed; and Emacs will need a complete restart to clean them.
-  (global-set-key [M-insert] '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
+  (global-set-key [M-insert] 
+     '(lambda() (interactive) (load-file "~/.emacs.d/init.el")))
 
   ;; Restart-emacs is a package to restart Emacs from within Emacs. It
   ;; offers the command =restart-emacs=, which kills the current Emacs
@@ -127,21 +126,18 @@ your Emacs version with =M-x version= and your org-mode version with
   ;; Indicates what face are we using currently under the cursor.
   (defun what-face (pos)
     (interactive "d")
-    (let ((face (or (get-char-property (point) 'read-face-name)
-		    (get-char-property (point) 'face))))
-      (if face (message "Face: %s" face) (message "No face at %d" pos))))
+    (let ((face (or 
+        (get-char-property (point) 'read-face-name)
+	  (get-char-property (point) 'face))))
+      (if face
+        (message "Face: %s" face) 
+        (message "No face at %d" pos))))
 
   ;; A better help
-  (use-package helpful
-    :ensure t)
+  (use-package helpful :ensure t)
 
-  ;; Study key frequency
-  ;; (use-package keyfreq
-  ;;   :init 
-  ;;     (keyfreq-mode 1)
-  ;;     (keyfreq-autosave-mode 1))
-
-  ;; Helps discoverability by showing you the available commands at any time.
+  ;; Helps discoverability by showing you the available commands at
+  ;; any time.
   (use-package which-key
     :ensure t
     :config 
@@ -211,9 +207,6 @@ your Emacs version with =M-x version= and your org-mode version with
       (fill-region start end))) 
 #+END_SRC
 
-#+RESULTS:
-: unfill-region
-
 ** Swiper and search
 #+BEGIN_SRC emacs-lisp
   ;; Swiper provides a fast search method.
@@ -282,8 +275,8 @@ your Emacs version with =M-x version= and your org-mode version with
       (interactive)
       (other-window -1)))
 
-  ;; Avy goto-char lets you jump to a given char on the screen just
-  ;; by pressing 'C-.'.
+  ;; Avy goto-char lets you jump to a given char on the screen just by
+  ;; pressing 'C-.'.
   (use-package avy
     :ensure t
     :bind (
@@ -291,13 +284,10 @@ your Emacs version with =M-x version= and your org-mode version with
       ("C-ç" . avy-goto-char) ))
 
   (use-package windmove
-    ;; :defer 4
     :ensure t
     :config
-    ;; use command key on Mac
-    (windmove-default-keybindings 'super)
-    ;; wrap around at edges
-    (setq windmove-wrap-around t))
+      (windmove-default-keybindings 'super)
+      (setq windmove-wrap-around t))
 
   ;; Make windmove work in org-mode:
   (add-hook 'org-shiftup-final-hook 'windmove-up)
@@ -2991,6 +2981,13 @@ $1
 #+END_SRC
 
 * Customization
+Emacs default looks are not the best.  We will solve this.  
+
+ * /Dashboard:/ The general dashboard will change to show "Cosmoi-Emacs".
+ * /Volatile:/ Mark each time a change occurs.
+ * /Beacon:/ Signal the cursor when the view changes.
+ * /Rainbow delimiters:/ Color matching parentheses.
+
 #+BEGIN_SRC emacs-lisp
   (message "[init] Customization")
   (message "[init] Window customization")
@@ -3000,7 +2997,7 @@ $1
       :ensure t
       :diminish dashboard-mode
       :config
-         (setq dashboard-banner-logo-title "Cosmoi Emacs for category theory engineers.")
+         (setq dashboard-banner-logo-title "Cosmoi, Emacs for category theory engineers.")
          (setq dashboard-items '((recents  . 10) (bookmarks . 10)))
          (dashboard-setup-startup-hook)
          (setq dashboard-set-footer nil)
@@ -3022,21 +3019,17 @@ $1
     :config (beacon-mode 1))
 
   ;; Rainbow delimiters colors parentheses with matching and different
-  ;; colors. It helps to visually determine the pairing.
+  ;; colors. It helps to visually determine the pairing. Rainbow mode
+  ;; is disabled for org-mode, because matching parentheses in a big
+  ;; org-file is a bit difficult.
   (use-package rainbow-delimiters
     :ensure t
     :config
       (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-      ; disabled for org (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
       (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode))
 
-  ;; The window split should be colored in gray. I do not want it to be
-  ;; too prominent.
-  ;(set-face-background 'vertical-border "gray")
-  ;(set-face-foreground 'vertical-border (face-background 'vertical-border))
-
   ;; The delimiter character whould be a unicode variant of |.
-  (let ((display-table (or standard-display-table (make-display-table))))
-    (set-display-table-slot display-table 'vertical-border (make-glyph-code ?┃))
-    (setq standard-display-table display-table))
+  ;; (let ((display-table (or standard-display-table (make-display-table))))
+  ;;   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?┃))
+  ;;   (setq standard-display-table display-table))
 #+END_SRC
