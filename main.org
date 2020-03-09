@@ -107,7 +107,15 @@ These are the declarations for the basic configuration variables.
   (delete-selection-mode 1)
 #+END_SRC
 
+We ask the operative system to change Caps to Ctrl. This is a possible solution to the [[http://ergoemacs.org/emacs/emacs_pinky.html][Emacs pinky]]. It becomes a systemwide option, but I prefer this to be systemwide anyway.
+
+#+BEGIN_SRC emacs-lisp
+(shell-command "setxkbmap -option ctrl:nocaps")
+#+END_SRC
+
 * Utilities
+[[http://pragmaticemacs.com/emacs/multiple-cursors/][Multiple cursors]] is a way of dealing with several cursors that do the same actions in different points of the file.  You can duplicate the current cursor to the next line multiple times with =Ctrl->=.
+
 #+BEGIN_SRC emacs-lisp
   ;; Edit with multiple cursors at the same time.
   (use-package multiple-cursors
@@ -940,7 +948,6 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
   (setq org-latex-default-packages-alist '())
 #+END_SRC
 
-
 ** Notes and spaced repetition
 #+BEGIN_SRC emacs-lisp
   ;; Org-noter provides support for note-taking on PDFs.
@@ -1067,7 +1074,8 @@ Stores org files in =~/org=. Defines location of index, agenda and todo files.
           '(lambda ()
             (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)))
 
-  ;; outline mode, making latex behave like org.
+  ;; Outline mode makes Latex behave like Org. It allows us to expand
+  ;; and contract regions on a TeX file.
   (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
 #+END_SRC
 
@@ -1703,6 +1711,8 @@ If yes, return this character."
 
 *** Pdf generation process
 #+BEGIN_SRC emacs-lisp
+  ;; This is the script Emacs will run when generating a PDF file from
+  ;; an org mode file.
   (setq org-latex-pdf-process
 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
     "bibtex %b"
@@ -3033,3 +3043,19 @@ Emacs default looks are not the best.  We will solve this.
   ;;   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?┃))
   ;;   (setq standard-display-table display-table))
 #+END_SRC
+
+** Fonts
+#+BEGIN_SRC emacs-lisp
+;; You may notice that I am not declaring a font to be used. Emacs
+;; should take the systemwide fontset and just adapt itself to its
+;; surroundings.
+(setq font-use-system-font t)
+#+END_SRC
+
+** Colors
+Org-mode comments should be grey instead of red. Code comments inside an org-babel block are still red.
+
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'org-meta-line nil :foreground "grey60")
+#+END_SRC
+
